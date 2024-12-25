@@ -10,6 +10,6 @@ Chainslake can decode any protocol, you just need to provide the abi.json file o
 
 ## Result
 
-Once your decoded job is executed, you will see your decoded tables in the Chainslake database [here](https://metabase.chainslake.io/browse/databases/3/schema/ethereum_decoded){:target="_blank"}. The naming convention is as follows:
+Once your decoded job is executed, you will see your decoded tables in the Chainslake database [here](https://metabase.chainslake.io/browse/databases/3/schema/ethereum_decoded). The naming convention is as follows:
 - [protocol_name]_evt_[event_name]: Event decoded table from log data
 - [protocol_name]_call_[function_name]: Internal transactions decoded table from trace data

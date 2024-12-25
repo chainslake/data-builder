@@ -10,4 +10,4 @@ Chainslake can help you get the necessary information from contracts and save th
 
 ## Result
 
-Once your get contract info job is executed, you will see your contract info table in the Chainslake database [here](https://metabase.chainslake.io/browse/databases/3/schema/ethereum_contract){:target="_blank"}
+Once your get contract info job is executed, you will see your contract info table in the Chainslake database [here](https://metabase.chainslake.io/browse/databases/3/schema/ethereum_contract)
