@@ -20,4 +20,12 @@ The job configurations placed after the `spark.app_properties` property include:
         - `binance_cex.exchange_info`: Job get all Exchanges from Binance CEX
         - `binance_cex.trade_minute`: Job get trade data by minute from Binance CEX
 - __config_file__: config file contains general config of the job
-- other config were used as input variables inside job
+- __chain_name__: 
+- __number_block_per_partition__: s defined so that one partition processes about 1 hour of data
+- __max_number_partition__: Maximum number of partition each time process
+- __max_time_run__: Miximum number of time process, infinite if equal to 0
+- __run_mode__: `forward` or `backward`
+- __start_number__, __end_number__: data limit, default unlimit
+- __repair_mode__: `true` or `false`, default `false`. Use in case of data repair
+
+
