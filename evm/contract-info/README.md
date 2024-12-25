@@ -5,7 +5,7 @@ Chainslake can help you get the necessary information from contracts and save th
 ## Step by step
 
 - First you need to create a configuration file in the `contract-info` folder. The configuration file consists of two parts separated by `===`. In the first part, you need to provide a `list_input_tables` names, these are usually decoded tables and `output_table` name. In part 2 you need to provide the information fields you need to get from the contract in json format.
-- Add your get contract info job to the pipeline, see instructions [here](/airflow/README.md).
+- Add your get contract info job to the pipeline, see instructions [here](/airflow).
 - Commit and push your work and you're done.
 
 ## Result

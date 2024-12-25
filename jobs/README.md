@@ -1,6 +1,6 @@
 # Job execution
 
-Jobs are Chainslake's data processing execution units, which are scripts placed in the `jobs` directory and called by Airflow (see data pipeline section [here](/airflow/README.md)).
+Jobs are Chainslake's data processing execution units, which are scripts placed in the `jobs` directory and called by Airflow (see data pipeline section [here](/airflow)).
 
 
 ## Configuration

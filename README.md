@@ -5,9 +5,9 @@ Chainslake is a Open Blockchain Data Lakehouse Platform, fully supported for EVM
 ## Features
 
 - Build and share blockchain data analytics dashboards for free, let start [here](https://metabase.chainslake.io/dashboard/60-erc20-token).
-- Easily and quickly decoded any protocol or contract, see instructions [here](/evm/abi/README.md)
-- Get information from contract and store in table, see instructions [here](/evm/contract-info/README.md)
-- Build your business tables using SQL, see instructions [here](/sql/README.md)
+- Easily and quickly decoded any protocol or contract, see instructions [here](/evm/abi)
+- Get information from contract and store in table, see instructions [here](/evm/contract-info)
+- Build your business tables using SQL, see instructions [here](/sql)
 
 ## Contributor
 

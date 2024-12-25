@@ -1,6 +1,12 @@
 spark-submit "$@" \
     --deploy-mode client \
     --conf "spark.app_properties.chainslake_home_dir=$CHAINSLAKE_HOME_DIR" \
+    --conf "spark.app_properties.postgres_url=$POSTGRES_ADMIN_URL" \
+    --conf "spark.app_properties.postgres_user=$POSTGRES_USER" \
+    --conf "spark.app_properties.postgres_password=$POSTGRES_PASSWORD" \
+    --conf "spark.app_properties.sonar_token=$BOT_TOKEN" \
+    --conf "spark.app_properties.chainslake_token=$ADMIN_TOKEN" \
+    --conf "spark.app_properties.admin_group_id=$ADMIN_GROUP_ID" \
     --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
     --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" \
     --conf spark.databricks.delta.retentionDurationCheck.enabled=false \

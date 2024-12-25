@@ -5,7 +5,7 @@ Chainslake can decode any protocol, you just need to provide the abi.json file o
 ## Step by step
 
 - First you need to copy the protocol's ABI into this `evm/abi` folder.
-- Add your decode job to the pipeline, see instructions [here](/airflow/README.md).
+- Add your decode job to the pipeline, see instructions [here](/airflow).
 - Commit and push your work and you're done.
 
 ## Result
