@@ -1,0 +1,63 @@
+[
+    {
+        "name": "NewExchange",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "token",
+                "indexed": true
+            },
+            {
+                "type": "address",
+                "name": "exchange",
+                "indexed": true
+            }
+        ],
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "name": "TokenPurchase",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "buyer",
+                "indexed": true
+            },
+            {
+                "type": "uint256",
+                "name": "eth_sold",
+                "indexed": true
+            },
+            {
+                "type": "uint256",
+                "name": "tokens_bought",
+                "indexed": true
+            }
+        ],
+        "anonymous": false,
+        "type": "event"
+    },
+    {
+        "name": "EthPurchase",
+        "inputs": [
+            {
+                "type": "address",
+                "name": "buyer",
+                "indexed": true
+            },
+            {
+                "type": "uint256",
+                "name": "tokens_sold",
+                "indexed": true
+            },
+            {
+                "type": "uint256",
+                "name": "eth_bought",
+                "indexed": true
+            }
+        ],
+        "anonymous": false,
+        "type": "event"
+    }
+]
