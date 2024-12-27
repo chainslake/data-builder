@@ -1,4 +1,4 @@
-$CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.Main \
+$CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.evm.Main \
     --name EthereumLogs \
     --master local[2] \
     --driver-memory 4g \

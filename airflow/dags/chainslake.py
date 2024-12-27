@@ -14,7 +14,7 @@ with DAG(
         "email": ["lakechain.nguyen@gmail.com"],
         "email_on_failure": True,
         "email_on_retry": False,
-        "retries": 0
+        "retries": 2
     },
     description="Chainslake pipeline",
     start_date=datetime(2024, 9, 20),
