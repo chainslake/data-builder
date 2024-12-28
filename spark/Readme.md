@@ -8,7 +8,7 @@ Chainslake App is a Data Application on Chainslake platform.
 ## Setting up the development environment
 You need to install the following dependencies:
 
-- Scalar 2.12.18
+- Scala 2.12.18
 - Spark 3.5.1
 - SBT 1.9.0
 
@@ -24,13 +24,14 @@ $ ./build.sh
 
 ```sh
 $ cd test
-$ ./exchange_info.sh
-$ ./trade_minute.sh
+$ ./build.sh
+$ ./run_test.sh
 ```
 
 ## Check result data
 
 ```shell
+$ cd test
 $ ./spark-sql.sh
 ```
 
