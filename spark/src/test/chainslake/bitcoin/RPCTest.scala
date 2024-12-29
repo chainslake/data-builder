@@ -8,7 +8,7 @@ import java.sql.Timestamp
 import java.util.Properties
 
 class RPCTest extends AnyFunSuite {
-  val rpcUrl = "https://rpc.ankr.com/btc"
+  val rpcUrl = "https://bitcoin.drpc.org"
 
   test("Get block height") {
     val response = Http(rpcUrl).header("Content-Type", "application/json")

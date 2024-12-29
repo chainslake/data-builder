@@ -19,7 +19,8 @@ with DAG(
     description="Chainslake pipeline",
     start_date=datetime(2024, 12, 28, 16),
     # schedule="@continuous",
-    schedule="@hourly",
+    # schedule="@hourly",
+    schedule="@once",
     max_active_runs=1,
     max_active_tasks=2,
 ) as dag:
@@ -30,6 +31,28 @@ with DAG(
         task_id="bitcoin_origin.transaction_blocks",
         bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
     )
+
+    bitcoin_extract_blocks = BashOperator(
+        task_id="bitcoin.blocks",
+        bash_command=f"cd {RUN_DIR} && ./extract/blocks.sh "
+    )
+
+    bitcoin_extract_transactions = BashOperator(
+        task_id="bitcoin.transactions",
+        bash_command=f"cd {RUN_DIR} && ./extract/transactions.sh "
+    )
+
+    bitcoin_extract_inputs = BashOperator(
+        task_id="bitcoin.inputs",
+        bash_command=f"cd {RUN_DIR} && ./extract/inputs.sh "
+    )
+
+    bitcoin_extract_outputs = BashOperator(
+        task_id="bitcoin.outputs",
+        bash_command=f"cd {RUN_DIR} && ./extract/outputs.sh "
+    )
+
+    bitcoin_origin_transaction_blocks >> [bitcoin_extract_blocks, bitcoin_extract_transactions, bitcoin_extract_inputs, bitcoin_extract_outputs]
 
 
     RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/binance"
