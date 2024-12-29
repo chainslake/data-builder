@@ -1,3 +1,4 @@
+./build.sh
 spark-submit --class chainslake.bitcoin.Main \
     --deploy-mode client \
     --name BitcoinOriginTransactionBlocks \

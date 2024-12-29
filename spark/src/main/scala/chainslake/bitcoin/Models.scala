@@ -24,8 +24,11 @@ case class OriginBlock(
 case class ResponseRawBlock(
                              var jsonrpc: String,
                              var id: String,
-                             var result: TransactionBlock
+                             var result: RawBlock
                         )
+case class RawBlock(
+                   var time: Long
+                   )
 
 // Source: https://developer.bitcoin.org/reference/rpc/getblock.html
 case class TransactionBlock(

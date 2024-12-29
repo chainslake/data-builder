@@ -76,7 +76,7 @@ object TransactionBlocks extends TaskRun {
           throw new Exception("don't have transaction block from block: " + blockNumber)
         }
         blockTimestamp = transactionBlock.time
-        result = gson.toJson(transactionBlock)
+        result = response.body
         success = true
       } catch {
         case e: Exception => {
