@@ -17,12 +17,19 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2024, 9, 20),
-    schedule="@continuous",
-    # schedule="@once",
+    start_date=datetime(2024, 12, 28, 16),
+    # schedule="@continuous",
+    schedule="@hourly",
     max_active_runs=1,
     max_active_tasks=2,
 ) as dag:
+
+    RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/bitcoin"
+
+    bitcoin_origin_transaction_blocks = BashOperator(
+        task_id="bitcoin_origin.transaction_blocks",
+        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
+    )
 
 
     RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/binance"
