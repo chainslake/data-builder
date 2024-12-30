@@ -80,7 +80,7 @@ object TransactionBlocks extends TaskRun {
         success = true
       } catch {
         case e: Exception => {
-          println("error in block: " + blockNumber)
+          println("error in block: " + blockNumber + " with rpc: ", rpc)
           Thread.sleep(1000)
           //          throw e
         }

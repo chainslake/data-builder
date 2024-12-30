@@ -17,10 +17,10 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2024, 12, 28, 16),
+    start_date=datetime(2024, 12, 29, 18),
     # schedule="@continuous",
-    # schedule="@hourly",
-    schedule="@once",
+    schedule="@hourly",
+    # schedule="@once",
     max_active_runs=1,
     max_active_tasks=2,
 ) as dag:
@@ -54,6 +54,22 @@ with DAG(
 
     bitcoin_origin_transaction_blocks >> [bitcoin_extract_blocks, bitcoin_extract_transactions, bitcoin_extract_inputs, bitcoin_extract_outputs]
 
+    bitcoin_balances_utxo_transfer_hour = BashOperator(
+        task_id="bitcoin_balances.utxo_transfer_hour",
+        bash_command=f"cd {RUN_DIR} && ./balances/utxo_transfer_hour.sh "
+    )
+
+    bitcoin_balances_utxo_transfer_day = BashOperator(
+        task_id="bitcoin_balances.utxo_transfer_day",
+        bash_command=f"cd {RUN_DIR} && ./balances/utxo_transfer_day.sh "
+    )
+
+    bitcoin_balances_utxo_latest_day = BashOperator(
+        task_id="bitcoin_balances.utxo_latest_day",
+        bash_command=f"cd {RUN_DIR} && ./balances/utxo_latest_day.sh "
+    )
+
+    [bitcoin_extract_inputs, bitcoin_extract_outputs] >> bitcoin_balances_utxo_transfer_hour >> bitcoin_balances_utxo_transfer_day >> bitcoin_balances_utxo_latest_day
 
     RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/binance"
 
