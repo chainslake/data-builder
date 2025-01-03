@@ -17,13 +17,48 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2025, 1, 3, 1),
+    start_date=datetime(2025, 1, 3, 4),
     # schedule="@continuous",
     schedule="@hourly",
     # schedule="@once",
     max_active_runs=1,
     max_active_tasks=2,
 ) as dag:
+
+    RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/sui"
+
+    sui_origin_transaction_blocks = BashOperator(
+        task_id="sui_origin.transaction_blocks",
+        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
+    )
+
+    sui_extract_blocks = BashOperator(
+        task_id="sui.blocks",
+        bash_command=f"cd {RUN_DIR} && ./extract/blocks.sh "
+    )
+
+    sui_extract_transactions = BashOperator(
+        task_id="sui.transactions",
+        bash_command=f"cd {RUN_DIR} && ./extract/transactions.sh "
+    )
+
+    sui_extract_events = BashOperator(
+        task_id="sui.events",
+        bash_command=f"cd {RUN_DIR} && ./extract/events.sh "
+    )
+
+    sui_extract_object_changes = BashOperator(
+        task_id="sui.object_changes",
+        bash_command=f"cd {RUN_DIR} && ./extract/object_changes.sh "
+    )
+
+    sui_extract_balance_changes = BashOperator(
+        task_id="sui.balance_changes",
+        bash_command=f"cd {RUN_DIR} && ./extract/balance_changes.sh "
+    )
+
+    sui_origin_transaction_blocks >> [sui_extract_blocks, sui_extract_object_changes, sui_extract_transactions, sui_extract_events, sui_extract_balance_changes]
+
 
     RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/solana"
 
@@ -105,12 +140,12 @@ with DAG(
         bash_command=f"cd {RUN_DIR} && ./balances/utxo_transfer_day.sh "
     )
 
-    bitcoin_balances_utxo_latest_day = BashOperator(
-        task_id="bitcoin_balances.utxo_latest_day",
-        bash_command=f"cd {RUN_DIR} && ./balances/utxo_latest_day.sh "
-    )
+    # bitcoin_balances_utxo_latest_day = BashOperator(
+    #     task_id="bitcoin_balances.utxo_latest_day",
+    #     bash_command=f"cd {RUN_DIR} && ./balances/utxo_latest_day.sh "
+    # )
 
-    [bitcoin_extract_inputs, bitcoin_extract_outputs] >> bitcoin_balances_utxo_transfer_hour >> bitcoin_balances_utxo_transfer_day >> bitcoin_balances_utxo_latest_day
+    [bitcoin_extract_inputs, bitcoin_extract_outputs] >> bitcoin_balances_utxo_transfer_hour >> bitcoin_balances_utxo_transfer_day
 
     RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/binance"
 
@@ -239,12 +274,12 @@ with DAG(
         bash_command=f"cd {RUN_DIR} && ./balances/token_transfer_day.sh "
     )
 
-    ethereum_balances_token_latest_day = BashOperator(
-        task_id="ethereum_balances.token_latest_day",
-        bash_command=f"cd {RUN_DIR} && ./balances/token_latest_day.sh "
-    )
+    # ethereum_balances_token_latest_day = BashOperator(
+    #     task_id="ethereum_balances.token_latest_day",
+    #     bash_command=f"cd {RUN_DIR} && ./balances/token_latest_day.sh "
+    # )
 
-    [ethereum_contract_erc20_tokens, ethereum_traces] >> ethereum_balances_token_transfer_hour >> ethereum_balances_token_transfer_day >> ethereum_balances_token_latest_day
+    [ethereum_contract_erc20_tokens, ethereum_traces] >> ethereum_balances_token_transfer_hour >> ethereum_balances_token_transfer_day
 
     ethereum_balances_nft_transfer_hour = BashOperator(
         task_id="ethereum_balances.nft_transfer_hour",
@@ -256,12 +291,12 @@ with DAG(
         bash_command=f"cd {RUN_DIR} && ./balances/nft_transfer_day.sh "
     )
 
-    ethereum_balances_nft_latest_day = BashOperator(
-        task_id="ethereum_balances.nft_latest_day",
-        bash_command=f"cd {RUN_DIR} && ./balances/nft_latest_day.sh "
-    )
+    # ethereum_balances_nft_latest_day = BashOperator(
+    #     task_id="ethereum_balances.nft_latest_day",
+    #     bash_command=f"cd {RUN_DIR} && ./balances/nft_latest_day.sh "
+    # )
 
-    [ethereum_contract_erc721_tokens, ethereum_contract_erc1155_tokens] >> ethereum_balances_nft_transfer_hour >> ethereum_balances_nft_transfer_day >> ethereum_balances_nft_latest_day
+    [ethereum_contract_erc721_tokens, ethereum_contract_erc1155_tokens] >> ethereum_balances_nft_transfer_hour >> ethereum_balances_nft_transfer_day
 
     ethereum_contract_uniswap_v2_info = BashOperator(
         task_id="ethereum_contract.uniswap_v2_info",
