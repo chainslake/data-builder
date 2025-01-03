@@ -1,7 +1,7 @@
 $CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.cex.Main \
     --name BinanceTradeMinute \
     --master local[4] \
-    --driver-memory 4g \
+    --driver-memory 2g \
     --conf "spark.app_properties.app_name=binance_cex.trade_minute" \
     --conf "spark.app_properties.binance_cex_url=$BINANCE_CEX_URL" \
     --conf "spark.app_properties.number_re_partitions=4" \

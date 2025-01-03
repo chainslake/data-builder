@@ -1,7 +1,7 @@
 $CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.evm.Main \
     --name EthereumTransactions \
     --master local[2] \
-    --driver-memory 4g \
+    --driver-memory 6g \
     --conf "spark.app_properties.app_name=evm.transactions" \
     --conf "spark.app_properties.rpc_list=$ETHEREUM_RPCS" \
     --conf "spark.app_properties.input_extract_transactions_table=blocks_receipt" \

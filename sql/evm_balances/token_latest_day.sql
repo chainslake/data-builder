@@ -54,7 +54,7 @@ ${if table_existed}
 
 select case 
     when sign = 3 or sign = 2 then 1
-    when sign = 1 then 0
+    when sign = 1 then 1
     end as is_change
     , key_partition
     , wallet_address
@@ -62,7 +62,7 @@ select case
     , symbol
     , balance
 from balance_agg
-where sign > 0
+where sign > 1
 
 ${else}
 
