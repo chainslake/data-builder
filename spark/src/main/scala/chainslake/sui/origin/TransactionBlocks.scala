@@ -78,7 +78,7 @@ object TransactionBlocks extends TaskRun {
 
         blockTimestamp = transactionBlock.timestampMs.toLong
         block = response.body
-        val mTrans = transactionBlock.transactions.grouped(50)
+        val mTrans = transactionBlock.transactions.grouped(10)
         var listResult = Array[Any]()
         mTrans.foreach(trans => {
           response = Http(rpc).header("Content-Type", "application/json").postData(s"""{"method":"sui_multiGetTransactionBlocks","params":[["${trans.mkString("\", \"")}"], {

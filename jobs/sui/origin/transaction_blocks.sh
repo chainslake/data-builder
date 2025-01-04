@@ -1,6 +1,6 @@
 $CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.sui.Main \
     --name SuiOriginTransactionBlocks \
-    --master local[4] \
+    --master local[20] \
     --driver-memory 4g \
     --conf "spark.app_properties.app_name=sui_origin.transaction_blocks" \
     --conf "spark.app_properties.rpc_list=$SUI_RPCS" \
