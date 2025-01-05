@@ -25,39 +25,39 @@ with DAG(
     max_active_tasks=2,
 ) as dag:
 
-    RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/sui"
+    # RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/sui"
 
-    sui_origin_transaction_blocks = BashOperator(
-        task_id="sui_origin.transaction_blocks",
-        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
-    )
+    # sui_origin_transaction_blocks = BashOperator(
+    #     task_id="sui_origin.transaction_blocks",
+    #     bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
+    # )
 
-    sui_extract_blocks = BashOperator(
-        task_id="sui.blocks",
-        bash_command=f"cd {RUN_DIR} && ./extract/blocks.sh "
-    )
+    # sui_extract_blocks = BashOperator(
+    #     task_id="sui.blocks",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/blocks.sh "
+    # )
 
-    sui_extract_transactions = BashOperator(
-        task_id="sui.transactions",
-        bash_command=f"cd {RUN_DIR} && ./extract/transactions.sh "
-    )
+    # sui_extract_transactions = BashOperator(
+    #     task_id="sui.transactions",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/transactions.sh "
+    # )
 
-    sui_extract_events = BashOperator(
-        task_id="sui.events",
-        bash_command=f"cd {RUN_DIR} && ./extract/events.sh "
-    )
+    # sui_extract_events = BashOperator(
+    #     task_id="sui.events",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/events.sh "
+    # )
 
-    sui_extract_object_changes = BashOperator(
-        task_id="sui.object_changes",
-        bash_command=f"cd {RUN_DIR} && ./extract/object_changes.sh "
-    )
+    # sui_extract_object_changes = BashOperator(
+    #     task_id="sui.object_changes",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/object_changes.sh "
+    # )
 
-    sui_extract_balance_changes = BashOperator(
-        task_id="sui.balance_changes",
-        bash_command=f"cd {RUN_DIR} && ./extract/balance_changes.sh "
-    )
+    # sui_extract_balance_changes = BashOperator(
+    #     task_id="sui.balance_changes",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/balance_changes.sh "
+    # )
 
-    sui_origin_transaction_blocks >> [sui_extract_blocks, sui_extract_object_changes, sui_extract_transactions, sui_extract_events, sui_extract_balance_changes]
+    # sui_origin_transaction_blocks >> [sui_extract_blocks, sui_extract_object_changes, sui_extract_transactions, sui_extract_events, sui_extract_balance_changes]
 
 
     # RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/solana"

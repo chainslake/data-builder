@@ -5,7 +5,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import scalaj.http.Http
 
 class RPCTest extends AnyFunSuite {
-  val rpcUrl = "http://node-prod.chainslake:1800/sui3"
+  val rpcUrl = "https://fullnode.mainnet.sui.io"
 
   test("Get latest block") {
     val response = Http(rpcUrl).header("Content-Type", "application/json")
@@ -59,7 +59,7 @@ class RPCTest extends AnyFunSuite {
 
   test("Get transaction ") {
     val response = Http(rpcUrl).header("Content-Type", "application/json")
-      .postData(s"""{"method":"sui_multiGetTransactionBlocks","params":[["FTefC9gvFWAZaDLRCjtnwbCwiYPVY2A2K7QGhKbxcETR"], {
+      .postData(s"""{"method":"sui_multiGetTransactionBlocks","params":[["8nMJEZjQNJUELqcwzhwgyUf3ghLM4KX8yukQmeCNb2t"], {
                    |      "showInput": true,
                    |      "showRawInput": false,
                    |      "showEffects": true,

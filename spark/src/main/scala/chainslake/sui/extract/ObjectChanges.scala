@@ -1,6 +1,7 @@
 package chainslake.sui.extract
 
 import chainslake.job.TaskRun
+import chainslake.sui.origin.TransactionBlocks
 import chainslake.sui.{ExtractedObjectChange, OriginBlock, Owner, Transaction}
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
@@ -30,7 +31,20 @@ object ObjectChanges extends TaskRun {
     spark.read.table(inputTableName).where(col("block_number") >= from && col("block_number") <= to)
       .as[OriginBlock].flatMap(block => {
         val gson = new Gson()
-        val extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])
+        var extractTransactions: Array[Transaction] = Array[Transaction]()
+        try {
+          extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])
+        } catch {
+          case e: Exception => {
+            println(s"Block number: ${block.block_number}")
+            val rpcList = properties.getProperty("rpc_list").split(",")
+            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)
+            block.block = result._1
+            block.transactions = result._2
+            extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])
+            //            throw e
+          }
+        }
         extractTransactions.flatMap(transaction => {
           transaction.objectChanges.map(objectChange => {
             ExtractedObjectChange(
