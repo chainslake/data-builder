@@ -5,6 +5,7 @@ import chainslake.solana.{OriginBlock, ResponseRawBlock, ResponseRawNumber}
 import com.google.gson.Gson
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.functions.{col, explode, lit, sequence}
+import org.apache.spark.storage.StorageLevel
 import scalaj.http.Http
 
 import java.sql.{Date, Timestamp}
@@ -27,6 +28,7 @@ object TransactionBlocks extends TaskRun {
 
   protected def onProcess(spark: SparkSession, outputTable: String, fromBlock: Long, toBlock: Long, properties: Properties): Unit = {
     processCrawlBlocks(spark, fromBlock, toBlock, properties)
+      .persist(StorageLevel.MEMORY_AND_DISK)
       .repartitionByRange(col("block_date"), col("block_time"))
       .write.partitionBy("block_date")
       .mode(SaveMode.Append).format("delta")

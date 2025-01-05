@@ -5,6 +5,7 @@ import chainslake.solana.{ExtractedBlock, OriginBlock, ResponseBlock}
 import com.google.gson.Gson
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.functions.col
+import org.apache.spark.storage.StorageLevel
 
 import java.sql.Timestamp
 import java.util.Properties
@@ -39,7 +40,9 @@ object Blocks extends TaskRun {
           extractBlock.parentSlot,
           extractBlock.previousBlockhash
         )
-      }).repartitionByRange(col("block_date"), col("block_time"))
+      })
+      .persist(StorageLevel.MEMORY_AND_DISK)
+      .repartitionByRange(col("block_date"), col("block_time"))
       .write.partitionBy("block_date")
       .mode(SaveMode.Append).format("delta")
       .saveAsTable(outputTable)

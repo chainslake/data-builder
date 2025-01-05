@@ -2,13 +2,13 @@
 spark-submit --class chainslake.sui.Main \
     --deploy-mode client \
     --name Sui \
-    --master local[1] \
-    --driver-memory 1g \
+    --master local[40] \
+    --driver-memory 8g \
     --conf "spark.app_properties.app_name=sui_origin.transaction_blocks" \
-    --conf "spark.app_properties.start_number=97476955" \
-    --conf "spark.app_properties.number_partitions=1" \
-    --conf "spark.app_properties.end_number=97476965" \
-    --conf "spark.app_properties.rpc_list=https://fullnode.mainnet.sui.io" \
+    --conf "spark.app_properties.start_number=97936844" \
+    --conf "spark.app_properties.number_partitions=40" \
+    --conf "spark.app_properties.end_number=97937484" \
+    --conf "spark.app_properties.rpc_list=http://node-prod.chainslake:1800/sui3" \
     --conf "spark.app_properties.config_file=sui/application.properties" \
     --conf "spark.app_properties.chainslake_home_dir=../../" \
     --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \

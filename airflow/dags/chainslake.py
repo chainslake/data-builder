@@ -60,45 +60,45 @@ with DAG(
     sui_origin_transaction_blocks >> [sui_extract_blocks, sui_extract_object_changes, sui_extract_transactions, sui_extract_events, sui_extract_balance_changes]
 
 
-    RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/solana"
+    # RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/solana"
 
-    solana_origin_transaction_blocks = BashOperator(
-        task_id="solana_origin.transaction_blocks",
-        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
-    )
+    # solana_origin_transaction_blocks = BashOperator(
+    #     task_id="solana_origin.transaction_blocks",
+    #     bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
+    # )
 
-    solana_extract_blocks = BashOperator(
-        task_id="solana.blocks",
-        bash_command=f"cd {RUN_DIR} && ./extract/blocks.sh "
-    )
+    # solana_extract_blocks = BashOperator(
+    #     task_id="solana.blocks",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/blocks.sh "
+    # )
 
-    solana_extract_transactions = BashOperator(
-        task_id="solana.transactions",
-        bash_command=f"cd {RUN_DIR} && ./extract/transactions.sh "
-    )
+    # solana_extract_transactions = BashOperator(
+    #     task_id="solana.transactions",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/transactions.sh "
+    # )
 
-    solana_extract_rewards = BashOperator(
-        task_id="solana.rewards",
-        bash_command=f"cd {RUN_DIR} && ./extract/rewards.sh "
-    )
+    # solana_extract_rewards = BashOperator(
+    #     task_id="solana.rewards",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/rewards.sh "
+    # )
 
-    solana_extract_instructions = BashOperator(
-        task_id="solana.instructions",
-        bash_command=f"cd {RUN_DIR} && ./extract/instructions.sh "
-    )
+    # solana_extract_instructions = BashOperator(
+    #     task_id="solana.instructions",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/instructions.sh "
+    # )
 
-    solana_extract_native_balances = BashOperator(
-        task_id="solana.native_balances",
-        bash_command=f"cd {RUN_DIR} && ./extract/native_balances.sh "
-    )
+    # solana_extract_native_balances = BashOperator(
+    #     task_id="solana.native_balances",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/native_balances.sh "
+    # )
 
-    solana_extract_token_balances = BashOperator(
-        task_id="solana.token_balances",
-        bash_command=f"cd {RUN_DIR} && ./extract/token_balances.sh "
-    )
+    # solana_extract_token_balances = BashOperator(
+    #     task_id="solana.token_balances",
+    #     bash_command=f"cd {RUN_DIR} && ./extract/token_balances.sh "
+    # )
 
 
-    solana_origin_transaction_blocks >> [solana_extract_blocks, solana_extract_instructions, solana_extract_transactions, solana_extract_rewards, solana_extract_native_balances, solana_extract_token_balances]
+    # solana_origin_transaction_blocks >> [solana_extract_blocks, solana_extract_instructions, solana_extract_transactions, solana_extract_rewards, solana_extract_native_balances, solana_extract_token_balances]
 
 
     RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/bitcoin"

@@ -5,6 +5,7 @@ import chainslake.sui.{OriginBlock, ResponseRawBlock, ResponseRawString, Respons
 import com.google.gson.Gson
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.functions.{col, explode, lit, sequence}
+import org.apache.spark.storage.StorageLevel
 import scalaj.http.Http
 
 import java.sql.{Date, Timestamp}
@@ -26,6 +27,7 @@ object TransactionBlocks extends TaskRun {
 
   protected def onProcess(spark: SparkSession, outputTable: String, fromBlock: Long, toBlock: Long, properties: Properties): Unit = {
     processCrawlBlocks(spark, fromBlock, toBlock, properties)
+      .persist(StorageLevel.MEMORY_AND_DISK)
       .repartitionByRange(col("block_date"), col("block_time"))
       .write.partitionBy("block_date")
       .mode(SaveMode.Append).format("delta")
@@ -35,6 +37,7 @@ object TransactionBlocks extends TaskRun {
   private def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {
     import spark.implicits._
     val numberPartition = properties.getProperty("number_partitions").toInt
+    println(s"fromBlock = $fromBlock, toBlock = $toBlock, numberPartitions = $numberPartition")
     val blockStr = s"""{"from_block": $fromBlock, "to_block": $toBlock }"""
     val rpcList = properties.getProperty("rpc_list").split(",")
     val maxRetry = properties.getProperty("max_retry").toInt
@@ -107,7 +110,7 @@ object TransactionBlocks extends TaskRun {
       } catch {
         case e: Exception => {
           println("error in block: " + blockNumber + " with rpc: ", rpc)
-          Thread.sleep(1000)
+//          Thread.sleep(1000)
           //          throw e
         }
       }

@@ -7,6 +7,7 @@ import java.io.{FileInputStream, StringReader}
 import java.util.Properties
 import ajr.scemplate._
 import chainslake.job.TaskRun
+import org.apache.spark.storage.StorageLevel
 
 object Transformer extends TaskRun {
   override def run(spark: SparkSession, properties: Properties): Unit = {
@@ -54,7 +55,8 @@ object Transformer extends TaskRun {
       val rangeColumns = properties.getProperty("re_partition_by_range").split(",").map(column => {
         col(column)
       })
-      sqlDf = sqlDf.repartitionByRange(rangeColumns:_*)
+      sqlDf = sqlDf.persist(StorageLevel.MEMORY_AND_DISK)
+        .repartitionByRange(rangeColumns:_*)
     }
 
     var sqlWriter = sqlDf.write.format("delta")

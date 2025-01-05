@@ -1,10 +1,12 @@
 package chainslake.sui.extract
 
 import chainslake.job.TaskRun
-import chainslake.sui.{ExtractedObjectChange, OriginBlock, Transaction}
+import chainslake.sui.{ExtractedObjectChange, OriginBlock, Owner, Transaction}
 import com.google.gson.Gson
+import com.google.gson.internal.LinkedTreeMap
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.functions.col
+import org.apache.spark.storage.StorageLevel
 
 import java.util.Properties
 
@@ -39,7 +41,12 @@ object ObjectChanges extends TaskRun {
               objectChange.digest,
               objectChange.`type`,
               objectChange.sender,
-              objectChange.owner.AddressOwner,
+                objectChange.owner match {
+                  case owner: LinkedTreeMap[String, String] => owner.get("AddressOwner")
+                  case owner: String => owner
+                  case null => null
+                }
+              ,
               objectChange.objectType,
               objectChange.objectId,
               objectChange.version.toLong,
@@ -51,7 +58,9 @@ object ObjectChanges extends TaskRun {
             )
           })
         })
-      }).repartitionByRange(col("block_date"), col("block_time"))
+      })
+      .persist(StorageLevel.MEMORY_AND_DISK)
+      .repartitionByRange(col("block_date"), col("block_time"))
       .write.partitionBy("block_date")
       .mode(SaveMode.Append).format("delta")
       .saveAsTable(outputTable)

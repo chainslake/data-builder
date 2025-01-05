@@ -1,10 +1,11 @@
 package chainslake.sui
 
+import com.google.gson.Gson
 import org.scalatest.funsuite.AnyFunSuite
 import scalaj.http.Http
 
 class RPCTest extends AnyFunSuite {
-  val rpcUrl = "https://fullnode.mainnet.sui.io"
+  val rpcUrl = "http://node-prod.chainslake:1800/sui3"
 
   test("Get latest block") {
     val response = Http(rpcUrl).header("Content-Type", "application/json")
@@ -14,10 +15,15 @@ class RPCTest extends AnyFunSuite {
   }
 
   test("Get checkpoint") {
-    val blockNumber = 97362177
+    val blockNumber = 97937484
     val response = Http(rpcUrl).header("Content-Type", "application/json")
       .postData(s"""{"jsonrpc":"2.0","method":"sui_getCheckpoint","params":["${blockNumber}"],"id":1}""").asString
-    println(response.body)
+    val gson = new Gson()
+    val responseRawBlock = gson.fromJson(response.body, classOf[ResponseRawBlock])
+    responseRawBlock.result.transactions.grouped(10).foreach(trans => {
+      println(trans.mkString(","))
+    })
+//    println(response.body)
     // {
     //    "jsonrpc": "2.0",
     //    "result": {
@@ -53,7 +59,7 @@ class RPCTest extends AnyFunSuite {
 
   test("Get transaction ") {
     val response = Http(rpcUrl).header("Content-Type", "application/json")
-      .postData(s"""{"method":"sui_multiGetTransactionBlocks","params":[["BmMyDXurM8nYyfocmCdpTkA9dYdCYbZfieDcgVdMxcTd"], {
+      .postData(s"""{"method":"sui_multiGetTransactionBlocks","params":[["FTefC9gvFWAZaDLRCjtnwbCwiYPVY2A2K7QGhKbxcETR"], {
                    |      "showInput": true,
                    |      "showRawInput": false,
                    |      "showEffects": true,
@@ -62,6 +68,10 @@ class RPCTest extends AnyFunSuite {
                    |      "showBalanceChanges": true,
                    |      "showRawEffects": false
                    |    }],"id":1,"jsonrpc":"2.0"}""".stripMargin).asString
+
+//    val gson = new Gson()
+
+//    gson.fromJson(block.transactions, classOf[Array[Transaction]])
     println(response.body)
   }
 

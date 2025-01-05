@@ -5,6 +5,7 @@ import chainslake.job.TaskRun
 import com.google.gson.Gson
 import org.apache.spark.sql.functions.{col, explode, lit, sequence}
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
+import org.apache.spark.storage.StorageLevel
 import scalaj.http.Http
 
 import java.sql.{Date, Timestamp}
@@ -27,6 +28,7 @@ object TransactionBlocks extends TaskRun {
 
   protected def onProcess(spark: SparkSession, outputTable: String, fromBlock: Long, toBlock: Long, properties: Properties): Unit = {
     processCrawlBlocks(spark, fromBlock, toBlock, properties)
+      .persist(StorageLevel.MEMORY_AND_DISK)
       .repartitionByRange(col("block_date"), col("block_time"))
       .write.partitionBy("block_date")
       .mode(SaveMode.Append).format("delta")
@@ -67,7 +69,9 @@ object TransactionBlocks extends TaskRun {
       }
       try {
         var response = Http(rpc).header("Content-Type", "application/json")
-          .postData(s"""{"method":"getblockhash","params":[$blockNumber],"id":"curltest","jsonrpc":"1.0"}""").asString
+          .postData(s"""{"method":"getblockhash","params":[$blockNumber],"id":"curltest","jsonrpc":"1.0"}""")
+          .timeout(50000, 50000)
+          .asString
         val blockHash = gson.fromJson(response.body, classOf[ResponseRawString]).result
         response = Http(rpc).header("Content-Type", "application/json")
           .postData(s"""{"method":"getblock","params":["$blockHash", 2],"id":"curltest","jsonrpc":"1.0"}""").asString
@@ -81,7 +85,7 @@ object TransactionBlocks extends TaskRun {
       } catch {
         case e: Exception => {
           println("error in block: " + blockNumber + " with rpc: ", rpc)
-          Thread.sleep(1000)
+//          Thread.sleep(1000)
           //          throw e
         }
       }

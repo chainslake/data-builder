@@ -5,6 +5,7 @@ import chainslake.sui.{ExtractedTransaction, OriginBlock, ResponseBlock, Transac
 import com.google.gson.Gson
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.functions.col
+import org.apache.spark.storage.StorageLevel
 
 import java.util.Properties
 
@@ -88,7 +89,9 @@ object Transactions extends TaskRun {
             transaction.effects.dependencies
           )
         })
-      }).repartitionByRange(col("block_date"), col("block_time"))
+      })
+      .persist(StorageLevel.MEMORY_AND_DISK)
+      .repartitionByRange(col("block_date"), col("block_time"))
       .write.partitionBy("block_date")
       .mode(SaveMode.Append).format("delta")
       .saveAsTable(outputTable)

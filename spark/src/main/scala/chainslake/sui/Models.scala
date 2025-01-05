@@ -126,7 +126,7 @@ case class Id(
 case class ObjectChange(
                        var `type`: String,
                        var sender: String,
-                       var owner: Owner,
+                       var owner: Any,
                        var objectType: String,
                        var objectId: String,
                        var version: String,
@@ -227,5 +227,5 @@ case class ExtractedBalanceChange(
                                    var tx_digest: String,
                                    var owner_address: String,
                                    var coin_type: String,
-                                   var amount: Long
+                                   var amount: Double
                                  )
