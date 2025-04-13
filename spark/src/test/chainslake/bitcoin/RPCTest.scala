@@ -18,7 +18,7 @@ class RPCTest extends AnyFunSuite {
   }
 
   test("Get block hash") {
-    val blockNumber = 876818
+    val blockNumber = 861228
     val response = Http(rpcUrl).header("Content-Type", "application/json")
       .postData(s"""{"method":"getblockhash","params":[$blockNumber],"id":"curltest","jsonrpc":"1.0"}""").asString
     println(response.body)
@@ -26,7 +26,7 @@ class RPCTest extends AnyFunSuite {
   }
 
   test("Get block by block hash") {
-    val blockHash = "0000000000000000000114036b4c6aff5d21d097ec3620539e7e40cae729b794"
+    val blockHash = "00000000000000000002e4a83140e23c5a774d99f85a9d6d711826ed7c839b23"
     val response = Http(rpcUrl).header("Content-Type", "application/json")
       .postData(s"""{"method":"getblock","params":["$blockHash", 2],"id":"curltest","jsonrpc":"1.0"}""").asString
     println(response.body)

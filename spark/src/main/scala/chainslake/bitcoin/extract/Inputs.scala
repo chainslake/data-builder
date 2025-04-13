@@ -1,6 +1,7 @@
 package chainslake.bitcoin.extract
 
-import chainslake.bitcoin.{ExtractedInput, OriginBlock, ResponseBlock}
+import chainslake.bitcoin.origin.TransactionBlocks
+import chainslake.bitcoin.{ExtractedInput, OriginBlock, ResponseBlock, TransactionBlock}
 import chainslake.job.TaskRun
 import com.google.gson.Gson
 import org.apache.spark.sql.functions.col
@@ -30,7 +31,20 @@ object Inputs extends TaskRun {
     spark.read.table(inputTableName).where(col("block_number") >= from && col("block_number") <= to)
       .as[OriginBlock].flatMap(block => {
         val gson = new Gson()
-        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result
+        var extractBlock: TransactionBlock = null
+        try {
+          extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result
+        } catch {
+          case e: Exception => {
+            println(s"Block number: ${block.block_number}")
+            val rpcList = properties.getProperty("rpc_list").split(",")
+            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)
+            block.block = result._1
+            extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result
+            //            throw e
+          }
+        }
+
         extractBlock.tx.flatMap(transaction => {
           transaction.vin.map(vin => {
             ExtractedInput(block.block_date,

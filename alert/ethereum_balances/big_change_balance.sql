@@ -30,6 +30,7 @@
             "value": "100000000"
         }
     ],
+    "transform_id": "ethereum_balance_token_transfer_hour",
     "query": "token_address = ${token address} and abs(amount) > ${value} and (${wallet address} = 'any' or wallet_address = ${wallet address})",
     "message": "[${wallet_address}](https://etherscan.io/address/${wallet_address}) changed balance of token [${token_symbol}](https://metabase.chainslake.io/public/dashboard/ac9dbee4-af29-4ba8-b494-eae69f4ee835?token_address=${token_address}) with amount ${amount} token. View [analyst](https://metabase.chainslake.io/public/dashboard/3c10be82-3e17-4312-ad0d-272b275a3a89?wallet=${wallet_address}&token_address=${token_address})"
 }

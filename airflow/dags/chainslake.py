@@ -17,7 +17,7 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2025, 1, 3, 4),
+    start_date=datetime(2025, 2, 20, 15),
     # schedule="@continuous",
     schedule="@hourly",
     # schedule="@once",
