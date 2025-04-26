@@ -1,0 +1,1713 @@
+{
+    "metadata": {
+        "dbt_schema_version": "https://schemas.getdbt.com/dbt/manifest/v9.json",
+        "dbt_version": "1.5.0b5",
+        "generated_at": "2023-04-11T20:29:42.316970Z",
+        "invocation_id": "f5f9ec53-b715-491d-92b0-c7d376eab70b",
+        "env": {},
+        "project_id": "06e5b98c2db46f8a72cc4f66410e9b3b",
+        "user_id": "0f2629b0-6f10-4626-8469-3c1d21aea8bc",
+        "send_anonymous_usage_stats": true,
+        "adapter_type": "snowflake"
+    },
+    "nodes": {
+        "model.chainslake.bitcoin.blocks": {
+            "database": "chainslake",
+            "schema": "bitcoin",
+            "name": "bitcoin.blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin.blocks",
+            "fqn": [
+                "chainslake",
+                "bitcoin",
+                "blocks"
+            ],
+            "alias": "blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Block data of Bitcoin",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin.blocks LIMIT 100;",
+                "bitcoin.extract.Blocks.scala": "package chainslake.bitcoin.extract\n\nimport chainslake.bitcoin.origin.TransactionBlocks\nimport chainslake.bitcoin.{ExtractedBlock, OriginBlock, ResponseBlock, TransactionBlock}\nimport chainslake.job.TaskRun\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.sql.Timestamp\nimport java.util.Properties\n\nobject Blocks extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".blocks\", properties)\n  }\n\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].map(block => {\n        val gson = new Gson()\n        var extractBlock: TransactionBlock = null\n        try {\n          extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n            //            throw e\n          }\n        }\n        ExtractedBlock(block.block_date,\n          block.block_number,\n          block.block_time,\n          extractBlock.hash,\n          extractBlock.size,\n          extractBlock.strippedsize,\n          extractBlock.weight,\n          extractBlock.version,\n          extractBlock.versionHex,\n          extractBlock.merkleroot,\n          new Timestamp(extractBlock.mediantime * 1000L),\n          extractBlock.nonce,\n          extractBlock.bits,\n          extractBlock.difficulty,\n          extractBlock.chainwork,\n          extractBlock.nTx,\n          extractBlock.previousblockhash\n        )\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin.inputs": {
+            "database": "chainslake",
+            "schema": "bitcoin",
+            "name": "bitcoin.inputs",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin.inputs",
+            "fqn": [
+                "chainslake",
+                "bitcoin",
+                "inputs"
+            ],
+            "alias": "inputs",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "UTXO input data of Bitcoin",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin.inputs LIMIT 100;",
+                "bitcoin.extract.Inputs.scala": "package chainslake.bitcoin.extract\n\nimport chainslake.bitcoin.origin.TransactionBlocks\nimport chainslake.bitcoin.{ExtractedInput, OriginBlock, ResponseBlock, TransactionBlock}\nimport chainslake.job.TaskRun\nimport com.google.gson.Gson\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Inputs extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".inputs\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        var extractBlock: TransactionBlock = null\n        try {\n          extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n            //            throw e\n          }\n        }\n\n        extractBlock.tx.flatMap(transaction => {\n          transaction.vin.map(vin => {\n            ExtractedInput(block.block_date,\n              block.block_number,\n              block.block_time,\n              transaction.txid,\n              vin.txid,\n              vin.coinbase,\n              vin.vout,\n              if (vin.scriptSig != null) vin.scriptSig.asm else null,\n              if (vin.scriptSig != null) vin.scriptSig.hex else null,\n              vin.sequence,\n              vin.txinwitness\n            )\n          })\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin.outputs": {
+            "database": "chainslake",
+            "schema": "bitcoin",
+            "name": "bitcoin.outputs",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin.outputs",
+            "fqn": [
+                "chainslake",
+                "bitcoin",
+                "outputs"
+            ],
+            "alias": "outputs",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "UTXO output data of Bitcoin",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin.outputs LIMIT 100;",
+                "bitcoin.extract.Outputs.scala": "package chainslake.bitcoin.extract\n\nimport chainslake.bitcoin.origin.TransactionBlocks\nimport chainslake.bitcoin.{ExtractedOutput, OriginBlock, ResponseBlock, TransactionBlock}\nimport chainslake.job.TaskRun\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Outputs extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".outputs\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        var extractBlock: TransactionBlock = null\n        try {\n          extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n            //            throw e\n          }\n        }\n        extractBlock.tx.flatMap(transaction => {\n          transaction.vout.map(vout => {\n            ExtractedOutput(block.block_date,\n              block.block_number,\n              block.block_time,\n              transaction.txid,\n              vout.n,\n              vout.value,\n              vout.scriptPubKey.asm,\n              vout.scriptPubKey.hex,\n              vout.scriptPubKey.reqSigs,\n              vout.scriptPubKey.`type`,\n              vout.scriptPubKey.addresses,\n              vout.scriptPubKey.address\n            )\n          })\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin.transactions": {
+            "database": "chainslake",
+            "schema": "bitcoin",
+            "name": "bitcoin.transactions",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin.transactions",
+            "fqn": [
+                "chainslake",
+                "bitcoin",
+                "transactions"
+            ],
+            "alias": "transactions",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Transaction data of Bitcoin",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin.transactions LIMIT 100;",
+                "bitcoin.extract.Transactions.scala": "package chainslake.bitcoin.extract\n\nimport chainslake.bitcoin.origin.TransactionBlocks\nimport chainslake.bitcoin.{ExtractedTransaction, OriginBlock, ResponseBlock, TransactionBlock}\nimport chainslake.job.TaskRun\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Transactions extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".transactions\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        var extractBlock: TransactionBlock = null\n        try {\n          extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n            //            throw e\n          }\n        }\n        extractBlock.tx.map(transaction => {\n          ExtractedTransaction(\n            block.block_date,\n            block.block_number,\n            block.block_time,\n            transaction.in_active_chain,\n            transaction.hex,\n            transaction.txid,\n            transaction.hash,\n            transaction.size,\n            transaction.vsize,\n            transaction.weight,\n            transaction.version,\n            transaction.locktime,\n            transaction.blockhash,\n            transaction.fee\n          )\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin_balances.utxo_latest_day": {
+            "database": "chainslake",
+            "schema": "bitcoin_balances",
+            "name": "bitcoin_balances.utxo_latest_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin_balances.utxo_latest_day",
+            "fqn": [
+                "chainslake",
+                "bitcoin_balances",
+                "utxo_latest_day"
+            ],
+            "alias": "utxo_latest_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Latest balances of all wallets in Bitcoin",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin_balances.utxo_transfer_day"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin_balances.utxo_latest_day LIMIT 100;",
+                "bitcoin_balances/utxo_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.utxo_transfer_day\noutput_table=${chain_name}_balances.utxo_latest_day\nre_partition_by_range=is_spent,key_partition\nwrite_mode=Overwrite\nnumber_index_columns=4\npartition_by=is_spent,key_partition\nmerge_by=key_partition,tx_id,n\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select max(key_partition) as key_partition\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by tx_id, n\n)\n\n${if table_existed} \n\n, all_balances as (\n    select * from new_balances\n    where utxo != 0\n    union all \n    select key_partition\n        , tx_id\n        , n\n        , value\n        , address\n        , utxo\n    from ${output_table}\n    where is_spent = 0\n)\n, balance_agg as (\n    select max(key_partition) as key_partition\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from all_balances\n    group by tx_id, n\n)\n\nselect case \n    when utxo = 0 then 1\n    else 0\n    end as is_spent\n    , * from balance_agg\n\n${else}\n\nSELECT 0 as is_spent, * FROM new_balances\nwhere utxo != 0\n\n${endif}"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin_balances.utxo_transfer_day": {
+            "database": "chainslake",
+            "schema": "bitcoin_balances",
+            "name": "bitcoin_balances.utxo_transfer_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin_balances.utxo_transfer_day",
+            "fqn": [
+                "chainslake",
+                "bitcoin_balances",
+                "utxo_transfer_day"
+            ],
+            "alias": "utxo_transfer_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Number of bitcoin transactions per wallet per day",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin_balances.utxo_transfer_hour"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin_balances.utxo_transfer_day LIMIT 100;",
+                "itcoin_balances/utxo_transfer_day.sql": "frequent_type=day\nlist_input_tables=${chain_name}_balances.utxo_transfer_hour\noutput_table=${chain_name}_balances.utxo_transfer_day\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=2\n\n===\n\nwith utxo_transfer_day as (\n    select block_date\n        , max(key_partition) as key_partition\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n        and block_date < cast(${to} as timestamp)\n        group by block_date, tx_id, n\n)\n\nselect * from utxo_transfer_day\nwhere utxo != 0"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin_balances.utxo_transfer_hour": {
+            "database": "chainslake",
+            "schema": "bitcoin_balances",
+            "name": "bitcoin_balances.utxo_transfer_hour",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin_balances.utxo_transfer_hour",
+            "fqn": [
+                "chainslake",
+                "bitcoin_balances",
+                "utxo_transfer_hour"
+            ],
+            "alias": "utxo_transfer_hour",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Number of bitcoin transactions per wallet per hour",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.bitcoin.inputs",
+                    "model.chainslake.bitcoin.outputs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin_balances.utxo_transfer_hour LIMIT 100;",
+                "bitcoin_balances/utxo_transfer_hour.sql": "frequent_type=hour\nlist_input_tables=${chain_name}.inputs,${chain_name}.outputs\noutput_table=${chain_name}_balances.utxo_transfer_hour\ninput_coin_table=${chain_name}.inputs\noutput_coin_table=${chain_name}.outputs\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=2\n\n===\n\nwith input_output as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , tx_id\n        , v_out as n\n        , 0 as value\n        , \"\" as address\n        , -1 as utxo\n    from ${input_coin_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp) \n    and tx_id is not null\n    union all\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , tx_id\n        , n\n        , value\n        , address\n        , 1 as utxo\n    from ${output_coin_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and address is not null \n)\n\n, input_output_hour as (\n    select block_date\n        , block_hour\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from input_output\n    group by block_date, block_hour, tx_id, n\n)\n\nselect block_date\n    , case \n        when address like 'bc1%' then concat(substring(tx_id, 1, 1), substring(address, 1, 5))\n        else concat(substring(tx_id, 1, 1), substring(address, 1, 2))\n    end as key_partition\n    , block_hour\n    , tx_id\n    , n\n    , value\n    , address\n    , utxo\nfrom input_output_hour where utxo != 0\n"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.bitcoin_origin.transaction_blocks": {
+            "database": "chainslake",
+            "schema": "bitcoin_origin",
+            "name": "bitcoin_origin.transaction_blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.bitcoin_origin.transaction_blocks",
+            "fqn": [
+                "chainslake",
+                "bitcoin_origin",
+                "transaction_blocks"
+            ],
+            "alias": "transaction_blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Raw data from Bitcoin",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM bitcoin_origin.transaction_blocks LIMIT 100;",
+                "bitcoin.origin.TransactionBlocks.scala": "package chainslake.bitcoin.origin\n\nimport chainslake.bitcoin.{OriginBlock, ResponseRawBlock, ResponseRawNumber, ResponseRawString}\nimport chainslake.job.TaskRun\nimport com.google.gson.Gson\nimport org.apache.spark.sql.functions.{col, explode, lit, sequence}\nimport org.apache.spark.sql.{Dataset, SaveMode, SparkSession}\nimport org.apache.spark.storage.StorageLevel\nimport scalaj.http.Http\n\nimport java.sql.{Date, Timestamp}\nimport java.util.Properties\n\nobject TransactionBlocks extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", \"node\")\n    val database = chainName + \"_origin\"\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \"_origin.transaction_blocks\", properties)\n  }\n\n  protected def onProcess(spark: SparkSession, outputTable: String, fromBlock: Long, toBlock: Long, properties: Properties): Unit = {\n    processCrawlBlocks(spark, fromBlock, toBlock, properties)\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n  private def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {\n    import spark.implicits._\n    val numberPartition = properties.getProperty(\"number_partitions\").toInt\n    val blockStr = s\"\"\"{\"from_block\": $fromBlock, \"to_block\": $toBlock }\"\"\"\n    val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n    val maxRetry = properties.getProperty(\"max_retry\").toInt\n    spark.read.json(Seq(blockStr).toDS).select(explode(sequence(col(\"from_block\"), col(\"to_block\"))).alias(\"block_number\"),\n        lit(new Timestamp(0l)).as(\"block_time\"), lit(new Date(0l)).as(\"block_date\"),\n        lit(\"\").as(\"block\"))\n      .as[OriginBlock].repartitionByRange(numberPartition, col(\"block_number\")).mapPartitions(par => {\n\n        val blockData = par.map(block => {\n          val transactionBlock = getOriginBlock(rpcList, block.block_number, maxRetry)\n          block.block = transactionBlock._1\n          block.block_time = new Timestamp(transactionBlock._2.longValue() * 1000L)\n          block.block_date = new Date(block.block_time.getTime)\n          block\n        })\n        blockData\n      })\n  }\n\n  def getOriginBlock(listRpc: Array[String], blockNumber: Long, maxRetry: Int): (String, BigInt) = {\n    var success = false\n    var numberRetry = 0\n    val gson = new Gson()\n    var result = \"\"\n    var blockTimestamp = BigInt(0)\n    while (!success && numberRetry < maxRetry) {\n      val rpc = listRpc {\n        scala.util.Random.nextInt(listRpc.length)\n      }\n      try {\n        var response = Http(rpc).header(\"Content-Type\", \"application/json\")\n          .postData(s\"\"\"{\"method\":\"getblockhash\",\"params\":[$blockNumber],\"id\":\"curltest\",\"jsonrpc\":\"1.0\"}\"\"\")\n          .timeout(50000, 50000)\n          .asString\n        val blockHash = gson.fromJson(response.body, classOf[ResponseRawString]).result\n        response = Http(rpc).header(\"Content-Type\", \"application/json\")\n          .postData(s\"\"\"{\"method\":\"getblock\",\"params\":[\"$blockHash\", 2],\"id\":\"curltest\",\"jsonrpc\":\"1.0\"}\"\"\").asString\n        val transactionBlock = gson.fromJson(response.body, classOf[ResponseRawBlock]).result\n        if (transactionBlock == null) {\n          throw new Exception(\"don't have transaction block from block: \" + blockNumber)\n        }\n        blockTimestamp = transactionBlock.time\n        result = response.body\n        success = true\n      } catch {\n        case e: Exception => {\n          println(\"error in block: \" + blockNumber + \" with rpc: \", rpc)\n//          Thread.sleep(1000)\n          //          throw e\n        }\n      }\n      numberRetry += 1\n    }\n    if (!success) {\n      throw new Exception(\"Max number retry\")\n    }\n\n    (result, blockTimestamp)\n  }\n\n  override def getFirstInput(spark: SparkSession, properties: Properties): Long = {\n    0L\n  }\n\n  override def getLatestInput(spark: SparkSession, properties: Properties): Long = {\n    val listRpc = properties.getProperty(\"rpc_list\").split(\",\")\n    val gson = new Gson()\n    val maxRetry = properties.getProperty(\"max_retry\").toInt\n    var success = false\n    var numberRetry = 0\n    var latestBlock = 0l\n    while (!success && numberRetry < maxRetry) {\n      val rpc = listRpc {\n        scala.util.Random.nextInt(listRpc.length)\n      }\n      try {\n        val response = Http(rpc).header(\"Content-Type\", \"application/json\")\n          .postData(s\"\"\"{\"method\":\"getblockcount\",\"params\":[],\"id\":\"curltest\",\"jsonrpc\":\"1.0\"}\"\"\").asString\n        latestBlock = gson.fromJson(response.body, classOf[ResponseRawNumber]).result\n        success = true\n      } catch {\n        case e: Exception => {\n          println(\"error in get block number\")\n          Thread.sleep(1000)\n        }\n        //          Thread.sleep(100 * numberRetry)\n      }\n      numberRetry += 1\n    }\n    if (!success) {\n      throw new Exception(\"Max number retry\")\n    }\n    latestBlock\n  }\n}\n"
+            },
+            "package_name": "bitcoin"
+        },
+        "model.chainslake.ethereum.logs": {
+            "database": "chainslake",
+            "schema": "ethereum",
+            "name": "ethereum.logs",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum.logs",
+            "fqn": [
+                "chainslake",
+                "ethereum",
+                "logs"
+            ],
+            "alias": "logs",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Event logs data of Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_origin.transaction_blocks",
+                    "model.chainslake.ethereum_origin.blocks_receipt"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum.logs LIMIT 100;"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum.traces": {
+            "database": "chainslake",
+            "schema": "ethereum",
+            "name": "ethereum.traces",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum.traces",
+            "fqn": [
+                "chainslake",
+                "ethereum",
+                "traces"
+            ],
+            "alias": "traces",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Traces data of Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_origin.traces",
+                    "model.chainslake.ethereum.transactions"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum.traces LIMIT 100;"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum.transactions": {
+            "database": "chainslake",
+            "schema": "ethereum",
+            "name": "ethereum.transactions",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum.transactions",
+            "fqn": [
+                "chainslake",
+                "ethereum",
+                "transactions"
+            ],
+            "alias": "transactions",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Transactions data of Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_origin.transaction_blocks",
+                    "model.chainslake.ethereum_origin.blocks_receipt"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum.transactions LIMIT 100;"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_balances.nft_latest_day": {
+            "database": "chainslake",
+            "schema": "ethereum_balances",
+            "name": "ethereum_balances.nft_latest_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_balances.nft_latest_day",
+            "fqn": [
+                "chainslake",
+                "ethereum_balances",
+                "nft_latest_day"
+            ],
+            "alias": "nft_latest_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Latest NFT balances of all wallets on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_balances.nft_transfer_day"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_balances.nft_latest_day LIMIT 100;",
+                "evm_balances/nft_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.nft_transfer_day\noutput_table=${chain_name}_balances.nft_latest_day\nre_partition_by_range=is_change,key_partition\nwrite_mode=Overwrite\nnumber_index_columns=5\npartition_by=is_change,key_partition\nmerge_by=key_partition,nft_type,wallet_address,token_address,token_id\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select key_partition \n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(amount) as balance\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\n${if table_existed}\n\n\n, all_balances as (\n    select 2 as sign, * from new_balances\n    where balance != 0\n    union all \n    select is_change as sign\n        , key_partition\n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , balance\n    from ${output_table}\n)\n\n, balance_agg as (\n    select sum(sign) as sign\n        , key_partition\n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(balance) as balance\n    from all_balances\n    group by key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\nselect case \n    when sign = 3 or sign = 2 then 1\n    when sign = 1 then 0\n    end as is_change\n    , key_partition\n    , nft_type\n    , wallet_address\n    , token_address\n    , token_id\n    , symbol\n    , balance\nfrom balance_agg\nwhere sign > 0\n\n${else}\n\nSELECT 0 as is_change, * FROM new_balances\nwhere balance != 0\n\n${endif}\n"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_balances.nft_transfer_day": {
+            "database": "chainslake",
+            "schema": "ethereum_balances",
+            "name": "ethereum_balances.nft_transfer_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_balances.nft_transfer_day",
+            "fqn": [
+                "chainslake",
+                "ethereum_balances",
+                "nft_transfer_day"
+            ],
+            "alias": "nft_transfer_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "NFT transfer group by day of all wallets on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_balances.nft_transfer_hour"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_balances.nft_transfer_day LIMIT 100;",
+                "evm_balances/nft_transfer_day.sql": "frequent_type=day\nlist_input_tables=${chain_name}_balances.nft_transfer_hour\noutput_table=${chain_name}_balances.nft_transfer_day\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=7\n\n===\n\nwith nft_transfer_day as (\n    select block_date\n        , key_partition\n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(amount) as amount\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by block_date, key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\nselect * from nft_transfer_day\nwhere amount != 0\n"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_balances.nft_transfer_hour": {
+            "database": "chainslake",
+            "schema": "ethereum_balances",
+            "name": "ethereum_balances.nft_transfer_hour",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_balances.nft_transfer_hour",
+            "fqn": [
+                "chainslake",
+                "ethereum_balances",
+                "nft_transfer_hour"
+            ],
+            "alias": "nft_transfer_hour",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "NFT transfer group by hour of all wallets on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.erc721_evt_transfer",
+                    "model.chainslake.ethereum_decoded.erc1155_evt_transfersingle",
+                    "model.chainslake.ethereum_decoded.erc1155_evt_transferbatch",
+                    "model.chainslake.ethereum_contract.erc721_tokens",
+                    "model.chainslake.ethereum_contract.erc1155_tokens"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_balances.nft_transfer_hour LIMIT 100;",
+                "evm_balances/nft_transfer_hour.sql": "frequent_type=hour\nlist_input_tables=${chain_name}_decoded.erc721_evt_transfer,${chain_name}_contract.erc721_tokens,${chain_name}_decoded.erc1155_evt_transferbatch,${chain_name}_decoded.erc1155_evt_transfersingle,${chain_name}_contract.erc1155_tokens\noutput_table=${chain_name}_balances.nft_transfer_hour\nerc721_event_table=${chain_name}_decoded.erc721_evt_transfer\nerc721_token_table=${chain_name}_contract.erc721_tokens\nerc1155_tranfersingle_table=${chain_name}_decoded.erc1155_evt_transfersingle\nerc1155_tranferbatch_table=${chain_name}_decoded.erc1155_evt_transferbatch\nerc1155_token_table=${chain_name}_contract.erc1155_tokens\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=7\n\n===\n\nwith erc721_transfer_tx as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , `from`\n        , to\n        , contract_address as token_address\n        , tokenid as token_id\n        from ${erc721_event_table}\n        where block_time >= cast(${from} as timestamp)\n        and block_time < cast(${to} as timestamp)\n),\n\nerc721_transfer_wallet as (\n    select block_date\n        , block_hour\n        , `from` as wallet_address\n        , token_address\n        , token_id\n        , -1 as value\n    from erc721_transfer_tx\n    union all\n    select block_date\n        , block_hour\n        , to as wallet_address\n        , token_address\n        , token_id\n        , 1 as value\n    from erc721_transfer_tx\n)\n\n, erc721_wallet_hour as (\n    select block_date\n        , block_hour\n        , wallet_address\n        , token_address\n        , token_id\n        , sum(value) as amount\n    from erc721_transfer_wallet\n    group by block_date, block_hour, wallet_address, token_address, token_id\n)\n\n, erc721_wallet_hour_token as (\n    select block_date\n        , block_hour\n        , concat(\n            substring(token_address, 1, 3),\n            substring(wallet_address, 1, 3)\n        ) AS key_partition\n        , 'ERC721' as nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , amount\n    from erc721_wallet_hour\n    inner join ${erc721_token_table}\n    on token_address = contract_address\n    where amount != 0\n)\n\n, erc1155_transfersingle_tx as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , `from`\n        , to\n        , contract_address as token_address\n        , id as token_id\n        , cast(value as double) as value\n        from ${erc1155_tranfersingle_table}\n        where block_time >= cast(${from} as timestamp)\n        and block_time < cast(${to} as timestamp)\n)\n\n, erc1155_tranferbatch_explode as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , `from`\n        , to\n        , contract_address as token_address\n        , explode(arrays_zip(values, ids)) as ids_and_count\n    from ${erc1155_tranferbatch_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n)\n\n, erc1155_transfer_tx as (\n    select block_date\n        , block_hour\n        , `from`\n        , to\n        , token_address\n        , ids_and_count.ids as token_id\n        , cast(ids_and_count.values as double) as value\n    from erc1155_tranferbatch_explode\n    union all \n    select * from erc1155_transfersingle_tx\n)\n\n, erc1155_transfer_wallet as (\n    select block_date\n        , block_hour\n        , `from` as wallet_address\n        , token_address\n        , token_id\n        , -1 * value as value\n    from erc1155_transfer_tx\n    union all\n    select block_date\n        , block_hour\n        , to as wallet_address\n        , token_address\n        , token_id\n        , value\n    from erc1155_transfer_tx\n)\n\n, erc1155_wallet_hour as (\n    select block_date\n        , block_hour\n        , wallet_address\n        , token_address\n        , token_id\n        , sum(value) as amount\n    from erc1155_transfer_wallet\n    group by block_date, block_hour, wallet_address, token_address, token_id\n)\n\n, erc1155_wallet_hour_token as (\n    select block_date\n        , block_hour\n        , concat(\n            substring(token_address, 1, 3),\n            substring(wallet_address, 1, 3)\n        ) AS key_partition\n        , 'ERC1155' as nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , amount\n    from erc1155_wallet_hour\n    inner join ${erc1155_token_table}\n    on token_address = contract_address\n    where amount != 0\n)\n\n\n\nselect * from erc721_wallet_hour_token\nunion all \nselect * from erc1155_wallet_hour_token\n\n"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_balances.token_latest_day": {
+            "database": "chainslake",
+            "schema": "ethereum_balances",
+            "name": "ethereum_balances.token_latest_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_balances.token_latest_day",
+            "fqn": [
+                "chainslake",
+                "ethereum_balances",
+                "token_latest_day"
+            ],
+            "alias": "token_latest_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Latest token balances of all wallets on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_balances.token_transfer_day"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_balances.token_latest_day LIMIT 100;",
+                "evm_balances/token_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.token_transfer_day\noutput_table=${chain_name}_balances.token_latest_day\nre_partition_by_range=is_change,key_partition\nwrite_mode=Overwrite\nnumber_index_columns=5\npartition_by=is_change,key_partition\nmerge_by=key_partition,wallet_address,token_address\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select wallet_address\n        , token_address\n        , symbol\n        , sum(amount) as balance\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by wallet_address, token_address, symbol\n)\n\n${if table_existed}\n\n\n, all_balances as (\n    select 2 as sign, concat(\n            substring(token_address, 1, 3),\n            substring(wallet_address, 1, 3)) as key_partition\n            , * from new_balances\n    where balance != 0\n    union all \n    select is_change as sign\n        , key_partition\n        , wallet_address\n        , token_address\n        , symbol\n        , balance\n    from ${output_table}\n)\n\n, balance_agg as (\n    select sum(sign) as sign\n        , key_partition\n        , wallet_address\n        , token_address\n        , symbol\n        , sum(balance) as balance\n    from all_balances\n    group by key_partition, wallet_address, token_address, symbol\n)\n\nselect case \n    when sign = 3 or sign = 2 then 1\n    when sign = 1 then 1\n    end as is_change\n    , key_partition\n    , wallet_address\n    , token_address\n    , symbol\n    , balance\nfrom balance_agg\nwhere sign > 1\n\n${else}\n\nSELECT 0 as is_change, concat(\n            substring(token_address, 1, 3),\n            substring(wallet_address, 1, 3)\n        ) AS key_partition, * FROM new_balances\nwhere balance != 0\n\n${endif}\n"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_balances.token_transfer_day": {
+            "database": "chainslake",
+            "schema": "ethereum_balances",
+            "name": "ethereum_balances.token_transfer_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_balances.token_transfer_day",
+            "fqn": [
+                "chainslake",
+                "ethereum_balances",
+                "token_transfer_day"
+            ],
+            "alias": "token_transfer_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Token transfer group by day of all wallets on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_balances.token_transfer_hour"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_balances.token_transfer_day LIMIT 100;",
+                "evm_balances/token_transfer_day.sql": "frequent_type=day\nlist_input_tables=${chain_name}_balances.token_transfer_hour\noutput_table=${chain_name}_balances.token_transfer_day\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=7\n\n===\n\nwith token_transfer_day as (\n    select block_date\n        , key_partition\n        , wallet_address\n        , token_address\n        , symbol\n        , sum(amount) as amount\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by block_date, key_partition, wallet_address, token_address, symbol\n)\n\nselect * from token_transfer_day\nwhere amount != 0\n"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_balances.token_transfer_hour": {
+            "database": "chainslake",
+            "schema": "ethereum_balances",
+            "name": "ethereum_balances.token_transfer_hour",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_balances.token_transfer_hour",
+            "fqn": [
+                "chainslake",
+                "ethereum_balances",
+                "token_transfer_hour"
+            ],
+            "alias": "token_transfer_hour",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Token transfer group by hour of all wallets on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.erc20_evt_transfer",
+                    "model.chainslake.ethereum.traces",
+                    "model.chainslake.ethereum.transactions",
+                    "model.chainslake.ethereum_contract.erc20_tokens"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_balances.token_transfer_hour LIMIT 100;",
+                "evm_balances/nft_transfer_hour.sql": "frequent_type=hour\nlist_input_tables=${chain_name}_decoded.erc20_evt_transfer,${chain_name}.traces,${chain_name}.transactions,${chain_name}_contract.erc20_tokens\noutput_table=${chain_name}_balances.token_transfer_hour\nerc20_event_table=${chain_name}_decoded.erc20_evt_transfer\nerc20_token_table=${chain_name}_contract.erc20_tokens\ntransactions_table=${chain_name}.transactions\ntraces_table=${chain_name}.traces\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=7\n\n===\n\nwith erc20_transfer_tx as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , `from`\n        , to\n        , contract_address as token_address\n        , cast(value as double) as value\n        from ${erc20_event_table}\n        where block_time >= cast(${from} as timestamp)\n        and block_time < cast(${to} as timestamp)\n),\n\nerc20_transfer_wallet as (\n    select block_date\n        , block_hour\n        , `from` as wallet_address\n        , token_address\n        , -1 * value as value\n    from erc20_transfer_tx\n    union all\n    select block_date\n        , block_hour\n        , to as wallet_address\n        , token_address\n        , value\n    from erc20_transfer_tx\n)\n\n, erc20_wallet_hour as (\n    select block_date\n        , block_hour\n        , wallet_address\n        , token_address\n        , sum(value) as value\n    from erc20_transfer_wallet\n    group by block_date, block_hour, wallet_address, token_address\n)\n\n, erc20_wallet_hour_token as (\n    select block_date\n        , block_hour\n        , concat(\n            substring(token_address, 1, 4),\n            substring(wallet_address, 1, 5)\n        ) AS key_partition\n        , wallet_address\n        , token_address\n        , symbol\n        , value / pow(10, decimals) as amount\n    from erc20_wallet_hour\n    inner join ${erc20_token_table}\n    on token_address = contract_address\n    where value != 0\n)\n\n, native_transfer_tx as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , `from`\n        , to\n        , cast(value as double) as value\n    from ${traces_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and success = true\n    and `type` = 'call'\n\n)\n\n, native_transfer_wallet as (\n    select block_date\n        , block_hour\n        , `from` as wallet_address\n        , -1 * value as value\n    from native_transfer_tx\n    union all \n    select block_date\n        , block_hour\n        , to as wallet_address\n        , value\n    from native_transfer_tx\n    union all\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , `from` as wallet_address\n        , -1 * gas_used * gas_price as value\n    from ${transactions_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n)\n\n, native_wallet_hour as (\n    select block_date\n        , block_hour\n        , wallet_address\n        , sum(value) as value\n    from native_transfer_wallet\n    group by block_date, block_hour, wallet_address\n)\n\n, native_wallet_hour_token as (\n    select block_date\n        , block_hour\n        , concat('0x', substring(wallet_address, 1, 5)) AS key_partition\n        , wallet_address\n        , '0x' as token_address\n        , '${native_symbol}' as symbol\n        , value / pow(10, 18) as amount\n    from native_wallet_hour\n    where value != 0\n)\n\nselect * from erc20_wallet_hour_token\nunion all \nselect * from native_wallet_hour_token\n\n"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_contract.erc1155_tokens": {
+            "database": "chainslake",
+            "schema": "ethereum_contract",
+            "name": "ethereum_contract.erc1155_tokens",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_contract.erc1155_tokens",
+            "fqn": [
+                "chainslake",
+                "ethereum_contract",
+                "erc1155_tokens"
+            ],
+            "alias": "erc1155_tokens",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "List all NFT 1155 on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.erc1155_evt_transferbatch",
+                    "model.chainslake.ethereum_decoded.erc1155_evt_transfersingle"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_contract.erc1155_tokens LIMIT 100;",
+                "contract-info/erc1155.conf": "list_input_tables=${chain_name}_decoded.erc1155_evt_transfersingle,${chain_name}_decoded.erc1155_evt_transferbatch\noutput_table=${chain_name}_contract.erc1155_tokens\n\n===\n\n[\n    {\n        \"name\": \"name\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"symbol\",\n        \"type\": \"string\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_contract.erc20_tokens": {
+            "database": "chainslake",
+            "schema": "ethereum_contract",
+            "name": "ethereum_contract.erc20_tokens",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_contract.erc20_tokens",
+            "fqn": [
+                "chainslake",
+                "ethereum_contract",
+                "erc20_tokens"
+            ],
+            "alias": "erc20_tokens",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "List all token ERC20 on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.erc20_evt_transfer"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_contract.erc20_tokens LIMIT 100;",
+                "contract-info/erc20.conf": "list_input_tables=${chain_name}_decoded.erc20_evt_transfer\noutput_table=${chain_name}_contract.erc20_tokens\n\n===\n\n[\n    {\n        \"name\": \"name\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"symbol\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"decimals\",\n        \"type\": \"uint8\"\n    },\n    {\n        \"name\": \"totalSupply\",\n        \"type\": \"uint256\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_contract.erc721_tokens": {
+            "database": "chainslake",
+            "schema": "ethereum_contract",
+            "name": "ethereum_contract.erc721_tokens",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_contract.erc721_tokens",
+            "fqn": [
+                "chainslake",
+                "ethereum_contract",
+                "erc721_tokens"
+            ],
+            "alias": "erc721_tokens",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "List all NFT 721 on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.erc721_evt_transfer"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_contract.erc721_tokens LIMIT 100;",
+                "contract-info/erc721.conf": "list_input_tables=${chain_name}_decoded.erc721_evt_transfer\noutput_table=${chain_name}_contract.erc721_tokens\n\n===\n\n[\n    {\n        \"name\": \"name\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"symbol\",\n        \"type\": \"string\"\n    },\n    {\n        \"name\": \"totalSupply\",\n        \"type\": \"uint256\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_contract.uniswap_v2_info": {
+            "database": "chainslake",
+            "schema": "ethereum_contract",
+            "name": "ethereum_contract.uniswap_v2_info",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_contract.uniswap_v2_info",
+            "fqn": [
+                "chainslake",
+                "ethereum_contract",
+                "uniswap_v2_info"
+            ],
+            "alias": "uniswap_v2_info",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Information of all uniswap v2 contracts on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.uniswap_v2_evt_swap"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_contract.uniswap_v2_info LIMIT 100;",
+                "contract-info/uniswap_v2.conf": "list_input_tables=${chain_name}_decoded.uniswap_v2_evt_swap\noutput_table=${chain_name}_contract.uniswap_v2_info\n\n===\n\n[\n    {\n        \"name\": \"token0\",\n        \"type\": \"address\"\n    },\n    {\n        \"name\": \"token1\",\n        \"type\": \"address\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_contract.uniswap_v3_info": {
+            "database": "chainslake",
+            "schema": "ethereum_contract",
+            "name": "ethereum_contract.uniswap_v3_info",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_contract.uniswap_v3_info",
+            "fqn": [
+                "chainslake",
+                "ethereum_contract",
+                "uniswap_v3_info"
+            ],
+            "alias": "uniswap_v3_info",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Information of all uniswap v3 contracts on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.uniswap_v3_evt_swap"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_contract.uniswap_v3_info LIMIT 100;",
+                "contract-info/uniswap_v3.conf": "list_input_tables=${chain_name}_decoded.uniswap_v3_evt_swap\noutput_table=${chain_name}_contract.uniswap_v3_info\n\n===\n\n[\n    {\n        \"name\": \"token0\",\n        \"type\": \"address\"\n    },\n    {\n        \"name\": \"token1\",\n        \"type\": \"address\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.erc1155_evt_transferbatch": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.erc1155_evt_transferbatch",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.erc1155_evt_transferbatch",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "erc1155_evt_transferbatch"
+            ],
+            "alias": "erc1155_evt_transferbatch",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All batch transfer event log of erc1155 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.erc1155_evt_transferbatch LIMIT 100;",
+                "abi/erc1155.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"operator\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"from\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"to\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256[]\",\n                \"name\": \"ids\",\n                \"type\": \"uint256[]\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256[]\",\n                \"name\": \"values\",\n                \"type\": \"uint256[]\"\n            }\n        ],\n        \"name\": \"TransferBatch\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.erc1155_evt_transfersingle": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.erc1155_evt_transfersingle",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.erc1155_evt_transfersingle",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "erc1155_evt_transfersingle"
+            ],
+            "alias": "erc1155_evt_transfersingle",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All single transfer event log of erc1155 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.erc1155_evt_transfersingle LIMIT 100;",
+                "abi/erc1155.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"operator\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"from\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"to\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"id\",\n                \"type\": \"uint256\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"value\",\n                \"type\": \"uint256\"\n            }\n        ],\n        \"name\": \"TransferSingle\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.erc20_evt_transfer": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.erc20_evt_transfer",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.erc20_evt_transfer",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "erc20_evt_transfer"
+            ],
+            "alias": "erc20_evt_transfer",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All transfer event logs of ERC20 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.erc20_evt_transfer LIMIT 100;",
+                "abi/erc20.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"name\": \"from\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"name\": \"to\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"name\": \"value\",\n                \"type\": \"uint256\"\n            }\n        ],\n        \"name\": \"Transfer\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.erc721_evt_transfer": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.erc721_evt_transfer",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.erc721_evt_transfer",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "erc721_evt_transfer"
+            ],
+            "alias": "erc721_evt_transfer",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All transfer event logs of ERC721 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.erc721_evt_transfer LIMIT 100;",
+                "abi/erc721.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"from\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"to\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"uint256\",\n                \"name\": \"tokenId\",\n                \"type\": \"uint256\"\n            }\n        ],\n        \"name\": \"Transfer\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.uniswap_v2_evt_paircreated": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.uniswap_v2_evt_paircreated",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.uniswap_v2_evt_paircreated",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "uniswap_v2_evt_paircreated"
+            ],
+            "alias": "uniswap_v2_evt_paircreated",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All created event log of uniswap v2 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.uniswap_v2_evt_paircreated LIMIT 100;",
+                "abi/uniswap_v2.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"token0\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"token1\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"address\",\n                \"name\": \"pair\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"ordinal\",\n                \"type\": \"uint256\"\n            }\n        ],\n        \"name\": \"PairCreated\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.uniswap_v2_evt_swap": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.uniswap_v2_evt_swap",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.uniswap_v2_evt_swap",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "uniswap_v2_evt_swap"
+            ],
+            "alias": "uniswap_v2_evt_swap",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All swap event log from uniswap v2 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.uniswap_v2_evt_swap LIMIT 100;",
+                "abi/uniswap_v2.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"sender\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"amount0In\",\n                \"type\": \"uint256\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"amount1In\",\n                \"type\": \"uint256\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"amount0Out\",\n                \"type\": \"uint256\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint256\",\n                \"name\": \"amount1Out\",\n                \"type\": \"uint256\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"to\",\n                \"type\": \"address\"\n            }\n        ],\n        \"name\": \"Swap\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.uniswap_v3_evt_poolcreated": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.uniswap_v3_evt_poolcreated",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.uniswap_v3_evt_poolcreated",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "uniswap_v3_evt_poolcreated"
+            ],
+            "alias": "uniswap_v3_evt_poolcreated",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All created event log from uniswap v3 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.uniswap_v3_evt_poolcreated LIMIT 100;",
+                "abi/uniswap_v3.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"token0\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"token1\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"uint24\",\n                \"name\": \"fee\",\n                \"type\": \"uint24\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"int24\",\n                \"name\": \"tickSpacing\",\n                \"type\": \"int24\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"address\",\n                \"name\": \"pool\",\n                \"type\": \"address\"\n            }\n        ],\n        \"name\": \"PoolCreated\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_decoded.uniswap_v3_evt_swap": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.uniswap_v3_evt_swap",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.uniswap_v3_evt_swap",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "uniswap_v3_evt_swap"
+            ],
+            "alias": "uniswap_v3_evt_swap",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All swap event log from uniswap v3 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.uniswap_v3_evt_swap LIMIT 100;",
+                "abi/uniswap_v3.json": "[\n    {\n        \"anonymous\": false,\n        \"inputs\": [\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"sender\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": true,\n                \"internalType\": \"address\",\n                \"name\": \"recipient\",\n                \"type\": \"address\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"int256\",\n                \"name\": \"amount0\",\n                \"type\": \"int256\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"int256\",\n                \"name\": \"amount1\",\n                \"type\": \"int256\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint160\",\n                \"name\": \"sqrtPriceX96\",\n                \"type\": \"uint160\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"uint128\",\n                \"name\": \"liquidity\",\n                \"type\": \"uint128\"\n            },\n            {\n                \"indexed\": false,\n                \"internalType\": \"int24\",\n                \"name\": \"tick\",\n                \"type\": \"int24\"\n            }\n        ],\n        \"name\": \"Swap\",\n        \"type\": \"event\"\n    }\n]"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_dex.token_trades": {
+            "database": "chainslake",
+            "schema": "ethereum_dex",
+            "name": "ethereum_dex.token_trades",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_dex.token_trades",
+            "fqn": [
+                "chainslake",
+                "ethereum_dex",
+                "token_trades"
+            ],
+            "alias": "token_trades",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All trade transaction of all token ERC20 on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_prices.weth_usd_minute",
+                    "model.chainslake.ethereum_dex.uniswap_v2_trades",
+                    "model.chainslake.ethereum_dex.uniswap_v3_trades"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_dex.token_trades LIMIT 100;",
+                "evm_dex/token_trades.sql": "frequent_type=minute\nlist_input_tables=${chain_name}_prices.${input_table_name}\noutput_table=${chain_name}_dex.token_trades\ntrade_v2_table=${chain_name}_dex.uniswap_v2_trades\ntrade_v3_table=${chain_name}_dex.uniswap_v3_trades\n\nre_partition_by_range=block_date,block_minute\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith uniswap_dex as (\n    select block_date\n        , block_time\n        , date_trunc('minute', block_time) as block_minute\n        , tx_hash\n        , taker\n        , pair_contract\n        , trade_type\n        , token_address\n        , token_symbol\n        , token_value\n        , currency_value\n    from ${trade_v2_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and currency_address in ('${currency_contracts}')\n    and (\n       '$token_contracts' = 'all' or token_address in ('${token_contracts}')\n    )\n    union all\n    select block_date\n        , block_time\n        , date_trunc('minute', block_time) as block_minute\n        , tx_hash\n        , taker\n        , pair_contract\n        , trade_type\n        , token_address\n        , token_symbol\n        , token_value\n        , currency_value\n    from ${trade_v3_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and currency_address in ('${currency_contracts}')\n    and (\n       '$token_contracts' = 'all' or token_address in ('${token_contracts}')\n    )\n)\n\n, wrap_token_prices as (\n    select block_date\n    , block_minute\n    , token_address\n    , token_symbol\n    , price\n from ${list_input_tables}\n where block_minute >= cast(${from} as timestamp)\n    and block_minute < cast(${to} as timestamp)\n)\n\nselect d.block_date\n    , d.block_minute\n    , d.block_time\n    , d.tx_hash\n    , d.taker\n    , d.pair_contract\n    , d.trade_type\n    , d.token_address\n    , d.token_symbol\n    , d.token_value\n    , d.currency_value as wrap_native_value\n    , p.price as wrap_native_price\n    , d.currency_value * p.price as volume\n    , (d.currency_value * p.price) / d.token_value as token_price\nfrom uniswap_dex d\nleft join wrap_token_prices p\non (\n   d.block_date = p.block_date\n   and d.block_minute = p.block_minute\n)"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_dex.uniswap_v2_trades": {
+            "database": "chainslake",
+            "schema": "ethereum_dex",
+            "name": "ethereum_dex.uniswap_v2_trades",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_dex.uniswap_v2_trades",
+            "fqn": [
+                "chainslake",
+                "ethereum_dex",
+                "uniswap_v2_trades"
+            ],
+            "alias": "uniswap_v2_trades",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All trade transactions were process by uniswap v2 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.uniswap_v2_evt_swap",
+                    "model.chainslake.ethereum_contract.erc20_tokens",
+                    "model.chainslake.ethereum_contract.uniswap_v2_info"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_dex.uniswap_v2_trades LIMIT 100;",
+                "evm_dex/swap_v2_trades.sql": "frequent_type=block\nlist_input_tables=${chain_name}_decoded.uniswap_v2_evt_swap,${chain_name}_contract.uniswap_v2_info,${chain_name}_contract.erc20_tokens\noutput_table=${chain_name}_dex.uniswap_v2_trades\nswap_event_table=${chain_name}_decoded.uniswap_v2_evt_swap\nerc20_token_table=${chain_name}_contract.erc20_tokens\nswap_info_table=${chain_name}_contract.uniswap_v2_info\nre_partition_by_range=block_date,block_time\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith swap_table_info as (\n    select swap.*\n        , erc20_swap.name as swap_protocol_name\n        , swap_info.token0 as token0_address\n        , erc20_token0.symbol as token0_symbol\n        , erc20_token0.decimals as token0_decimals\n        , swap_info.token1 as token1_address\n        , erc20_token1.symbol as token1_symbol\n        , erc20_token1.decimals as token1_decimals\n    from ${swap_event_table} swap\n    left join ${swap_info_table} swap_info\n        on swap.contract_address = swap_info.contract_address\n    left join ${erc20_token_table} erc20_swap\n        on swap_info.contract_address = erc20_swap.contract_address\n    left join ${erc20_token_table} erc20_token0\n        on swap_info.token0 = erc20_token0.contract_address\n    left join ${erc20_token_table} erc20_token1\n        on swap_info.token1 = erc20_token1.contract_address\n    where block_number >= ${from} and block_number <= ${to}\n\n)\n\n, token_trades as (\n    select block_date\n        , block_number\n        , block_time\n        , current_timestamp() as updated_time\n        , tx_hash\n        , evt_index\n        , to as taker\n        , swap_protocol_name\n        , contract_address as pair_contract\n        , 'sell' as trade_type\n        , case\n            when amount0in != '0' then token0_address\n            else token1_address\n        end as token_address\n        , case\n            when amount0in != '0' then token0_symbol\n            else token1_symbol\n        end as token_symbol\n        , case\n            when amount0in != '0' then token0_decimals\n            else token1_decimals\n        end as token_decimals\n        , case\n            when amount0in != '0' then amount0in\n            else amount1in\n        end as token_wei\n        , case\n            when amount0in != '0' then token1_address\n            else token0_address\n        end as currency_address\n        , case\n            when amount0in != '0' then token1_symbol\n            else token0_symbol\n        end as currency_symbol\n        , case\n            when amount0in != '0' then token1_decimals\n            else token0_decimals\n        end as currency_decimals\n        , case\n            when amount0in != '0' then amount1out\n            else amount0out\n        end as currency_wei\n    from swap_table_info\n    union all\n    select block_date\n        , block_number\n        , block_time\n        , current_timestamp() as updated_time\n        , tx_hash\n        , evt_index\n        , to as taker\n        , swap_protocol_name\n        , contract_address as pair_contract\n        , 'buy' as trade_type\n        , case\n            when amount1in != '0' then token0_address\n            else token1_address\n        end as token_address\n        , case\n            when amount1in != '0' then token0_symbol\n            else token1_symbol\n        end as token_symbol\n        , case\n            when amount1in != '0' then token0_decimals\n            else token1_decimals\n        end as token_decimals\n        , case\n            when amount1in != '0' then amount0out\n            else amount1out\n        end as token_wei\n        , case\n            when amount1in != '0' then token1_address\n            else token0_address\n        end as currency_address\n        , case\n            when amount1in != '0' then token1_symbol\n            else token0_symbol\n        end as currency_symbol\n        , case\n            when amount1in != '0' then token1_decimals\n            else token0_decimals\n        end as currency_decimals\n        , case\n            when amount1in != '0' then amount1in\n            else amount0in\n        end as currency_wei\n    from swap_table_info\n)\n\nselect *\n    , token_wei / power(10, token_decimals) as token_value\n    , currency_wei / power(10, currency_decimals) as currency_value\n    , (currency_wei / power(10, currency_decimals)) / (token_wei / power(10, token_decimals)) as token_price\nfrom token_trades"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_dex.uniswap_v3_trades": {
+            "database": "chainslake",
+            "schema": "ethereum_dex",
+            "name": "ethereum_dex.uniswap_v3_trades",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_dex.uniswap_v3_trades",
+            "fqn": [
+                "chainslake",
+                "ethereum_dex",
+                "uniswap_v3_trades"
+            ],
+            "alias": "uniswap_v3_trades",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "All trade transactions were process by uniswap v3 contract on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_decoded.uniswap_v3_evt_swap",
+                    "model.chainslake.ethereum_contract.erc20_tokens",
+                    "model.chainslake.ethereum_contract.uniswap_v3_info"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_dex.uniswap_v3_trades LIMIT 100;",
+                "evm_dex/swap_v3_trades.sql": "frequent_type=block\nlist_input_tables=${chain_name}_decoded.uniswap_v3_evt_swap,${chain_name}_contract.uniswap_v3_info,${chain_name}_contract.erc20_tokens\noutput_table=${chain_name}_dex.uniswap_v3_trades\nswap_event_table=${chain_name}_decoded.uniswap_v3_evt_swap\nerc20_token_table=${chain_name}_contract.erc20_tokens\nswap_info_table=${chain_name}_contract.uniswap_v3_info\nre_partition_by_range=block_date,block_time\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith swap_table_info as (\n    select swap.*\n        , swap_info.token0 as token0_address\n        , erc20_token0.symbol as token0_symbol\n        , erc20_token0.decimals as token0_decimals\n        , swap_info.token1 as token1_address\n        , erc20_token1.symbol as token1_symbol\n        , erc20_token1.decimals as token1_decimals\n    from ${swap_event_table} swap\n    left join ${swap_info_table} swap_info\n        on swap.contract_address = swap_info.contract_address\n    left join ${erc20_token_table} erc20_token0\n        on swap_info.token0 = erc20_token0.contract_address\n    left join ${erc20_token_table} erc20_token1\n        on swap_info.token1 = erc20_token1.contract_address\n    where block_number >= ${from} and block_number <= ${to}\n)\n\n, token_trades as (\n    select block_date\n        , block_number\n        , block_time\n        , current_timestamp() as updated_time\n        , tx_hash\n        , evt_index\n        , recipient as taker\n        , contract_address as pair_contract\n        , 'sell' as trade_type\n        , case\n            when cast(amount0 as double) > 0 then token0_address\n            else token1_address\n        end as token_address\n        , case\n            when cast(amount0 as double) > 0 then token0_symbol\n            else token1_symbol\n        end as token_symbol\n        , case\n            when cast(amount0 as double) > 0 then token0_decimals\n            else token1_decimals\n        end as token_decimals\n        , case\n            when cast(amount0 as double) > 0 then amount0\n            else amount1\n        end as token_wei\n        , case\n            when cast(amount0 as double) > 0 then token1_address\n            else token0_address\n        end as currency_address\n        , case\n            when cast(amount0 as double) > 0 then token1_symbol\n            else token0_symbol\n        end as currency_symbol\n        , case\n            when cast(amount0 as double) > 0 then token1_decimals\n            else token0_decimals\n        end as currency_decimals\n        , case\n            when cast(amount0 as double) > 0 then -1 * amount1\n            else -1 * amount0\n        end as currency_wei\n    from swap_table_info\n    union all\n    select block_date\n        , block_number\n        , block_time\n        , current_timestamp() as updated_time\n        , tx_hash\n        , evt_index\n        , recipient as taker\n        , contract_address as pair_contract\n        , 'buy' as trade_type\n        , case\n            when cast(amount0 as double) < 0 then token0_address\n            else token1_address\n        end as token_address\n        , case\n            when cast(amount0 as double) < 0 then token0_symbol\n            else token1_symbol\n        end as token_symbol\n        , case\n            when cast(amount0 as double) < 0 then token0_decimals\n            else token1_decimals\n        end as token_decimals\n        , case\n            when cast(amount0 as double) < 0 then -1 * amount0\n            else -1 * amount1\n        end as token_wei\n        , case\n            when cast(amount0 as double) < 0 then token1_address\n            else token0_address\n        end as currency_address\n        , case\n            when cast(amount0 as double) < 0 then token1_symbol\n            else token0_symbol\n        end as currency_symbol\n        , case\n            when cast(amount0 as double) < 0 then token1_decimals\n            else token0_decimals\n        end as currency_decimals\n        , case\n            when cast(amount0 as double) < 0 then amount1\n            else amount0\n        end as currency_wei\n    from swap_table_info\n)\n\nselect *\n    , token_wei / power(10, token_decimals) as token_value\n    , currency_wei / power(10, currency_decimals) as currency_value\n    , (currency_wei / power(10, currency_decimals)) / (token_wei / power(10, token_decimals)) as token_price\nfrom token_trades"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_origin.blocks_receipt": {
+            "database": "chainslake",
+            "schema": "ethereum_origin",
+            "name": "ethereum_origin.blocks_receipt",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_origin.blocks_receipt",
+            "fqn": [
+                "chainslake",
+                "ethereum_origin",
+                "blocks_receipt"
+            ],
+            "alias": "blocks_receipt",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Raw block receipt data on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_origin.blocks_receipt LIMIT 100;"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_origin.traces": {
+            "database": "chainslake",
+            "schema": "ethereum_origin",
+            "name": "ethereum_origin.traces",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_origin.traces",
+            "fqn": [
+                "chainslake",
+                "ethereum_origin",
+                "traces"
+            ],
+            "alias": "traces",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Raw trace (internal transaction) data on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_origin.traces LIMIT 100;"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_origin.transaction_blocks": {
+            "database": "chainslake",
+            "schema": "ethereum_origin",
+            "name": "ethereum_origin.transaction_blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_origin.transaction_blocks",
+            "fqn": [
+                "chainslake",
+                "ethereum_origin",
+                "transaction_blocks"
+            ],
+            "alias": "transaction_blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Raw transaction blocks on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_origin.transaction_blocks LIMIT 100;"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_prices.erc20_usd_day": {
+            "database": "chainslake",
+            "schema": "ethereum_prices",
+            "name": "ethereum_prices.erc20_usd_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_prices.erc20_usd_day",
+            "fqn": [
+                "chainslake",
+                "ethereum_prices",
+                "erc20_usd_day"
+            ],
+            "alias": "erc20_usd_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Daily price of all ERC20 tokens on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_prices.erc20_usd_minute"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_prices.erc20_usd_day LIMIT 100;",
+                "evm_prices/day.sql": "frequent_type=day\nlist_input_tables=${chain_name}_prices.${input_table_name}\noutput_table=${chain_name}_prices.${output_table_name}\n\nre_partition_by_range=block_date\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith price_with_day as (\n    select block_date\n        , block_minute\n        , token_address\n        , token_symbol\n        , token_volume\n        , currency_volume\n        , price\n    from ${list_input_tables}\n    where block_minute >= cast(${from} as timestamp)\n    and block_minute < cast(${to} as timestamp)\n)\n\n, price_ohlc as (\n    select block_date\n        , token_address\n        , token_symbol\n        , sum(token_volume) as token_volume\n        , sum(currency_volume) as currency_volume\n        , min_by(price, block_minute) as open_price\n        , max(price) as high_price\n        , min(price) as low_price\n        , max_by(price, block_minute) as close_price\n    from price_with_day\n    group by block_date, token_address, token_symbol\n)\n\nselect block_date\n    , current_timestamp() as updated_time\n    , token_address\n    , token_symbol\n    , token_volume\n    , currency_volume\n    , open_price\n    , high_price\n    , low_price\n    , close_price\n    , currency_volume / token_volume as avg_price\nfrom price_ohlc"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_prices.erc20_usd_hour": {
+            "database": "chainslake",
+            "schema": "ethereum_prices",
+            "name": "ethereum_prices.erc20_usd_hour",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_prices.erc20_usd_hour",
+            "fqn": [
+                "chainslake",
+                "ethereum_prices",
+                "erc20_usd_hour"
+            ],
+            "alias": "erc20_usd_hour",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Hourly price of all ERC20 tokens on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_prices.erc20_usd_minute"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_prices.erc20_usd_hour LIMIT 100;",
+                "evm_prices/hour.sql": "frequent_type=hour\nlist_input_tables=${chain_name}_prices.${input_table_name}\noutput_table=${chain_name}_prices.${output_table_name}\n\nre_partition_by_range=block_date,block_hour\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith price_with_hour as (\n    select block_date\n        , block_minute\n        , date_trunc('hour', block_minute) as block_hour\n        , token_address\n        , token_symbol\n        , token_volume\n        , currency_volume\n        , price\n    from ${list_input_tables}\n    where block_minute >= cast(${from} as timestamp)\n    and block_minute < cast(${to} as timestamp)\n)\n\n\n, price_ohlc as (\n    select block_date\n        , block_hour\n        , token_address\n        , token_symbol\n        , sum(token_volume) as token_volume\n        , sum(currency_volume) as currency_volume\n        , min_by(price, block_minute) as open_price\n        , max(price) as high_price\n        , min(price) as low_price\n        , max_by(price, block_minute) as close_price\n    from price_with_hour\n    group by block_date, block_hour, token_address, token_symbol\n)\n\nselect block_date\n    , block_hour\n    , current_timestamp() as updated_time\n    , token_address\n    , token_symbol\n    , token_volume\n    , currency_volume\n    , open_price\n    , high_price\n    , low_price\n    , close_price\n    , currency_volume / token_volume as avg_price\nfrom price_ohlc"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_prices.erc20_usd_minute": {
+            "database": "chainslake",
+            "schema": "ethereum_prices",
+            "name": "ethereum_prices.erc20_usd_minute",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_prices.erc20_usd_minute",
+            "fqn": [
+                "chainslake",
+                "ethereum_prices",
+                "erc20_usd_minute"
+            ],
+            "alias": "erc20_usd_minute",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Price by minute of all ERC20 tokens on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_prices.weth_usd_minute",
+                    "model.chainslake.ethereum_prices.erc20_weth_minute"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_prices.erc20_usd_minute LIMIT 100;",
+                "evm_prices/usd_minute.sql": "frequent_type=minute\nlist_input_tables=${chain_name}_prices.${price_erc20_table_name},${chain_name}_prices.${price_wrap_native_table_name}\n\noutput_table=${chain_name}_prices.erc20_usd_minute\nerc20_price_table=${chain_name}_prices.${price_erc20_table_name}\nwrap_native_price_table=${chain_name}_prices.${price_wrap_native_table_name}\n\nre_partition_by_range=block_date,block_minute\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith erc20_by_native as (\n    select block_date\n        , current_timestamp() as updated_time\n        , block_minute\n        , token_address\n        , token_symbol\n        , token_volume\n        , currency_volume\n        , price\n    from ${erc20_price_table}\n    where block_minute >= cast(${from} as timestamp)\n    and block_minute < cast(${to} as timestamp)\n)\n, wrap_native_by_usd as (\n    select block_date\n        , current_timestamp() as updated_time\n        , block_minute\n        , lead(block_minute) over (order by block_minute) as next_minute\n        , token_address\n        , token_symbol\n        , token_volume\n        , currency_volume\n        , price\n    from ${wrap_native_price_table}\n    where block_minute >= cast(${from} as timestamp)\n    and block_minute < cast(${to} as timestamp)\n)\n\n, erc20_by_usd as (\n    select erc20.block_date\n        , erc20.updated_time\n        , erc20.block_minute\n        , erc20.token_address\n        , erc20.token_symbol\n        , erc20.token_volume\n        , erc20.currency_volume * wn.price as currency_volume\n        , erc20.price * wn.price as price\n    from erc20_by_native erc20\n    inner join wrap_native_by_usd wn\n    on (\n        erc20.block_minute >= wn.block_minute\n        and\n        (wn.next_minute is null or erc20.block_minute < wn.next_minute)\n    )\n)\n\nselect block_date\n    , updated_time\n    , block_minute\n    , token_address\n    , token_symbol\n    , token_volume\n    , currency_volume\n    , price\n    from wrap_native_by_usd\nunion all\nselect * from erc20_by_usd"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_prices.erc20_weth_minute": {
+            "database": "chainslake",
+            "schema": "ethereum_prices",
+            "name": "ethereum_prices.erc20_weth_minute",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_prices.erc20_weth_minute",
+            "fqn": [
+                "chainslake",
+                "ethereum_prices",
+                "erc20_weth_minute"
+            ],
+            "alias": "erc20_weth_minute",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Price of all ERC20 tokens by WETH per minute on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_dex.uniswap_v2_trades",
+                    "model.chainslake.ethereum_dex.uniswap_v3_trades"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_prices.erc20_weth_minute LIMIT 100;",
+                "evm_prices/minute.sql": "frequent_type=minute\nlist_input_tables=${chain_name}_dex.uniswap_v2_trades,${chain_name}_dex.uniswap_v3_trades\noutput_table=${chain_name}_prices.${output_table_name}\ntrade_v2_table=${chain_name}_dex.uniswap_v2_trades\ntrade_v3_table=${chain_name}_dex.uniswap_v3_trades\ncurrency_contracts=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2\ntoken_contracts=all\n\nre_partition_by_range=block_date,block_minute\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith uniswap_dex as (\n    select block_date\n        , block_time\n        , date_trunc('minute', block_time) as block_minute\n        , token_address\n        , token_symbol\n        , token_value\n        , currency_value\n    from ${trade_v2_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and currency_address in ('${currency_contracts}')\n    and (\n       '${token_contracts}' = 'all' or token_address in ('${token_contracts}')\n    )\n    union all\n    select block_date\n        , block_time\n        , date_trunc('minute', block_time) as block_minute\n        , token_address\n        , token_symbol\n        , token_value\n        , currency_value\n    from ${trade_v3_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and currency_address in ('${currency_contracts}')\n    and (\n       '${token_contracts}' = 'all' or token_address in ('${token_contracts}')\n    )\n)\n\n, amount_by_minute as (\n    select block_date\n    , block_minute\n    , token_address\n    , token_symbol\n    , sum(token_value) as token_volume\n    , sum(currency_value) as currency_volume\n from uniswap_dex\n group by block_date, block_minute, token_address, token_symbol\n)\n\nselect block_date\n    , block_minute\n    , current_timestamp() as updated_time\n    , token_address\n    , token_symbol\n    , token_volume\n    , currency_volume\n    , currency_volume / token_volume as price\nfrom amount_by_minute"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.ethereum_prices.weth_usd_minute": {
+            "database": "chainslake",
+            "schema": "ethereum_prices",
+            "name": "ethereum_prices.weth_usd_minute",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_prices.weth_usd_minute",
+            "fqn": [
+                "chainslake",
+                "ethereum_prices",
+                "weth_usd_minute"
+            ],
+            "alias": "weth_usd_minute",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Price of ETH by USD per minute on Ethereum",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum_dex.uniswap_v2_trades",
+                    "model.chainslake.ethereum_dex.uniswap_v3_trades"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_prices.weth_usd_minute LIMIT 100;",
+                "evm_prices/minute.sql": "frequent_type=minute\nlist_input_tables=${chain_name}_dex.uniswap_v2_trades,${chain_name}_dex.uniswap_v3_trades\noutput_table=${chain_name}_prices.${output_table_name}\ntrade_v2_table=${chain_name}_dex.uniswap_v2_trades\ntrade_v3_table=${chain_name}_dex.uniswap_v3_trades\ncurrency_contracts=0xdac17f958d2ee523a2206206994597c13d831ec7,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48\ntoken_contracts=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2\n\nre_partition_by_range=block_date,block_minute\npartition_by=block_date\nwrite_mode=Append\n\n===\n\nwith uniswap_dex as (\n    select block_date\n        , block_time\n        , date_trunc('minute', block_time) as block_minute\n        , token_address\n        , token_symbol\n        , token_value\n        , currency_value\n    from ${trade_v2_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and currency_address in ('${currency_contracts}')\n    and (\n       '${token_contracts}' = 'all' or token_address in ('${token_contracts}')\n    )\n    union all\n    select block_date\n        , block_time\n        , date_trunc('minute', block_time) as block_minute\n        , token_address\n        , token_symbol\n        , token_value\n        , currency_value\n    from ${trade_v3_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and currency_address in ('${currency_contracts}')\n    and (\n       '${token_contracts}' = 'all' or token_address in ('${token_contracts}')\n    )\n)\n\n, amount_by_minute as (\n    select block_date\n    , block_minute\n    , token_address\n    , token_symbol\n    , sum(token_value) as token_volume\n    , sum(currency_value) as currency_volume\n from uniswap_dex\n group by block_date, block_minute, token_address, token_symbol\n)\n\nselect block_date\n    , block_minute\n    , current_timestamp() as updated_time\n    , token_address\n    , token_symbol\n    , token_volume\n    , currency_volume\n    , currency_volume / token_volume as price\nfrom amount_by_minute"
+            },
+            "package_name": "ethereum"
+        },
+        "model.chainslake.solana.blocks": {
+            "database": "chainslake",
+            "schema": "solana",
+            "name": "solana.blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana.blocks",
+            "fqn": [
+                "chainslake",
+                "solana",
+                "blocks"
+            ],
+            "alias": "blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Block data on Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.solana_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM solana.blocks LIMIT 100;",
+                "solana.extract.Blocks.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedBlock, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.sql.Timestamp\nimport java.util.Properties\n\nobject Blocks extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".blocks\", properties)\n  }\n\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].map(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        ExtractedBlock(block.block_date,\n          block.block_number,\n          block.block_time,\n          extractBlock.blockhash,\n          extractBlock.blockHeight,\n          extractBlock.parentSlot,\n          extractBlock.previousBlockhash\n        )\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.solana.instructions": {
+            "database": "chainslake",
+            "schema": "solana",
+            "name": "solana.instructions",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana.instructions",
+            "fqn": [
+                "chainslake",
+                "solana",
+                "instructions"
+            ],
+            "alias": "instructions",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Instruction data on Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.solana_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM solana.instructions LIMIT 100;",
+                "solana.extract.Instructions.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedInstruction, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Instructions extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".instructions\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        extractBlock.transactions.filter(transaction => transaction.meta.err == null).flatMap(transaction => {\n          transaction.transaction.message.instructions.map(instruction => {\n            ExtractedInstruction(\n              block.block_date,\n              block.block_number,\n              block.block_time,transaction.transaction.signatures(0),\n              instruction.programIdIndex,\n              instruction.programId,\n              instruction.program,\n              if (instruction.parsed != null) gson.toJson(instruction.parsed) else null,\n              instruction.accounts,\n              instruction.data\n            )\n          })\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.solana.native_balances": {
+            "database": "chainslake",
+            "schema": "solana",
+            "name": "solana.native_balances",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana.native_balances",
+            "fqn": [
+                "chainslake",
+                "solana",
+                "native_balances"
+            ],
+            "alias": "native_balances",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Native balances data on Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.solana_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM solana.native_balances LIMIT 100;",
+                "solana.extract.NativeBalances.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedNativeBalanceChange, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject NativeBalances extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".native_balances\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        extractBlock.transactions.flatMap(transaction => {\n          val preBalances = transaction.meta.preBalances\n          val postBalances = transaction.meta.postBalances\n          transaction.transaction.message.accountKeys.map(accountKey => accountKey.pubkey)\n            .zipWithIndex.map(accountIndex => {\n            ExtractedNativeBalanceChange(\n              block.block_date,\n              block.block_number,\n              block.block_time,transaction.transaction.signatures(0),\n              accountIndex._1,\n              preBalances(accountIndex._2),\n              postBalances(accountIndex._2)\n            )\n            }).filter(balance => balance.post_balance != balance.pre_balance)\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.solana.rewards": {
+            "database": "chainslake",
+            "schema": "solana",
+            "name": "solana.rewards",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana.rewards",
+            "fqn": [
+                "chainslake",
+                "solana",
+                "rewards"
+            ],
+            "alias": "rewards",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Reward data on Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.solana_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM solana.rewards LIMIT 100;",
+                "solana.extract.Rewards.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedReward, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Rewards extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".rewards\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        extractBlock.rewards.map(reward => {\n          ExtractedReward(\n            block.block_date,\n            block.block_number,\n            block.block_time,\n            reward.commission,\n            reward.lamports,\n            reward.postBalance,\n            reward.pubkey,\n            reward.rewardType\n          )\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.solana.token_balances": {
+            "database": "chainslake",
+            "schema": "solana",
+            "name": "solana.token_balances",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana.token_balances",
+            "fqn": [
+                "chainslake",
+                "solana",
+                "token_balances"
+            ],
+            "alias": "token_balances",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Token balances on Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.solana_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM solana.token_balances LIMIT 100;",
+                "solana.extract.TokenBalances.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedTokenBalanceChange, OriginBlock, ResponseBlock, TokenBalance}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject TokenBalances extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".token_balances\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        extractBlock.transactions.flatMap(transaction => {\n          val accounts = transaction.transaction.message.accountKeys.map(accountKey => accountKey.pubkey)\n          val preBalances = transaction.meta.preTokenBalances\n          var mapIndexPreBalance: Map[Long, TokenBalance] = Map.empty[Long, TokenBalance]\n          preBalances.foreach(balance => {\n            mapIndexPreBalance = mapIndexPreBalance + (balance.accountIndex -> balance)\n          })\n          transaction.meta.postTokenBalances.map(postBalance => {\n              val extractedTokenBalance = ExtractedTokenBalanceChange(\n                block.block_date,\n                block.block_number,\n                block.block_time,\n                transaction.transaction.signatures(0),\n                accounts(postBalance.accountIndex.toInt),\n                postBalance.mint,\n                postBalance.owner,\n                postBalance.programId,\n                postBalance.uiTokenAmount.decimals,\n                \"0\",\n                \"0\",\n                0,\n                postBalance.uiTokenAmount.amount,\n                postBalance.uiTokenAmount.uiAmountString,\n                postBalance.uiTokenAmount.uiAmount\n              )\n            if (mapIndexPreBalance.contains(postBalance.accountIndex)) {\n              val preBalance = mapIndexPreBalance(postBalance.accountIndex)\n              extractedTokenBalance.pre_amount = preBalance.uiTokenAmount.amount\n              extractedTokenBalance.pre_str_ui_amount = preBalance.uiTokenAmount.uiAmountString\n              extractedTokenBalance.pre_ui_amount = preBalance.uiTokenAmount.uiAmount\n            }\n            extractedTokenBalance\n          }).filter(balance => balance.pre_ui_amount != balance.post_ui_amount)\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.solana.transactions": {
+            "database": "chainslake",
+            "schema": "solana",
+            "name": "solana.transactions",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana.transactions",
+            "fqn": [
+                "chainslake",
+                "solana",
+                "transactions"
+            ],
+            "alias": "transactions",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Transaction data of Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.solana_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM solana.transactions LIMIT 100;",
+                "solana.extract.Transactions.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedTransaction, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Transactions extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".transactions\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        extractBlock.transactions.map(transaction => {\n          ExtractedTransaction(\n            block.block_date,\n            block.block_number,\n            block.block_time,\n            transaction.transaction.signatures(0),\n            transaction.transaction.message.accountKeys.filter(accountKey => accountKey.signer).map(accountKey => accountKey.pubkey),\n            transaction.version,\n            transaction.meta.computeUnitsConsumed,\n            if (transaction.meta.err != null) gson.toJson(transaction.meta.err) else null,\n            transaction.meta.fee,\n            transaction.meta.logMessages,\n            transaction.transaction.message.recentBlockhash\n          )\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.solana_origin.transaction_blocks": {
+            "database": "chainslake",
+            "schema": "solana_origin",
+            "name": "solana_origin.transaction_blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.solana_origin.transaction_blocks",
+            "fqn": [
+                "chainslake",
+                "solana_origin",
+                "transaction_blocks"
+            ],
+            "alias": "transaction_blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Raw transaction blocks data of Solana",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM solana_origin.transaction_blocks LIMIT 100;",
+                "solana.origin.TransactionBlocks.scala": "package chainslake.solana.origin\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{OriginBlock, ResponseRawBlock, ResponseRawNumber}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{Dataset, SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.{col, explode, lit, sequence}\nimport org.apache.spark.storage.StorageLevel\nimport scalaj.http.Http\n\nimport java.sql.{Date, Timestamp}\nimport java.util.Properties\n\nobject TransactionBlocks extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", \"node\")\n    val database = chainName + \"_origin\"\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \"_origin.transaction_blocks\", properties)\n  }\n\n  protected def onProcess(spark: SparkSession, outputTable: String, fromBlock: Long, toBlock: Long, properties: Properties): Unit = {\n    processCrawlBlocks(spark, fromBlock, toBlock, properties)\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n  private def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {\n    import spark.implicits._\n    val numberPartition = properties.getProperty(\"number_partitions\").toInt\n    val blockStr = s\"\"\"{\"from_block\": $fromBlock, \"to_block\": $toBlock }\"\"\"\n    val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n    val maxRetry = properties.getProperty(\"max_retry\").toInt\n    spark.read.json(Seq(blockStr).toDS).select(explode(sequence(col(\"from_block\"), col(\"to_block\"))).alias(\"block_number\"),\n        lit(new Timestamp(0l)).as(\"block_time\"), lit(new Date(0l)).as(\"block_date\"),\n        lit(\"\").as(\"block\"))\n      .as[OriginBlock].repartitionByRange(numberPartition, col(\"block_number\")).mapPartitions(par => {\n\n        val blockData = par.map(block => {\n          val transactionBlock = getOriginBlock(rpcList, block.block_number, maxRetry)\n          block.block = transactionBlock._1\n          block.block_time = new Timestamp(transactionBlock._2.longValue() * 1000L)\n          block.block_date = new Date(block.block_time.getTime)\n          block\n        }).filter(block => block.block != null)\n        blockData\n      })\n  }\n\n  def getOriginBlock(listRpc: Array[String], blockNumber: Long, maxRetry: Int): (String, BigInt) = {\n    var success = false\n    var numberRetry = 0\n    val gson = new Gson()\n    var result = \"\"\n    var blockTimestamp = BigInt(0)\n    while (!success && numberRetry < maxRetry) {\n      val rpc = listRpc {\n        scala.util.Random.nextInt(listRpc.length)\n      }\n      try {\n        val response = Http(rpc).header(\"Content-Type\", \"application/json\")\n          .postData(s\"\"\"{\"method\":\"getBlock\",\"params\":[$blockNumber, {\"encoding\": \"jsonParsed\",\"maxSupportedTransactionVersion\":0,\"transactionDetails\":\"full\",\"rewards\":true}],\"id\":1,\"jsonrpc\":\"2.0\"}\"\"\").asString\n        val responseRawBlock = gson.fromJson(response.body, classOf[ResponseRawBlock])\n        val transactionBlock = responseRawBlock.result\n        if (transactionBlock == null) {\n          if (responseRawBlock.error != null && responseRawBlock.error.code == -32007) {\n            blockTimestamp = 0\n            result = null\n            success = true\n          } else {\n            throw new Exception(\"don't have transaction block from block: \" + blockNumber)\n          }\n        } else {\n          blockTimestamp = transactionBlock.blockTime\n          result = response.body\n          success = true\n        }\n      } catch {\n        case e: Exception => {\n          println(\"error in block: \" + blockNumber + \" with rpc: \", rpc)\n          Thread.sleep(100)\n          //          throw e\n        }\n      }\n      numberRetry += 1\n    }\n    if (!success) {\n      throw new Exception(\"Max number retry\")\n    }\n\n    (result, blockTimestamp)\n  }\n\n  override def getFirstInput(spark: SparkSession, properties: Properties): Long = {\n    0L\n  }\n\n  override def getLatestInput(spark: SparkSession, properties: Properties): Long = {\n    val listRpc = properties.getProperty(\"rpc_list\").split(\",\")\n    val gson = new Gson()\n    val maxRetry = properties.getProperty(\"max_retry\").toInt\n    var success = false\n    var numberRetry = 0\n    var latestBlock = 0l\n    while (!success && numberRetry < maxRetry) {\n      val rpc = listRpc {\n        scala.util.Random.nextInt(listRpc.length)\n      }\n      try {\n        val response = Http(rpc).header(\"Content-Type\", \"application/json\")\n          .postData(s\"\"\"{\"method\":\"getSlot\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}\"\"\").asString\n        latestBlock = gson.fromJson(response.body, classOf[ResponseRawNumber]).result\n        success = true\n      } catch {\n        case e: Exception => {\n          println(\"error in get block number\")\n          Thread.sleep(1000)\n        }\n        //          Thread.sleep(100 * numberRetry)\n      }\n      numberRetry += 1\n    }\n    if (!success) {\n      throw new Exception(\"Max number retry\")\n    }\n    latestBlock\n  }\n}\n"
+            },
+            "package_name": "solana"
+        },
+        "model.chainslake.sui.balance_changes": {
+            "database": "chainslake",
+            "schema": "sui",
+            "name": "sui.balance_changes",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.sui.balance_changes",
+            "fqn": [
+                "chainslake",
+                "sui",
+                "balance_changes"
+            ],
+            "alias": "balance_changes",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Balance change data of Sui",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.sui_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM sui.balance_changes LIMIT 100;",
+                "sui.extract.BalanceChanges.scala": "package chainslake.sui.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.sui.origin.TransactionBlocks\nimport chainslake.sui.{ExtractedBalanceChange, OriginBlock, Transaction}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject BalanceChanges extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".balance_changes\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        var extractTransactions: Array[Transaction] = Array[Transaction]()\n        try {\n          extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            block.transactions = result._2\n            extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])\n            //            throw e\n          }\n        }\n        extractTransactions.flatMap(transaction => {\n          transaction.balanceChanges.map(balance => {\n            ExtractedBalanceChange(\n              block.block_date,\n              block.block_number,\n              block.block_time,\n              transaction.digest,\n              balance.owner.AddressOwner,\n              balance.coinType,\n              balance.amount.toDouble\n            )\n          })\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "sui"
+        },
+        "model.chainslake.sui.blocks": {
+            "database": "chainslake",
+            "schema": "sui",
+            "name": "sui.blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.sui.blocks",
+            "fqn": [
+                "chainslake",
+                "sui",
+                "blocks"
+            ],
+            "alias": "blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Block data of Sui",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.sui_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM sui.blocks LIMIT 100;",
+                "sui.extract.Blocks.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedBlock, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.sql.Timestamp\nimport java.util.Properties\n\nobject Blocks extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".blocks\", properties)\n  }\n\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].map(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        ExtractedBlock(block.block_date,\n          block.block_number,\n          block.block_time,\n          extractBlock.blockhash,\n          extractBlock.blockHeight,\n          extractBlock.parentSlot,\n          extractBlock.previousBlockhash\n        )\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "sui"
+        },
+        "model.chainslake.sui.events": {
+            "database": "chainslake",
+            "schema": "sui",
+            "name": "sui.events",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.sui.events",
+            "fqn": [
+                "chainslake",
+                "sui",
+                "events"
+            ],
+            "alias": "events",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Event data of Sui",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.sui_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM sui.events LIMIT 100;",
+                "sui.extract.Events.scala": "package chainslake.sui.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.sui.origin.TransactionBlocks\nimport chainslake.sui.{ExtractedEvent, OriginBlock, Transaction}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Events extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".events\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        var extractTransactions: Array[Transaction] = Array[Transaction]()\n        try {\n          extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            block.transactions = result._2\n            extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])\n            //            throw e\n          }\n        }\n        extractTransactions.flatMap(transaction => {\n          transaction.events.map(event => {\n            ExtractedEvent(\n              block.block_date,\n              block.block_number,\n              block.block_time,\n              transaction.digest,\n              event.id.eventSeq.toLong,\n              event.packageId,\n              event.transactionModule,\n              event.sender,\n              event.`type`,\n              gson.toJson(event.parsedJson),\n              event.bcsEncoding,\n              event.bcs\n            )\n          })\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "sui"
+        },
+        "model.chainslake.sui.object_changes": {
+            "database": "chainslake",
+            "schema": "sui",
+            "name": "sui.object_changes",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.sui.object_changes",
+            "fqn": [
+                "chainslake",
+                "sui",
+                "object_changes"
+            ],
+            "alias": "object_changes",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Object change data of Sui",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.sui_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM sui.object_changes LIMIT 100;",
+                "sui.extract.ObjectChanges.scala": "package chainslake.sui.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.sui.origin.TransactionBlocks\nimport chainslake.sui.{ExtractedObjectChange, OriginBlock, Owner, Transaction}\nimport com.google.gson.Gson\nimport com.google.gson.internal.LinkedTreeMap\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject ObjectChanges extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".object_changes\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        var extractTransactions: Array[Transaction] = Array[Transaction]()\n        try {\n          extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])\n        } catch {\n          case e: Exception => {\n            println(s\"Block number: ${block.block_number}\")\n            val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n            val result = TransactionBlocks.getOriginBlock(rpcList, block.block_number, 10)\n            block.block = result._1\n            block.transactions = result._2\n            extractTransactions = gson.fromJson(block.transactions, classOf[Array[Transaction]])\n            //            throw e\n          }\n        }\n        extractTransactions.flatMap(transaction => {\n          transaction.objectChanges.map(objectChange => {\n            ExtractedObjectChange(\n              block.block_date,\n              block.block_number,\n              block.block_time,\n              transaction.digest,\n              objectChange.digest,\n              objectChange.`type`,\n              objectChange.sender,\n                objectChange.owner match {\n                  case owner: LinkedTreeMap[String, String] => owner.get(\"AddressOwner\")\n                  case owner: String => owner\n                  case null => null\n                }\n              ,\n              objectChange.objectType,\n              objectChange.objectId,\n              objectChange.version.toLong,\n              try {\n                objectChange.previousVersion.toLong\n              } catch {\n                case e: Exception => 0L\n              }\n            )\n          })\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "sui"
+        },
+        "model.chainslake.sui.transactions": {
+            "database": "chainslake",
+            "schema": "sui",
+            "name": "sui.transactions",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.sui.transactions",
+            "fqn": [
+                "chainslake",
+                "sui",
+                "transactions"
+            ],
+            "alias": "transactions",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Transaction data of Sui",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.sui_origin.transaction_blocks"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM sui.transactions LIMIT 100;",
+                "sui.extract.Transactions.scala": "package chainslake.solana.extract\n\nimport chainslake.job.TaskRun\nimport chainslake.solana.{ExtractedTransaction, OriginBlock, ResponseBlock}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.storage.StorageLevel\n\nimport java.util.Properties\n\nobject Transactions extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", chainName + \"_origin.transaction_blocks\")\n    val database = chainName\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \".transactions\", properties)\n  }\n\n  override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val inputTableName = properties.getProperty(\"list_input_tables\")\n    spark.read.table(inputTableName).where(col(\"block_number\") >= from && col(\"block_number\") <= to)\n      .as[OriginBlock].flatMap(block => {\n        val gson = new Gson()\n        val extractBlock = gson.fromJson(block.block, classOf[ResponseBlock]).result\n        extractBlock.transactions.map(transaction => {\n          ExtractedTransaction(\n            block.block_date,\n            block.block_number,\n            block.block_time,\n            transaction.transaction.signatures(0),\n            transaction.transaction.message.accountKeys.filter(accountKey => accountKey.signer).map(accountKey => accountKey.pubkey),\n            transaction.version,\n            transaction.meta.computeUnitsConsumed,\n            if (transaction.meta.err != null) gson.toJson(transaction.meta.err) else null,\n            transaction.meta.fee,\n            transaction.meta.logMessages,\n            transaction.transaction.message.recentBlockhash\n          )\n        })\n      })\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n}\n"
+            },
+            "package_name": "sui"
+        },
+        "model.chainslake.sui_origin.transaction_blocks": {
+            "database": "chainslake",
+            "schema": "sui_origin",
+            "name": "sui_origin.transaction_blocks",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.sui_origin.transaction_blocks",
+            "fqn": [
+                "chainslake",
+                "sui_origin",
+                "transaction_blocks"
+            ],
+            "alias": "transaction_blocks",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Raw transaction blocks of Sui",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM sui_origin.transaction_blocks LIMIT 100;",
+                "sui.origin.TransactionBlocks.scala": "package chainslake.sui.origin\n\nimport chainslake.job.TaskRun\nimport chainslake.sui.{OriginBlock, ResponseRawBlock, ResponseRawString, ResponseRawTransactions}\nimport com.google.gson.Gson\nimport org.apache.spark.sql.{Dataset, SaveMode, SparkSession}\nimport org.apache.spark.sql.functions.{col, explode, lit, sequence}\nimport org.apache.spark.storage.StorageLevel\nimport scalaj.http.Http\n\nimport java.sql.{Date, Timestamp}\nimport java.util.Properties\n\nobject TransactionBlocks extends TaskRun {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    val chainName = properties.getProperty(\"chain_name\")\n    properties.setProperty(\"frequent_type\", \"block\")\n    properties.setProperty(\"list_input_tables\", \"node\")\n    val database = chainName + \"_origin\"\n    try {\n      spark.sql(s\"create database if not exists $database\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, chainName + \"_origin.transaction_blocks\", properties)\n  }\n\n  protected def onProcess(spark: SparkSession, outputTable: String, fromBlock: Long, toBlock: Long, properties: Properties): Unit = {\n    processCrawlBlocks(spark, fromBlock, toBlock, properties)\n      .persist(StorageLevel.MEMORY_AND_DISK)\n      .repartitionByRange(col(\"block_date\"), col(\"block_time\"))\n      .write.partitionBy(\"block_date\")\n      .mode(SaveMode.Append).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n\n  private def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {\n    import spark.implicits._\n    val numberPartition = properties.getProperty(\"number_partitions\").toInt\n    println(s\"fromBlock = $fromBlock, toBlock = $toBlock, numberPartitions = $numberPartition\")\n    val blockStr = s\"\"\"{\"from_block\": $fromBlock, \"to_block\": $toBlock }\"\"\"\n    val rpcList = properties.getProperty(\"rpc_list\").split(\",\")\n    val maxRetry = properties.getProperty(\"max_retry\").toInt\n    spark.read.json(Seq(blockStr).toDS).select(explode(sequence(col(\"from_block\"), col(\"to_block\"))).alias(\"block_number\"),\n        lit(new Timestamp(0l)).as(\"block_time\"), lit(new Date(0l)).as(\"block_date\"),\n        lit(\"\").as(\"block\"), lit(\"\").as(\"transactions\"))\n      .as[OriginBlock].repartitionByRange(numberPartition, col(\"block_number\")).mapPartitions(par => {\n\n        val blockData = par.map(block => {\n          val transactionBlock = getOriginBlock(rpcList, block.block_number, maxRetry)\n          block.block = transactionBlock._1\n          block.transactions = transactionBlock._2\n          block.block_time = new Timestamp(transactionBlock._3.longValue())\n          block.block_date = new Date(block.block_time.getTime)\n          block\n        }).filter(block => block.block != null)\n        blockData\n      })\n  }\n\n  def getOriginBlock(listRpc: Array[String], blockNumber: Long, maxRetry: Int): (String, String, BigInt) = {\n    var success = false\n    var numberRetry = 0\n    val gson = new Gson()\n    var block = \"\"\n    var transactions = \"\"\n    var blockTimestamp = BigInt(0)\n    while (!success && numberRetry < maxRetry) {\n      val rpc = listRpc {\n        scala.util.Random.nextInt(listRpc.length)\n      }\n      try {\n        var response = Http(rpc).header(\"Content-Type\", \"application/json\").postData(s\"\"\"{\"jsonrpc\":\"2.0\",\"method\":\"sui_getCheckpoint\",\"params\":[\"${blockNumber}\"],\"id\":1}\"\"\")\n          .timeout(50000, 50000)\n          .asString\n        val responseRawBlock = gson.fromJson(response.body, classOf[ResponseRawBlock])\n        val transactionBlock = responseRawBlock.result\n        if (transactionBlock == null) {\n          throw new Exception(\"don't have transaction block from block: \" + blockNumber)\n        }\n\n        blockTimestamp = transactionBlock.timestampMs.toLong\n        block = response.body\n        val mTrans = transactionBlock.transactions.grouped(10)\n        var listResult = Array[Any]()\n        mTrans.foreach(trans => {\n          response = Http(rpc).header(\"Content-Type\", \"application/json\").postData(s\"\"\"{\"method\":\"sui_multiGetTransactionBlocks\",\"params\":[[\"${trans.mkString(\"\\\", \\\"\")}\"], {\n                                                                                      |      \"showInput\": true,\n                                                                                      |      \"showRawInput\": false,\n                                                                                      |      \"showEffects\": true,\n                                                                                      |      \"showEvents\": true,\n                                                                                      |      \"showObjectChanges\": true,\n                                                                                      |      \"showBalanceChanges\": true,\n                                                                                      |      \"showRawEffects\": false\n                                                                                      |    }],\"id\":1,\"jsonrpc\":\"2.0\"}\"\"\".stripMargin)\n            .timeout(50000, 50000)\n            .asString\n          val transactionBlock = gson.fromJson(response.body, classOf[ResponseRawTransactions]).result\n          if (transactionBlock == null) {\n            throw new Exception(\"don't have transaction block from block: \" + blockNumber)\n          }\n          listResult = listResult ++ transactionBlock\n        })\n        if (transactionBlock.transactions.length != listResult.length) {\n          throw new Exception(\"Not enough transaction at: \" + blockNumber)\n        }\n        transactions = gson.toJson(listResult)\n\n        success = true\n      } catch {\n        case e: Exception => {\n          println(\"error in block: \" + blockNumber + \" with rpc: \", rpc)\n//          Thread.sleep(1000)\n          //          throw e\n        }\n      }\n      numberRetry += 1\n    }\n    if (!success) {\n      throw new Exception(\"Max number retry\")\n    }\n\n    (block, transactions, blockTimestamp)\n  }\n\n  override def getFirstInput(spark: SparkSession, properties: Properties): Long = {\n    0L\n  }\n\n  override def getLatestInput(spark: SparkSession, properties: Properties): Long = {\n    val listRpc = properties.getProperty(\"rpc_list\").split(\",\")\n    val gson = new Gson()\n    val maxRetry = properties.getProperty(\"max_retry\").toInt\n    var success = false\n    var numberRetry = 0\n    var latestBlock = 0l\n    while (!success && numberRetry < maxRetry) {\n      val rpc = listRpc {\n        scala.util.Random.nextInt(listRpc.length)\n      }\n      try {\n        val response = Http(rpc).header(\"Content-Type\", \"application/json\").postData(s\"\"\"{\"jsonrpc\":\"2.0\",\"method\":\"sui_getLatestCheckpointSequenceNumber\",\"params\":[],\"id\":1}\"\"\")\n          .timeout(50000, 50000)\n          .asString\n        latestBlock = gson.fromJson(response.body, classOf[ResponseRawString]).result.toLong\n        success = true\n      } catch {\n        case e: Exception => {\n          println(\"error in get block number\")\n          Thread.sleep(1000)\n        }\n        //          Thread.sleep(100 * numberRetry)\n      }\n      numberRetry += 1\n    }\n    if (!success) {\n      throw new Exception(\"Max number retry\")\n    }\n    latestBlock\n  }\n}\n"
+            },
+            "package_name": "sui"
+        }
+    },
+    "sources": {},
+    "macros": {},
+    "docs": {
+        "doc.chainslake.__overview__": {
+            "name": "__overview__",
+            "resource_type": "doc",
+            "package_name": "chainslake",
+            "path": "overview.md",
+            "original_file_path": "models/overview.md",
+            "unique_id": "doc.chainslake.__overview__",
+            "block_contents": "# Chainslake\n\nChainslake is a Open Blockchain Data Lakehouse Platform, fully supported for EVM blockchain. You can check out Chainslake demo [here](https://metabase.chainslake.io/public/dashboard/ac9dbee4-af29-4ba8-b494-eae69f4ee835) then you can register an account and start using Chainslake completely free [here](https://metabase.chainslake.io/).\n\n## Features\n\n- Build and share blockchain data analytics dashboards for free, let start [here](https://metabase.chainslake.io/dashboard/60-erc20-token).\n- Easily and quickly decoded any protocol or contract, see instructions [here](/evm/abi)\n- Get information from contract and store in table, see instructions [here](/evm/contract-info)\n- Build your business tables using SQL, see instructions [here](/sql)\n\n## Contributor\n\nChainslake welcomes any contributions from the community who share the same passion for blockchain data analysis. You can contribute to this project by adding ABIs, Contract info that you are interested in or building data tables to serve your business.\n\n## Chainslake for Enterprise\n\nIn addition to the free community version, Chainslake also has an enterprise version for companies who want to build their own Blockchain Data LakeHouse. Contact us to discuss your needs.\n\n## Contacts\n- Email: [lakechain.nguyen@gmail.com](mailto:lakechain.nguyen@gmail.com)\n\n## License\n\nCopyright 2024 Chainslake"
+        }
+    },
+    "exposures": {},
+    "metrics": {},
+    "groups": {},
+    "selectors": {},
+    "disabled": {},
+    "parent_map": {},
+    "child_map": {},
+    "group_map": {}
+}
