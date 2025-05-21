@@ -17,12 +17,12 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2025, 2, 20, 15),
+    start_date=datetime(2025, 5, 21, 16),
     # schedule="@continuous",
     schedule="@hourly",
     # schedule="@once",
     max_active_runs=1,
-    max_active_tasks=2,
+    max_active_tasks=1,
 ) as dag:
 
     # RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/sui"
@@ -137,35 +137,67 @@ with DAG(
 
     bitcoin_balances_utxo_transfer_day = BashOperator(
         task_id="bitcoin_balances.utxo_transfer_day",
-        bash_command=f"cd {RUN_DIR} && ./balances/utxo_transfer_day.sh "
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ]; then
+            cd {RUN_DIR} && ./balances/utxo_transfer_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
     )
 
-    # bitcoin_balances_utxo_latest_day = BashOperator(
-    #     task_id="bitcoin_balances.utxo_latest_day",
-    #     bash_command=f"cd {RUN_DIR} && ./balances/utxo_latest_day.sh "
-    # )
+    bitcoin_balances_utxo_latest_day = BashOperator(
+        task_id="bitcoin_balances.utxo_latest_day",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 2 ]; then
+            cd {RUN_DIR} && ./balances/utxo_latest_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
+    )
 
-    [bitcoin_extract_inputs, bitcoin_extract_outputs] >> bitcoin_balances_utxo_transfer_hour >> bitcoin_balances_utxo_transfer_day
+    [bitcoin_extract_inputs, bitcoin_extract_outputs] >> bitcoin_balances_utxo_transfer_hour >> bitcoin_balances_utxo_transfer_day >> bitcoin_balances_utxo_latest_day
 
-    RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/binance"
+    RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/cex"
 
-    # binance_cex_exchange_info = BashOperator(
-    #     task_id="binance_cex.exchange_info",
-    #     bash_command=f"cd {RUN_DIR} && ./cex/exchange_info.sh "
-    # )
+    binance_cex_exchange_info = BashOperator(
+        task_id="binance_cex.exchange_info",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ]; then
+            cd {RUN_DIR} && ./binance/exchange_info.sh 
+        else
+            echo "Skip run"
+        fi
+        """
+    )
 
     binance_cex_trade_minute = BashOperator(
-        task_id="binance_cex.trade_minute",
-        bash_command=f"cd {RUN_DIR} && ./cex/trade_minute.sh "
+        task_id="cex_binance.trade_minute",
+        bash_command=f"cd {RUN_DIR} && ./binance/trade_minute.sh "
     )
 
-    binance_cex_trade_minute_agg_volume = BashOperator(
-        task_id="binance_cex.trade_minute_agg_volume",
-        bash_command=f"cd {RUN_DIR} && ./cex/trade_minute_agg_volume.sh "
-    )
-    # binance_cex_exchange_info >> binance_cex_trade_minute >> binance_cex_trade_minute_agg_volume
+    # binance_cex_trade_minute_agg_volume = BashOperator(
+    #     task_id="cex_binance.trade_minute_agg_volume",
+    #     bash_command=f"cd {RUN_DIR} && ./binance/trade_minute_agg_volume.sh "
+    # )
 
-    binance_cex_trade_minute >> binance_cex_trade_minute_agg_volume
+    binance_cex_trade_day = BashOperator(
+        task_id="cex_binance.trade_day",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ]; then
+            cd {RUN_DIR} && ./binance/trade_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
+    )
+
+    binance_cex_exchange_info >> binance_cex_trade_minute >> binance_cex_trade_day
 
     ########################### ORIGIN ##########################################
 
@@ -271,15 +303,29 @@ with DAG(
 
     ethereum_balances_token_transfer_day = BashOperator(
         task_id="ethereum_balances.token_transfer_day",
-        bash_command=f"cd {RUN_DIR} && ./balances/token_transfer_day.sh "
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ]; then
+            cd {RUN_DIR} && ./balances/token_transfer_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
     )
 
-    # ethereum_balances_token_latest_day = BashOperator(
-    #     task_id="ethereum_balances.token_latest_day",
-    #     bash_command=f"cd {RUN_DIR} && ./balances/token_latest_day.sh "
-    # )
+    ethereum_balances_token_latest_day = BashOperator(
+        task_id="ethereum_balances.token_latest_day",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 3 ]; then
+            cd {RUN_DIR} && ./balances/token_latest_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
+    )
 
-    [ethereum_contract_erc20_tokens, ethereum_traces] >> ethereum_balances_token_transfer_hour >> ethereum_balances_token_transfer_day
+    [ethereum_contract_erc20_tokens, ethereum_traces] >> ethereum_balances_token_transfer_hour >> ethereum_balances_token_transfer_day >> ethereum_balances_token_latest_day
 
     ethereum_balances_nft_transfer_hour = BashOperator(
         task_id="ethereum_balances.nft_transfer_hour",
@@ -288,15 +334,29 @@ with DAG(
 
     ethereum_balances_nft_transfer_day = BashOperator(
         task_id="ethereum_balances.nft_transfer_day",
-        bash_command=f"cd {RUN_DIR} && ./balances/nft_transfer_day.sh "
+        bash_command=f"""
+        current_hour=$(date +"%H") 
+        if [ "$current_hour"  -eq 1 ]; then
+            cd {RUN_DIR} && ./balances/nft_transfer_day.sh
+        else
+            echo "Skip run"
+        fi
+        """
     )
 
-    # ethereum_balances_nft_latest_day = BashOperator(
-    #     task_id="ethereum_balances.nft_latest_day",
-    #     bash_command=f"cd {RUN_DIR} && ./balances/nft_latest_day.sh "
-    # )
+    ethereum_balances_nft_latest_day = BashOperator(
+        task_id="ethereum_balances.nft_latest_day",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 100 ]; then
+            cd {RUN_DIR} && ./balances/nft_latest_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
+    )
 
-    [ethereum_contract_erc721_tokens, ethereum_contract_erc1155_tokens] >> ethereum_balances_nft_transfer_hour >> ethereum_balances_nft_transfer_day
+    [ethereum_contract_erc721_tokens, ethereum_contract_erc1155_tokens] >> ethereum_balances_nft_transfer_hour >> ethereum_balances_nft_transfer_day >> ethereum_balances_nft_latest_day
 
     ethereum_contract_uniswap_v2_info = BashOperator(
         task_id="ethereum_contract.uniswap_v2_info",
@@ -357,7 +417,14 @@ with DAG(
 
     ethereum_prices_erc20_usd_day = BashOperator(
         task_id="ethereum_prices.erc20_usd_day",
-        bash_command=f"cd {RUN_DIR} && ./prices/day.sh erc20_usd_minute erc20_usd_day"
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ]; then
+            cd {RUN_DIR} && ./prices/day.sh erc20_usd_minute erc20_usd_day 
+        else
+            echo "Skip run"
+        fi
+        """
     )
 
     ethereum_prices_erc20_usd_minute >> [ethereum_prices_erc20_usd_hour, ethereum_prices_erc20_usd_day]

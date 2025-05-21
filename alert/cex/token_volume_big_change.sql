@@ -12,7 +12,7 @@
     ],
     "transform_id": "binance_cex_volume",
     "query": "ratio_change_volume >= ${percent}",
-    "message": "Volume of $${base_asset} ${change_type} ${ratio_change_volume} % with volume change ${change_volume} USD. [detail](https://metabase.chainslake.io/public/dashboard/13b762f3-91c3-40ec-b6c6-53c0775ceb12?coin=${base_asset})"
+    "message": "Volume of $${base_asset} ${change_type} ${ratio_change_volume}%. https://metabase.chainslake.io/question/354-cex-token-volume-big-change?coin=BTC"
 }
 
 ===
@@ -27,7 +27,7 @@ WITH
     FROM
       binance_cex.trade_minute_agg_volume
     WHERE
-      block_minute > CURRENT_TIMESTAMP - interval '15' MINUTE
+      block_minute > CURRENT_TIMESTAMP - interval '1' HOUR
   ),
   trade_filter AS (
     SELECT
@@ -43,8 +43,8 @@ WITH
   )
 SELECT
   *, case
-       when minute_max > minute_min then 'increase'
-       else 'decrease'
+       when minute_max > minute_min then 'increased'
+       else 'decreased'
     end as change_type
 FROM
   trade_filter

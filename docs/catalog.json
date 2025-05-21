@@ -7,6 +7,204 @@
         "env": {}
     },
     "nodes": {
+        "model.chainslake.cex_binance.exchange_info": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "cex_binance",
+                "name": "exchange_info",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "symbol": {
+                    "index": 1,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "ETHBTC"
+                },
+                "base_asset": {
+                    "index": 2,
+                    "name": "base_asset",
+                    "type": "varchar",
+                    "description": "ETH"
+                },
+                "quote_asset": {
+                    "index": 3,
+                    "name": "quote_asset",
+                    "type": "varchar",
+                    "description": "BTC"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.cex_binance.exchange_info"
+        },
+        "model.chainslake.cex_binance.trade_minute": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "cex_binance",
+                "name": "trade_minute",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "2025-04-26"
+                },
+                "block_minute": {
+                    "index": 2,
+                    "name": "block_minute",
+                    "type": "timestamp(3) with time zone",
+                    "description": "2025-04-26 16:31:00+00:00"
+                },
+                "symbol": {
+                    "index": 3,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "WLDUSDT"
+                },
+                "base_asset": {
+                    "index": 4,
+                    "name": "base_asset",
+                    "type": "varchar",
+                    "description": "WLD"
+                },
+                "quote_asset": {
+                    "index": 5,
+                    "name": "quote_asset",
+                    "type": "varchar",
+                    "description": "USDT"
+                },
+                "open_price": {
+                    "index": 6,
+                    "name": "open_price",
+                    "type": "double",
+                    "description": "1.109"
+                },
+                "high_price": {
+                    "index": 7,
+                    "name": "high_price",
+                    "type": "double",
+                    "description": "1.109"
+                },
+                "low_price": {
+                    "index": 8,
+                    "name": "low_price",
+                    "type": "double",
+                    "description": "1.105"
+                },
+                "close_price": {
+                    "index": 9,
+                    "name": "close_price",
+                    "type": "double",
+                    "description": "1.105"
+                },
+                "volume": {
+                    "index": 10,
+                    "name": "volume",
+                    "type": "double",
+                    "description": "12913.5"
+                },
+                "quote_volume": {
+                    "index": 11,
+                    "name": "quote_volume",
+                    "type": "double",
+                    "description": "14311.7963"
+                },
+                "number_trades": {
+                    "index": 12,
+                    "name": "number_trades",
+                    "type": "integer",
+                    "description": "143"
+                },
+                "taker_buy_base_volume": {
+                    "index": 13,
+                    "name": "taker_buy_base_volume",
+                    "type": "double",
+                    "description": "4109.0"
+                },
+                "taker_buy_quote_volume": {
+                    "index": 14,
+                    "name": "taker_buy_quote_volume",
+                    "type": "double",
+                    "description": "4553.634"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.cex_binance.trade_minute"
+        },
+        "model.chainslake.cex_binance.trade_minute_agg_volume": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "cex_binance",
+                "name": "trade_minute_agg_volume",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "2025-04-25"
+                },
+                "block_minute": {
+                    "index": 2,
+                    "name": "block_minute",
+                    "type": "timestamp(3) with time zone",
+                    "description": "2025-04-25 20:32:00+00:00"
+                },
+                "symbol": {
+                    "index": 3,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "NEXOUSDT"
+                },
+                "base_asset": {
+                    "index": 4,
+                    "name": "base_asset",
+                    "type": "varchar",
+                    "description": "NEXO"
+                },
+                "open_price": {
+                    "index": 5,
+                    "name": "open_price",
+                    "type": "double",
+                    "description": "1.124"
+                },
+                "quote_volume": {
+                    "index": 6,
+                    "name": "quote_volume",
+                    "type": "double",
+                    "description": "621.82479"
+                },
+                "24h_volume": {
+                    "index": 7,
+                    "name": "24h_volume",
+                    "type": "double",
+                    "description": "35976.61628000001"
+                },
+                "24h_coin_volume": {
+                    "index": 8,
+                    "name": "24h_coin_volume",
+                    "type": "double",
+                    "description": "32145.109999999997"
+                },
+                "24h_avg_price": {
+                    "index": 9,
+                    "name": "24h_avg_price",
+                    "type": "double",
+                    "description": "1.119194063420533"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.cex_binance.trade_minute_agg_volume"
+        },
         "model.chainslake.bitcoin.blocks": {
             "metadata": {
                 "type": "TABLE",

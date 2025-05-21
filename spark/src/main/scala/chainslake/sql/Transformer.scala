@@ -42,6 +42,21 @@ object Transformer extends TaskRun {
     val sqlTemplateString = properties.getProperty("sql_template")
     val sqlTemplate = new Template(sqlTemplateString)
     val isExistedTable = spark.catalog.tableExists(outputTable)
+    var useVersion = false
+    var currentVersion = 0
+    var nextVersion = 1
+    if (properties.containsKey("partition_by")) {
+      if (properties.getProperty("partition_by") == "version") {
+        useVersion = true
+        if (isExistedTable) {
+          currentVersion = spark.sql(s"SHOW TBLPROPERTIES $outputTable ('version');").collect()(0).getAs[String]("value").toInt
+          if (!spark.sql(s"select version from $outputTable where version != $currentVersion limit 1").isEmpty) {
+            spark.sql(s"delete from $outputTable where version != $currentVersion")
+          }
+          nextVersion = currentVersion + 1
+        }
+      }
+    }
     var context = Context()
     properties.stringPropertyNames().forEach(key => {
       context = context.withValues(key -> StringValue(properties.getProperty(key).replace(",", "','")))
@@ -49,6 +64,10 @@ object Transformer extends TaskRun {
     context = context.withValues("from" -> IntValue(from.toInt))
     context = context.withValues("to" -> IntValue(to.toInt))
     context = context.withValues("table_existed" -> BooleanValue(isExistedTable))
+    if (useVersion) {
+      context = context.withValues("current_version" -> IntValue(currentVersion))
+      context = context.withValues("next_version" -> IntValue(nextVersion))
+    }
     val sqlString = sqlTemplate.render(context)
     var sqlDf = spark.sql(sqlString)
     if (properties.containsKey("re_partition_by_range")) {
@@ -93,6 +112,10 @@ object Transformer extends TaskRun {
       }
     } else {
       sqlWriter.saveAsTable(properties.getProperty("output_table"))
+      if (useVersion) {
+        spark.sql(s"ALTER TABLE $outputTable SET TBLPROPERTIES (version=$nextVersion)")
+        spark.sql(s"delete from $outputTable where version != $nextVersion")
+      }
     }
   }
 }

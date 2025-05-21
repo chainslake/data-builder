@@ -11,6 +11,97 @@
         "adapter_type": "snowflake"
     },
     "nodes": {
+        "model.chainslake.cex_binance.exchange_info": {
+            "database": "chainslake",
+            "schema": "cex_binance",
+            "name": "cex_binance.exchange_info",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.cex_binance.exchange_info",
+            "fqn": [
+                "chainslake",
+                "cex_binance",
+                "exchange_info"
+            ],
+            "alias": "exchange_info",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "List all exchange on Binance CEX",
+            "depends_on": {
+                "macros": [],
+                "nodes": []
+            },
+            "code": {
+                "Example": "SELECT * FROM cex_binance.exchange_info LIMIT 100;",
+                "cex.binance.ExchangeInfo.scala": "package chainslake.cex.binance\n\nimport chainslake.cex.CexExchangeInfo\nimport chainslake.job.JobInf\nimport com.google.gson.Gson\nimport com.google.gson.internal.LinkedTreeMap\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport scalaj.http.Http\n\nimport java.util\nimport java.util.Properties\n\nobject ExchangeInfo extends JobInf {\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    import spark.implicits._\n    val outputTable = \"cex_binance.exchange_info\"\n    try {\n      spark.sql(\"create database if not exists cex_binance\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    val url = properties.getProperty(\"binance_cex_url\")\n    val api = url + \"/api/v3/exchangeInfo?symbolStatus=TRADING&showPermissionSets=false\"\n    spark.read.json(Seq(s\"\"\"{\"url\": \"$api\"}\"\"\").toDS).flatMap(row => {\n      val gson = new Gson()\n      val response = Http(api).header(\"Content-Type\", \"application/json\")\n        .timeout(50000, 50000)\n        .asString\n      var result = List[CexExchangeInfo]()\n      gson.fromJson(response.body, classOf[Object]).asInstanceOf[LinkedTreeMap[String, Any]]\n        .get(\"symbols\").asInstanceOf[util.ArrayList[LinkedTreeMap[String, Any]]]\n        .forEach(symbol => {\n          result = result :+ CexExchangeInfo(symbol.get(\"symbol\").asInstanceOf[String],\n            symbol.get(\"baseAsset\").asInstanceOf[String],\n            symbol.get(\"quoteAsset\").asInstanceOf[String]\n          )\n        })\n      result\n    }).write.mode(SaveMode.Overwrite).format(\"delta\")\n      .saveAsTable(outputTable)\n  }\n}\n"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.cex_binance.trade_minute": {
+            "database": "chainslake",
+            "schema": "cex_binance",
+            "name": "cex_binance.trade_minute",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.cex_binance.trade_minute",
+            "fqn": [
+                "chainslake",
+                "cex_binance",
+                "trade_minute"
+            ],
+            "alias": "trade_minute",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Trade data by minute of all exchange on Binance CEX",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.cex_binance.exchange_info"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM cex_binance.trade_minute LIMIT 100;",
+                "cex.binance.TradeMinute.scala": "package chainslake.cex.binance\n\nimport chainslake.job.TaskRun\nimport chainslake.cex.{CexExchangeInfo, CexTradeMinute}\nimport com.google.gson.Gson\nimport com.google.gson.internal.LinkedTreeMap\nimport org.apache.spark.sql.functions.col\nimport org.apache.spark.sql.{SaveMode, SparkSession}\nimport scalaj.http.Http\n\nimport java.sql.{Date, Timestamp}\nimport java.util\nimport java.util.Properties\n\nobject TradeMinute extends TaskRun {\n\n  override def run(spark: SparkSession, properties: Properties): Unit = {\n    properties.setProperty(\"frequent_type\", \"minute\")\n    properties.setProperty(\"list_input_tables\", \"binance\")\n    try {\n      spark.sql(s\"create database if not exists cex_binance\")\n    } catch {\n      case e: Exception => e.getMessage\n    }\n    processTable(spark, \"cex_binance.trade_minute\", properties)\n  }\n\n  protected def onProcess(spark: SparkSession, outputTable: String, fromBlockTime: Long, toBlockTime: Long, properties: Properties): Unit = {\n    import spark.implicits._\n    val quoteAsset = properties.getProperty(\"quote_asset\")\n    val numberPartition = properties.getProperty(\"number_re_partitions\").toInt\n    val waitMilliseconds = properties.getProperty(\"wait_milliseconds\").toLong\n    val url = properties.getProperty(\"binance_cex_url\")\n    val api = url + \"/api/v3/klines?interval=1m\"\n    val inputTable = \"cex_binance.exchange_info\"\n    spark.read.table(inputTable).repartition(numberPartition).where(col(\"quote_asset\") === quoteAsset).as[CexExchangeInfo].flatMap(exchange => {\n        val gson = new Gson()\n        val startTime = fromBlockTime * 1000L\n        val endTime = (toBlockTime - 60L) * 1000L\n        var result = List[CexTradeMinute]()\n        val response = Http(api + s\"&symbol=${exchange.symbol}&startTime=${startTime}&endTime=${endTime}\").header(\"Content-Type\", \"application/json\")\n          .timeout(50000, 50000)\n          .asString\n        Thread.sleep(waitMilliseconds)\n        gson.fromJson(response.body, classOf[Object]).asInstanceOf[util.ArrayList[util.ArrayList[Any]]]\n          .forEach(item => {\n            val minute = new Timestamp(item.get(0).asInstanceOf[Double].toLong)\n            val date = new Date(minute.getTime)\n            result = result :+ CexTradeMinute(date, minute, exchange.symbol, exchange.base_asset, exchange.quote_asset,\n              item.get(1).asInstanceOf[String].toDouble,\n              item.get(2).asInstanceOf[String].toDouble,\n              item.get(3).asInstanceOf[String].toDouble,\n              item.get(4).asInstanceOf[String].toDouble,\n              item.get(5).asInstanceOf[String].toDouble,\n              item.get(7).asInstanceOf[String].toDouble,\n              item.get(8).asInstanceOf[Double].toInt,\n              item.get(9).asInstanceOf[String].toDouble,\n              item.get(10).asInstanceOf[String].toDouble\n            )\n          })\n        result\n      }).write.format(\"delta\")\n      .option(\"optimizeWrite\", \"True\")\n      .mode(SaveMode.Append)\n      .partitionBy(\"block_date\")\n      .saveAsTable(outputTable)\n  }\n\n  override def getLatestInput(spark: SparkSession, properties: Properties): Long = {\n    val url = properties.getProperty(\"binance_cex_url\")\n    val api = url + \"/api/v3/time\"\n    val response = Http(api).header(\"Content-Type\", \"application/json\")\n      .timeout(50000, 50000)\n      .asString\n    val gson = new Gson()\n    gson.fromJson(response.body, classOf[Object]).asInstanceOf[LinkedTreeMap[String, Any]]\n      .get(\"serverTime\").asInstanceOf[Double].toLong / 1000L\n  }\n\n  override def getFirstInput(spark: SparkSession, properties: Properties): Long = {\n    0L\n  }\n}\n"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.cex_binance.trade_minute_agg_volume": {
+            "database": "chainslake",
+            "schema": "cex_binance",
+            "name": "cex_binance.trade_minute_agg_volume",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.cex_binance.trade_minute_agg_volume",
+            "fqn": [
+                "chainslake",
+                "cex_binance",
+                "trade_minute_agg_volume"
+            ],
+            "alias": "trade_minute_agg_volume",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Trade data by minute aggreated in 24 hours on Binance CEX",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.cex_binance.exchange_info"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM cex_binance.trade_minute_agg_volume LIMIT 100;",
+                "cex_binance/trade_minute_agg_volume.sql": "frequent_type=minute\nlist_input_tables=cex_binance.trade_minute\noutput_table=cex_binance.trade_minute_agg_volume\nre_partition_by_range=block_date,block_minute\nwrite_mode=Append\nnumber_index_columns=6\npartition_by=block_date\n\n===\n\nwith trade_minute_agg_volume as (\n  select block_date, block_minute, symbol, base_asset, open_price, quote_volume\n    , sum(quote_volume) over (PARTITION by symbol order by block_minute ROWS 1440 PRECEDING) as 24h_volume\n    , sum(volume) over (PARTITION by symbol order by block_minute ROWS 1440 PRECEDING) as 24h_coin_volume\n  from ${list_input_tables}\n  where block_minute >= cast((${from} - 86520) as timestamp)\n    and block_minute < cast(${to} as timestamp)\n)\nselect *, 24h_volume / 24h_coin_volume as 24h_avg_price from trade_minute_agg_volume\nwhere block_minute >= cast(${from} as timestamp)"
+            },
+            "package_name": "cex"
+        },
         "model.chainslake.bitcoin.blocks": {
             "database": "chainslake",
             "schema": "bitcoin",
@@ -1699,7 +1790,7 @@
             "path": "overview.md",
             "original_file_path": "models/overview.md",
             "unique_id": "doc.chainslake.__overview__",
-            "block_contents": "# Chainslake\n\nChainslake is a Open Blockchain Data Lakehouse Platform, fully supported for EVM blockchain. You can check out Chainslake demo [here](https://metabase.chainslake.io/public/dashboard/ac9dbee4-af29-4ba8-b494-eae69f4ee835) then you can register an account and start using Chainslake completely free [here](https://metabase.chainslake.io/).\n\n## Features\n\n- Build and share blockchain data analytics dashboards for free, let start [here](https://metabase.chainslake.io/dashboard/60-erc20-token).\n- Easily and quickly decoded any protocol or contract, see instructions [here](/evm/abi)\n- Get information from contract and store in table, see instructions [here](/evm/contract-info)\n- Build your business tables using SQL, see instructions [here](/sql)\n\n## Contributor\n\nChainslake welcomes any contributions from the community who share the same passion for blockchain data analysis. You can contribute to this project by adding ABIs, Contract info that you are interested in or building data tables to serve your business.\n\n## Chainslake for Enterprise\n\nIn addition to the free community version, Chainslake also has an enterprise version for companies who want to build their own Blockchain Data LakeHouse. Contact us to discuss your needs.\n\n## Contacts\n- Email: [lakechain.nguyen@gmail.com](mailto:lakechain.nguyen@gmail.com)\n\n## License\n\nCopyright 2024 Chainslake"
+            "block_contents": "Welcome to Chainslake, a community driven by the passion to explore the beauty of data."
         }
     },
     "exposures": {},

@@ -1,4 +1,4 @@
-$CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.sui.Main \
+$CHAINSLAKE_RUN_DIR/chainslake-run.sh --class chainslake.sui.Main \
     --name SuiOriginTransactionBlocks \
     --master local[20] \
     --driver-memory 8g \

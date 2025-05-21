@@ -1,4 +1,4 @@
-$CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.sui.Main \
+$CHAINSLAKE_RUN_DIR/chainslake-run.sh --class chainslake.sui.Main \
     --name SuiExtractBalanceChanges \
     --master local[4] \
     --driver-memory 4g \

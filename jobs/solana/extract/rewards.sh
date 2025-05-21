@@ -1,4 +1,4 @@
-$CHAINSLAKE_HOME_DIR/spark/script/chainslake-run.sh --class chainslake.solana.Main \
+$CHAINSLAKE_RUN_DIR/chainslake-run.sh --class chainslake.solana.Main \
     --name SolanaExtractRewards \
     --master local[2] \
     --driver-memory 10g \

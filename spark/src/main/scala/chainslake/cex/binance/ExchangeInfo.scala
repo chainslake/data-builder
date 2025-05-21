@@ -13,9 +13,9 @@ import java.util.Properties
 object ExchangeInfo extends JobInf {
   override def run(spark: SparkSession, properties: Properties): Unit = {
     import spark.implicits._
-    val outputTable = "binance_cex.exchange_info"
+    val outputTable = "cex_binance.exchange_info"
     try {
-      spark.sql("create database if not exists binance_cex")
+      spark.sql("create database if not exists cex_binance")
     } catch {
       case e: Exception => e.getMessage
     }

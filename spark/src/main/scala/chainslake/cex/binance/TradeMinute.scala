@@ -18,11 +18,11 @@ object TradeMinute extends TaskRun {
     properties.setProperty("frequent_type", "minute")
     properties.setProperty("list_input_tables", "binance")
     try {
-      spark.sql(s"create database if not exists binance_cex")
+      spark.sql(s"create database if not exists cex_binance")
     } catch {
       case e: Exception => e.getMessage
     }
-    processTable(spark, "binance_cex.trade_minute", properties)
+    processTable(spark, "cex_binance.trade_minute", properties)
   }
 
   protected def onProcess(spark: SparkSession, outputTable: String, fromBlockTime: Long, toBlockTime: Long, properties: Properties): Unit = {
@@ -32,13 +32,13 @@ object TradeMinute extends TaskRun {
     val waitMilliseconds = properties.getProperty("wait_milliseconds").toLong
     val url = properties.getProperty("binance_cex_url")
     val api = url + "/api/v3/klines?interval=1m"
-    val inputTable = "binance_cex.exchange_info"
+    val inputTable = "cex_binance.exchange_info"
     spark.read.table(inputTable).repartition(numberPartition).where(col("quote_asset") === quoteAsset).as[CexExchangeInfo].flatMap(exchange => {
         val gson = new Gson()
         val startTime = fromBlockTime * 1000L
         val endTime = (toBlockTime - 60L) * 1000L
         var result = List[CexTradeMinute]()
-        val response = Http(api + s"&symbol=${exchange.symbol}&startTime=${startTime}&endTime=${endTime}").header("Content-Type", "application/json")
+        val response = Http(api + s"&symbol=${exchange.symbol}&startTime=${startTime}&endTime=${endTime}&limit=1500").header("Content-Type", "application/json")
           .timeout(50000, 50000)
           .asString
         Thread.sleep(waitMilliseconds)

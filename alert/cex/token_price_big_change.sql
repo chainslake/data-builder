@@ -12,7 +12,7 @@
     ],
     "transform_id": "binance_cex_price",
     "query": "ratio_change_price >= ${percent} and minute_max > minute_min",
-    "message": "Price of $${base_asset} increase ${ratio_change_price} % with volume change ${change_volume} USD. [detail](https://metabase.chainslake.io/public/dashboard/13b762f3-91c3-40ec-b6c6-53c0775ceb12?coin=${base_asset})"
+    "message": "Price of #${base_asset} increased ${ratio_change_price}%. https://metabase.chainslake.io/question/353-cex-token-price-big-change?coin=${base_asset})"
 }
 
 ===
@@ -25,7 +25,7 @@ WITH
       open_price,
       24h_volume
     FROM
-      binance_cex.trade_minute_agg_volume
+      cex_binance.trade_minute_agg_volume
     WHERE
       block_minute > CURRENT_TIMESTAMP - interval '1' HOUR
   ),

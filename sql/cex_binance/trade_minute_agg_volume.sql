@@ -1,6 +1,6 @@
 frequent_type=minute
-list_input_tables=binance_cex.trade_minute
-output_table=binance_cex.trade_minute_agg_volume
+list_input_tables=cex_binance.trade_minute
+output_table=cex_binance.trade_minute_agg_volume
 re_partition_by_range=block_date,block_minute
 write_mode=Append
 number_index_columns=6
