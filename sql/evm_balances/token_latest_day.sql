@@ -2,7 +2,7 @@ frequent_type=day
 repair_mode=false
 list_input_tables=${chain_name}_balances.token_transfer_day
 output_table=${chain_name}_balances.token_latest_day
-re_partition_by_range=key_partition
+re_partition_by_range=version,key_partition
 write_mode=Append
 number_index_columns=3
 partition_by=version
@@ -33,7 +33,10 @@ ${if table_existed}
         , token_address
         , symbol
         , balance
-        , key_partition
+        , concat(
+            substring(token_address, 1, 4),
+            substring(wallet_address, 1, 5)
+        ) AS key_partition
     from ${output_table}
     where version = ${current_version}
 )

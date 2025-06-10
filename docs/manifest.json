@@ -58,7 +58,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Trade data by minute of all exchange on Binance CEX",
+            "description": "Trade data by minute of all exchange pairs were listed in cex_binance.exchange_info table. Each record in this table contains 1 minute of trading data for 1 exchange pair.",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -151,7 +151,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "UTXO input data of Bitcoin",
+            "description": "UTXO input data, extracted from colume block of bitcoin_orign.transaction_blocks. Each record of this table records information when a UTXO is spent. Note: Each UTXO is uniquely identified by tx_id (if non-null) and v_out",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -182,7 +182,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "UTXO output data of Bitcoin",
+            "description": "UTXO output data extracted from colume block of bitcoin_orign.transaction_blocks. Each record of this table records information when a UTXO was created. Note: Each UTXO is uniquely identified by tx_id (if non-null) and n",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -244,7 +244,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Latest balances of all wallets in Bitcoin",
+            "description": "Table containing all UTXOs, aggregate value from bitcoin_balances.utxo_transfer_day table. If this table already exists, then take the data from the current_version of the table and combine it with the new data from the bitcoin_balances.utxo_transfer_day table to get the new result and write it to next_version. The old version data will be deleted after the new version is written.",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -253,7 +253,7 @@
             },
             "code": {
                 "Example": "SELECT * FROM bitcoin_balances.utxo_latest_day LIMIT 100;",
-                "bitcoin_balances/utxo_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.utxo_transfer_day\noutput_table=${chain_name}_balances.utxo_latest_day\nre_partition_by_range=is_spent,key_partition\nwrite_mode=Overwrite\nnumber_index_columns=4\npartition_by=is_spent,key_partition\nmerge_by=key_partition,tx_id,n\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select max(key_partition) as key_partition\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by tx_id, n\n)\n\n${if table_existed} \n\n, all_balances as (\n    select * from new_balances\n    where utxo != 0\n    union all \n    select key_partition\n        , tx_id\n        , n\n        , value\n        , address\n        , utxo\n    from ${output_table}\n    where is_spent = 0\n)\n, balance_agg as (\n    select max(key_partition) as key_partition\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from all_balances\n    group by tx_id, n\n)\n\nselect case \n    when utxo = 0 then 1\n    else 0\n    end as is_spent\n    , * from balance_agg\n\n${else}\n\nSELECT 0 as is_spent, * FROM new_balances\nwhere utxo != 0\n\n${endif}"
+                "bitcoin_balances/utxo_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.utxo_transfer_day\noutput_table=${chain_name}_balances.utxo_latest_day\nre_partition_by_range=version,key_partition\nwrite_mode=Append\nnumber_index_columns=3\npartition_by=version\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select max(address) as address \n        , tx_id\n        , n\n        , max(value) as value\n        , sum(utxo) as utxo\n        , max(key_partition) as key_partition\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by tx_id, n\n)\n\n${if table_existed} \n\n, all_balances as (\n    -- Get the current balance in this table and union with new balance\n    select * from new_balances\n    where utxo != 0\n    union all \n    select address\n        , tx_id\n        , n\n        , value\n        , utxo\n        , key_partition\n    from ${output_table}\n    where version = ${current_version}\n)\n, balance_agg as (\n    select max(address) as address\n        , tx_id\n        , n\n        , max(value) as value\n        , sum(utxo) as utxo\n        , max(key_partition) as key_partition\n    from all_balances\n    group by tx_id, n\n)\n\nselect ${next_version} as version -- Increase to next version\n    , * from balance_agg\n    where utxo != 0 -- Filter spent UTXOs\n\n${else}\n\nSELECT 1 as version -- version = 1 in the first run\n    , * FROM new_balances\n    where utxo != 0 -- Filter spent UTXOs\n\n${endif}"
             },
             "package_name": "bitcoin"
         },
@@ -275,7 +275,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Number of bitcoin transactions per wallet per day",
+            "description": "Table aggregate UTXO by day from bitcoin_balances.utxo_transfer_hour table",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -306,7 +306,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Number of bitcoin transactions per wallet per hour",
+            "description": "Table aggregate UTXO by hour from bitcoin.inputs and bitcoin.outputs table. Use the utxo column to mark if that UTXO was created (utxo = 1) or spent (utxo = -1), after aggregation filter out UTXOs with utxo = 0.",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -316,7 +316,7 @@
             },
             "code": {
                 "Example": "SELECT * FROM bitcoin_balances.utxo_transfer_hour LIMIT 100;",
-                "bitcoin_balances/utxo_transfer_hour.sql": "frequent_type=hour\nlist_input_tables=${chain_name}.inputs,${chain_name}.outputs\noutput_table=${chain_name}_balances.utxo_transfer_hour\ninput_coin_table=${chain_name}.inputs\noutput_coin_table=${chain_name}.outputs\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=2\n\n===\n\nwith input_output as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , tx_id\n        , v_out as n\n        , 0 as value\n        , \"\" as address\n        , -1 as utxo\n    from ${input_coin_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp) \n    and tx_id is not null\n    union all\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , tx_id\n        , n\n        , value\n        , address\n        , 1 as utxo\n    from ${output_coin_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and address is not null \n)\n\n, input_output_hour as (\n    select block_date\n        , block_hour\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from input_output\n    group by block_date, block_hour, tx_id, n\n)\n\nselect block_date\n    , case \n        when address like 'bc1%' then concat(substring(tx_id, 1, 1), substring(address, 1, 5))\n        else concat(substring(tx_id, 1, 1), substring(address, 1, 2))\n    end as key_partition\n    , block_hour\n    , tx_id\n    , n\n    , value\n    , address\n    , utxo\nfrom input_output_hour where utxo != 0\n"
+                "bitcoin_balances/utxo_transfer_hour.sql": "frequent_type=hour\nlist_input_tables=${chain_name}.inputs,${chain_name}.outputs\noutput_table=${chain_name}_balances.utxo_transfer_hour\ninput_coin_table=${chain_name}.inputs\noutput_coin_table=${chain_name}.outputs\nre_partition_by_range=block_date,key_partition\npartition_by=block_date\nwrite_mode=Append\nnumber_index_columns=2\n\n===\n\nwith input_output as (\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , tx_id\n        , v_out as n\n        , 0 as value\n        , \"\" as address\n        , -1 as utxo -- -1 mean UTXO is spent\n    from ${input_coin_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp) \n    and tx_id is not null\n    union all\n    select block_date\n        , date_trunc('hour', block_time) as block_hour\n        , tx_id\n        , n\n        , value\n        , address\n        , 1 as utxo -- 1 mean UTXO was created\n    from ${output_coin_table}\n    where block_time >= cast(${from} as timestamp)\n    and block_time < cast(${to} as timestamp)\n    and address is not null \n)\n\n, input_output_hour as (\n    select block_date\n        , block_hour\n        , tx_id\n        , n\n        , max(value) as value\n        , max(address) as address\n        , sum(utxo) as utxo\n    from input_output\n    group by block_date, block_hour, tx_id, n\n)\n\nselect block_date\n    , case \n        when address like 'bc1%' then concat(substring(tx_id, 1, 1), substring(address, 1, 5))\n        else concat(substring(tx_id, 1, 1), substring(address, 1, 2))\n    end as key_partition\n    , block_hour\n    , tx_id\n    , n\n    , value\n    , address\n    , utxo\nfrom input_output_hour where utxo != 0 -- Filter spent UTXOs\n"
             },
             "package_name": "bitcoin"
         },
@@ -367,7 +367,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Event logs data of Ethereum",
+            "description": "Event logs data of Ethereum. When a transaction is executed on Ethereum, the smart contracts participating in that transaction will emit Events, and Event data is stored in this logs table.",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -398,7 +398,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Traces data of Ethereum",
+            "description": "Traces data of Ethereum, recording data from internal transactions. which is the smallest unit of execution. When a transaction is executed, a sequence of internal transactions is executed.",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -429,7 +429,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Transactions data of Ethereum",
+            "description": "Transactions data of Ethereum, record information of a transaction as it is executed",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -460,7 +460,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Latest NFT balances of all wallets on Ethereum",
+            "description": "Latest NFT balances of all wallets on Ethereum, aggregate total balance from ethereum_balances.nft_transfer_day table",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -469,7 +469,7 @@
             },
             "code": {
                 "Example": "SELECT * FROM ethereum_balances.nft_latest_day LIMIT 100;",
-                "evm_balances/nft_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.nft_transfer_day\noutput_table=${chain_name}_balances.nft_latest_day\nre_partition_by_range=is_change,key_partition\nwrite_mode=Overwrite\nnumber_index_columns=5\npartition_by=is_change,key_partition\nmerge_by=key_partition,nft_type,wallet_address,token_address,token_id\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select key_partition \n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(amount) as balance\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\n${if table_existed}\n\n\n, all_balances as (\n    select 2 as sign, * from new_balances\n    where balance != 0\n    union all \n    select is_change as sign\n        , key_partition\n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , balance\n    from ${output_table}\n)\n\n, balance_agg as (\n    select sum(sign) as sign\n        , key_partition\n        , nft_type\n        , wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(balance) as balance\n    from all_balances\n    group by key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\nselect case \n    when sign = 3 or sign = 2 then 1\n    when sign = 1 then 0\n    end as is_change\n    , key_partition\n    , nft_type\n    , wallet_address\n    , token_address\n    , token_id\n    , symbol\n    , balance\nfrom balance_agg\nwhere sign > 0\n\n${else}\n\nSELECT 0 as is_change, * FROM new_balances\nwhere balance != 0\n\n${endif}\n"
+                "evm_balances/nft_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.nft_transfer_day\noutput_table=${chain_name}_balances.nft_latest_day\nre_partition_by_range=version,key_partition\nwrite_mode=Append\nnumber_index_columns=3\npartition_by=version\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(amount) as balance\n        , nft_type\n        , key_partition\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\n${if table_existed}\n\n\n, all_balances as (\n    select * from new_balances\n    where balance != 0\n    union all \n    select wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , balance\n        , nft_type\n        , key_partition\n    from ${output_table}\n    where version = ${current_version} -- Get current balance in this table and union with new balance\n)\n\n, balance_agg as (\n    select wallet_address\n        , token_address\n        , token_id\n        , symbol\n        , sum(balance) as balance\n        , nft_type\n        , key_partition\n    from all_balances\n    group by key_partition, nft_type, wallet_address, token_address, token_id, symbol\n)\n\nselect ${next_version} as version -- Increase to next version \n    , wallet_address\n    , token_address\n    , token_id\n    , symbol\n    , balance\n    , nft_type\n    , key_partition\nfrom balance_agg\nwhere balance != 0 -- Filter out records if balance = 0\n\n${else}\n\nSELECT 1 as version, * FROM new_balances -- Set version = 1 in first run time\nwhere balance != 0\n\n${endif}\n"
             },
             "package_name": "ethereum"
         },
@@ -522,7 +522,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "NFT transfer group by hour of all wallets on Ethereum",
+            "description": "NFT transfer group by hour of all wallets on Ethereum, which include ERC721 and ERC1155 NFT",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -557,7 +557,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Latest token balances of all wallets on Ethereum",
+            "description": "Latest token balances of all wallets on Ethereum, include ERC20 Token and Ethereum native token",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -566,7 +566,7 @@
             },
             "code": {
                 "Example": "SELECT * FROM ethereum_balances.token_latest_day LIMIT 100;",
-                "evm_balances/token_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.token_transfer_day\noutput_table=${chain_name}_balances.token_latest_day\nre_partition_by_range=is_change,key_partition\nwrite_mode=Overwrite\nnumber_index_columns=5\npartition_by=is_change,key_partition\nmerge_by=key_partition,wallet_address,token_address\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select wallet_address\n        , token_address\n        , symbol\n        , sum(amount) as balance\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by wallet_address, token_address, symbol\n)\n\n${if table_existed}\n\n\n, all_balances as (\n    select 2 as sign, concat(\n            substring(token_address, 1, 3),\n            substring(wallet_address, 1, 3)) as key_partition\n            , * from new_balances\n    where balance != 0\n    union all \n    select is_change as sign\n        , key_partition\n        , wallet_address\n        , token_address\n        , symbol\n        , balance\n    from ${output_table}\n)\n\n, balance_agg as (\n    select sum(sign) as sign\n        , key_partition\n        , wallet_address\n        , token_address\n        , symbol\n        , sum(balance) as balance\n    from all_balances\n    group by key_partition, wallet_address, token_address, symbol\n)\n\nselect case \n    when sign = 3 or sign = 2 then 1\n    when sign = 1 then 1\n    end as is_change\n    , key_partition\n    , wallet_address\n    , token_address\n    , symbol\n    , balance\nfrom balance_agg\nwhere sign > 1\n\n${else}\n\nSELECT 0 as is_change, concat(\n            substring(token_address, 1, 3),\n            substring(wallet_address, 1, 3)\n        ) AS key_partition, * FROM new_balances\nwhere balance != 0\n\n${endif}\n"
+                "evm_balances/token_latest_day.sql": "frequent_type=day\nrepair_mode=false\nlist_input_tables=${chain_name}_balances.token_transfer_day\noutput_table=${chain_name}_balances.token_latest_day\nre_partition_by_range=version,key_partition\nwrite_mode=Append\nnumber_index_columns=3\npartition_by=version\nis_vacuum=true\n\n===\n\nwith new_balances as (\n    select wallet_address\n        , token_address\n        , symbol\n        , sum(amount) as balance\n        , key_partition\n    from ${list_input_tables}\n    where block_date >= cast(${from} as timestamp)\n    and block_date < cast(${to} as timestamp)\n    group by key_partition, wallet_address, token_address, symbol\n)\n\n${if table_existed}\n\n\n, all_balances as (\n    select * from new_balances\n    where balance != 0\n    union all \n    select wallet_address\n        , token_address\n        , symbol\n        , balance\n        , key_partition\n    from ${output_table}\n    where version = ${current_version}\n)\n\n, balance_agg as (\n    select wallet_address\n        , token_address\n        , symbol\n        , sum(balance) as balance\n        , key_partition\n    from all_balances\n    group by key_partition, wallet_address, token_address, symbol\n)\n\nselect ${next_version} as version\n    , wallet_address\n    , token_address\n    , symbol\n    , balance\n    , key_partition\nfrom balance_agg\nwhere balance != 0\n\n${else}\n\nSELECT 1 as version, * FROM new_balances\nwhere balance != 0\n\n${endif}\n"
             },
             "package_name": "ethereum"
         },
@@ -588,7 +588,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Token transfer group by day of all wallets on Ethereum",
+            "description": "Token transfer group by day of all wallets on Ethereum, include ERC20 Token and Ethereum native token",
             "depends_on": {
                 "macros": [],
                 "nodes": [
@@ -619,7 +619,7 @@
                 "enabled": true
             },
             "tags": [],
-            "description": "Token transfer group by hour of all wallets on Ethereum",
+            "description": "Token transfer group by hour of all wallets on Ethereum, include ERC20 Token and Ethereum native token",
             "depends_on": {
                 "macros": [],
                 "nodes": [

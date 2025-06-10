@@ -21,19 +21,22 @@
                     "index": 1,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "ETHBTC"
+                    "description": "Symbol of exchange pair",
+                    "example": "ETHBTC"
                 },
                 "base_asset": {
                     "index": 2,
                     "name": "base_asset",
                     "type": "varchar",
-                    "description": "ETH"
+                    "description": "Acts as commodity in exchange pair",
+                    "example": "ETH"
                 },
                 "quote_asset": {
                     "index": 3,
                     "name": "quote_asset",
                     "type": "varchar",
-                    "description": "BTC"
+                    "description": "Acts as currency in exchange pair",
+                    "example": "BTC"
                 }
             },
             "stats": {},
@@ -53,85 +56,97 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-04-26"
+                    "description": "Date of record",
+                    "example": "2025-04-26"
                 },
                 "block_minute": {
                     "index": 2,
                     "name": "block_minute",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-04-26 16:31:00+00:00"
+                    "description": "Minute of record",
+                    "example": "2025-04-26 16:31:00+00:00"
                 },
                 "symbol": {
                     "index": 3,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "WLDUSDT"
+                    "description": "Symbol of Exchange pair, refer to symbol of cex_binance.exchange_info table",
+                    "example": "WLDUSDT"
                 },
                 "base_asset": {
                     "index": 4,
                     "name": "base_asset",
                     "type": "varchar",
-                    "description": "WLD"
+                    "description": "Acts as commodity in exchange pair, refer to base_asset of cex_binance.exchange_info table",
+                    "example": "WLD"
                 },
                 "quote_asset": {
                     "index": 5,
                     "name": "quote_asset",
                     "type": "varchar",
-                    "description": "USDT"
+                    "description": "Acts as currency in exchange pair, refer to quote_asset of cex_binance.exchange_info table",
+                    "example": "USDT"
                 },
                 "open_price": {
                     "index": 6,
                     "name": "open_price",
                     "type": "double",
-                    "description": "1.109"
+                    "description": "Open exchange price of base_asset to quote_asset",
+                    "example": "1.109"
                 },
                 "high_price": {
                     "index": 7,
                     "name": "high_price",
                     "type": "double",
-                    "description": "1.109"
+                    "description": "Highest exchange price of base_asset to quote_asset",
+                    "example": "1.109"
                 },
                 "low_price": {
                     "index": 8,
                     "name": "low_price",
                     "type": "double",
-                    "description": "1.105"
+                    "description": "Lowest exchange price of base_asset to quote_asset",
+                    "example": "1.105"
                 },
                 "close_price": {
                     "index": 9,
                     "name": "close_price",
                     "type": "double",
-                    "description": "1.105"
+                    "description": "Close exchange price of base_asset to quote_asset",
+                    "example": "1.105"
                 },
                 "volume": {
                     "index": 10,
                     "name": "volume",
                     "type": "double",
-                    "description": "12913.5"
+                    "description": "base_asset exchange volume ",
+                    "example": "12913.5"
                 },
                 "quote_volume": {
                     "index": 11,
                     "name": "quote_volume",
                     "type": "double",
-                    "description": "14311.7963"
+                    "description": "quote_asset exchange volume ",
+                    "example": "14311.7963"
                 },
                 "number_trades": {
                     "index": 12,
                     "name": "number_trades",
                     "type": "integer",
-                    "description": "143"
+                    "description": "Total trades in the miniute of record",
+                    "example": "143"
                 },
                 "taker_buy_base_volume": {
                     "index": 13,
                     "name": "taker_buy_base_volume",
                     "type": "double",
-                    "description": "4109.0"
+                    "example": "4109.0"
                 },
                 "taker_buy_quote_volume": {
                     "index": 14,
                     "name": "taker_buy_quote_volume",
                     "type": "double",
-                    "description": "4553.634"
+                    "example": "4553.634"
                 }
             },
             "stats": {},
@@ -151,55 +166,55 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-04-25"
+                    "example": "2025-04-25"
                 },
                 "block_minute": {
                     "index": 2,
                     "name": "block_minute",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-04-25 20:32:00+00:00"
+                    "example": "2025-04-25 20:32:00+00:00"
                 },
                 "symbol": {
                     "index": 3,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "NEXOUSDT"
+                    "example": "NEXOUSDT"
                 },
                 "base_asset": {
                     "index": 4,
                     "name": "base_asset",
                     "type": "varchar",
-                    "description": "NEXO"
+                    "example": "NEXO"
                 },
                 "open_price": {
                     "index": 5,
                     "name": "open_price",
                     "type": "double",
-                    "description": "1.124"
+                    "example": "1.124"
                 },
                 "quote_volume": {
                     "index": 6,
                     "name": "quote_volume",
                     "type": "double",
-                    "description": "621.82479"
+                    "example": "621.82479"
                 },
                 "24h_volume": {
                     "index": 7,
                     "name": "24h_volume",
                     "type": "double",
-                    "description": "35976.61628000001"
+                    "example": "35976.61628000001"
                 },
                 "24h_coin_volume": {
                     "index": 8,
                     "name": "24h_coin_volume",
                     "type": "double",
-                    "description": "32145.109999999997"
+                    "example": "32145.109999999997"
                 },
                 "24h_avg_price": {
                     "index": 9,
                     "name": "24h_avg_price",
                     "type": "double",
-                    "description": "1.119194063420533"
+                    "example": "1.119194063420533"
                 }
             },
             "stats": {},
@@ -219,103 +234,103 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2023-02-25"
+                    "example": "2023-02-25"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "778200"
+                    "example": "778200"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2023-02-25 06:01:23+00:00"
+                    "example": "2023-02-25 06:01:23+00:00"
                 },
                 "hash": {
                     "index": 4,
                     "name": "hash",
                     "type": "varchar",
-                    "description": "000000000000000000031a3b1060786fb206ff49fdf375bbf79c89ac765c4065"
+                    "example": "000000000000000000031a3b1060786fb206ff49fdf375bbf79c89ac765c4065"
                 },
                 "size": {
                     "index": 5,
                     "name": "size",
                     "type": "bigint",
-                    "description": "2340547"
+                    "example": "2340547"
                 },
                 "stripped_size": {
                     "index": 6,
                     "name": "stripped_size",
                     "type": "bigint",
-                    "description": "550920"
+                    "example": "550920"
                 },
                 "weight": {
                     "index": 7,
                     "name": "weight",
                     "type": "bigint",
-                    "description": "3993307"
+                    "example": "3993307"
                 },
                 "version": {
                     "index": 8,
                     "name": "version",
                     "type": "bigint",
-                    "description": "549453824"
+                    "example": "549453824"
                 },
                 "version_hex": {
                     "index": 9,
                     "name": "version_hex",
                     "type": "varchar",
-                    "description": "20c00000"
+                    "example": "20c00000"
                 },
                 "merkle_root": {
                     "index": 10,
                     "name": "merkle_root",
                     "type": "varchar",
-                    "description": "7585227ab4b419c2d5c58db9157ed3bfad553be5538cfe55752834aeaeeb0eee"
+                    "example": "7585227ab4b419c2d5c58db9157ed3bfad553be5538cfe55752834aeaeeb0eee"
                 },
                 "median_time": {
                     "index": 11,
                     "name": "median_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2023-02-25 05:12:08+00:00"
+                    "example": "2023-02-25 05:12:08+00:00"
                 },
                 "nonce": {
                     "index": 12,
                     "name": "nonce",
                     "type": "bigint",
-                    "description": "2474329745"
+                    "example": "2474329745"
                 },
                 "bits": {
                     "index": 13,
                     "name": "bits",
                     "type": "varchar",
-                    "description": "170689a3"
+                    "example": "170689a3"
                 },
                 "difficulty": {
                     "index": 14,
                     "name": "difficulty",
                     "type": "double",
-                    "description": "43053844193928.45"
+                    "example": "43053844193928.45"
                 },
                 "chain_work": {
                     "index": 15,
                     "name": "chain_work",
                     "type": "varchar",
-                    "description": "000000000000000000000000000000000000000041122fb8f21637a8f8c69e6c"
+                    "example": "000000000000000000000000000000000000000041122fb8f21637a8f8c69e6c"
                 },
                 "n_tx": {
                     "index": 16,
                     "name": "n_tx",
                     "type": "bigint",
-                    "description": "1244"
+                    "example": "1244"
                 },
                 "previous_block_hash": {
                     "index": 17,
                     "name": "previous_block_hash",
                     "type": "varchar",
-                    "description": "000000000000000000057af3a1558099a1aa3bbdd2e4912e57d05d7d4c2bd83a"
+                    "example": "000000000000000000057af3a1558099a1aa3bbdd2e4912e57d05d7d4c2bd83a"
                 }
             },
             "stats": {},
@@ -335,67 +350,73 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2022-09-27"
+                    "description": "Date when UTXO is spent",
+                    "example": "2022-09-27"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "755982"
+                    "description": "Block number of transaction when UTXO is spent",
+                    "example": "755982"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2022-09-27 23:17:08+00:00"
+                    "description": "Time of transaction when UTXO is spent",
+                    "example": "2022-09-27 23:17:08+00:00"
                 },
                 "burn_tx_id": {
                     "index": 4,
                     "name": "burn_tx_id",
                     "type": "varchar",
-                    "description": "cee61a8d2ef73ce128ab0bb9783499dc38f89b63fcba4e0a267e2bf8b59a2dd7"
+                    "description": "Hash of transaction when UTXO is spent",
+                    "example": "cee61a8d2ef73ce128ab0bb9783499dc38f89b63fcba4e0a267e2bf8b59a2dd7"
                 },
                 "tx_id": {
                     "index": 5,
                     "name": "tx_id",
                     "type": "varchar",
-                    "description": "None"
+                    "description": "Hash of transaction when UTXO was created",
+                    "example": "None"
                 },
                 "coinbase": {
                     "index": 6,
                     "name": "coinbase",
                     "type": "varchar",
-                    "description": "030e890b04758433632f466f756e6472792055534120506f6f6c202364726f70676f6c642f0f5228130000643852000000"
+                    "example": "030e890b04758433632f466f756e6472792055534120506f6f6c202364726f70676f6c642f0f5228130000643852000000"
                 },
                 "v_out": {
                     "index": 7,
                     "name": "v_out",
                     "type": "bigint",
-                    "description": "0"
+                    "description": "The order of UTXO in transaction creates itself",
+                    "example": "0"
                 },
                 "script_sig_asm": {
                     "index": 8,
                     "name": "script_sig_asm",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "script_sig_hex": {
                     "index": 9,
                     "name": "script_sig_hex",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "sequence": {
                     "index": 10,
                     "name": "sequence",
                     "type": "bigint",
-                    "description": "4294967295"
+                    "example": "4294967295"
                 },
                 "tx_in_witness": {
                     "index": 11,
                     "name": "tx_in_witness",
                     "type": "array(varchar)",
-                    "description": "['0000000000000000000000000000000000000000000000000000000000000000']"
+                    "example": "['0000000000000000000000000000000000000000000000000000000000000000']"
                 }
             },
             "stats": {},
@@ -415,73 +436,80 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2022-07-21"
+                    "description": "Date when UTXO was created",
+                    "example": "2022-07-21"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "745863"
+                    "description": "Block number of transactions when UTXO was created",
+                    "example": "745863"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2022-07-21 08:26:34+00:00"
+                    "description": "Time of transaction when UTXO was created",
+                    "example": "2022-07-21 08:26:34+00:00"
                 },
                 "tx_id": {
                     "index": 4,
                     "name": "tx_id",
                     "type": "varchar",
-                    "description": "2cafdf78acba5cce560f5f66f5951c35cd20f2a3928ecbcbf892481d07c85df0"
+                    "description": "Hash of transaction when UTXO was created",
+                    "example": "2cafdf78acba5cce560f5f66f5951c35cd20f2a3928ecbcbf892481d07c85df0"
                 },
                 "n": {
                     "index": 5,
                     "name": "n",
                     "type": "bigint",
-                    "description": "0"
+                    "description": "The order of UTXO in transaction creates itself",
+                    "example": "0"
                 },
                 "value": {
                     "index": 6,
                     "name": "value",
                     "type": "double",
-                    "description": "6.34668035"
+                    "description": "Number of Satoshi in UTXO ~ value of this UTXO, (1 Bitcoin = 10^8 Satoshi)",
+                    "example": "6.34668035"
                 },
                 "script_pub_key_asm": {
                     "index": 7,
                     "name": "script_pub_key_asm",
                     "type": "varchar",
-                    "description": "OP_HASH160 ca35b1f4d02907314852f09935b9604507f8d700 OP_EQUAL"
+                    "example": "OP_HASH160 ca35b1f4d02907314852f09935b9604507f8d700 OP_EQUAL"
                 },
                 "script_pub_key_hex": {
                     "index": 8,
                     "name": "script_pub_key_hex",
                     "type": "varchar",
-                    "description": "a914ca35b1f4d02907314852f09935b9604507f8d70087"
+                    "example": "a914ca35b1f4d02907314852f09935b9604507f8d70087"
                 },
                 "script_pub_key_req_sigs": {
                     "index": 9,
                     "name": "script_pub_key_req_sigs",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "type": {
                     "index": 10,
                     "name": "type",
                     "type": "varchar",
-                    "description": "scripthash"
+                    "example": "scripthash"
                 },
                 "addresses": {
                     "index": 11,
                     "name": "addresses",
                     "type": "array(varchar)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "address": {
                     "index": 12,
                     "name": "address",
                     "type": "varchar",
-                    "description": "3L8Ck6bm3sve1vJGKo6Ht2k167YKSKi8TZ"
+                    "description": "Wallet address holds this UTXO",
+                    "example": "3L8Ck6bm3sve1vJGKo6Ht2k167YKSKi8TZ"
                 }
             },
             "stats": {},
@@ -501,85 +529,85 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2022-12-25"
+                    "example": "2022-12-25"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "768779"
+                    "example": "768779"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2022-12-25 00:16:44+00:00"
+                    "example": "2022-12-25 00:16:44+00:00"
                 },
                 "in_active_chain": {
                     "index": 4,
                     "name": "in_active_chain",
                     "type": "boolean",
-                    "description": "False"
+                    "example": "False"
                 },
                 "hex": {
                     "index": 5,
                     "name": "hex",
                     "type": "varchar",
-                    "description": "010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff58030bbb0b1b4d"
+                    "example": "010000000001010000000000000000000000000000000000000000000000000000000000000000ffffffff58030bbb0b1b4d"
                 },
                 "tx_id": {
                     "index": 6,
                     "name": "tx_id",
                     "type": "varchar",
-                    "description": "89a9af05568cd7a2f3def01cc21493abe559434ccd5d2905f4e8939b2971d365"
+                    "example": "89a9af05568cd7a2f3def01cc21493abe559434ccd5d2905f4e8939b2971d365"
                 },
                 "hash": {
                     "index": 7,
                     "name": "hash",
                     "type": "varchar",
-                    "description": "3cba4efdf348210eb68e362071271ee3403f3b34f907611007f900f59c34e299"
+                    "example": "3cba4efdf348210eb68e362071271ee3403f3b34f907611007f900f59c34e299"
                 },
                 "size": {
                     "index": 8,
                     "name": "size",
                     "type": "bigint",
-                    "description": "306"
+                    "example": "306"
                 },
                 "v_size": {
                     "index": 9,
                     "name": "v_size",
                     "type": "bigint",
-                    "description": "279"
+                    "example": "279"
                 },
                 "weight": {
                     "index": 10,
                     "name": "weight",
                     "type": "bigint",
-                    "description": "1116"
+                    "example": "1116"
                 },
                 "version": {
                     "index": 11,
                     "name": "version",
                     "type": "bigint",
-                    "description": "1"
+                    "example": "1"
                 },
                 "lock_time": {
                     "index": 12,
                     "name": "lock_time",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "block_hash": {
                     "index": 13,
                     "name": "block_hash",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "fee": {
                     "index": 14,
                     "name": "fee",
                     "type": "double",
-                    "description": "0.0"
+                    "example": "0.0"
                 }
             },
             "stats": {},
@@ -595,47 +623,53 @@
                 "owner": "Chainslake"
             },
             "columns": {
-                "is_spent": {
+                "version": {
                     "index": 1,
-                    "name": "is_spent",
+                    "name": "version",
                     "type": "integer",
-                    "description": "1"
+                    "description": "Version of data, table only keeps the latest version",
+                    "example": "25"
                 },
-                "key_partition": {
+                "address": {
                     "index": 2,
-                    "name": "key_partition",
+                    "name": "address",
                     "type": "varchar",
-                    "description": "01D"
+                    "description": "Wallet address holds this UTXO",
+                    "example": "bc1qtnhyffcphwehznnuhryjpmqlm704kz2l5n6lqy"
                 },
                 "tx_id": {
                     "index": 3,
                     "name": "tx_id",
                     "type": "varchar",
-                    "description": "028ad3e0ba6ac3fa62e76c4f1868091c38ab85455252efdd0b851093e87a39aa"
+                    "description": "Hash of transaction when UTXO was created",
+                    "example": "ca36c89e1c392fc49c8647194cdbf03f312222f45f810cd9a34119c835e1e09c"
                 },
                 "n": {
                     "index": 4,
                     "name": "n",
                     "type": "bigint",
-                    "description": "0"
+                    "description": "The order of UTXO in transaction creates itself",
+                    "example": "0"
                 },
                 "value": {
                     "index": 5,
                     "name": "value",
                     "type": "double",
-                    "description": "0.00100556"
-                },
-                "address": {
-                    "index": 6,
-                    "name": "address",
-                    "type": "varchar",
-                    "description": "1DdebKP5B2fXJncVgbMum3HsgcLqa5fwFK"
+                    "description": "Bitcoin value of this UTXO",
+                    "example": "3.3e-06"
                 },
                 "utxo": {
-                    "index": 7,
+                    "index": 6,
                     "name": "utxo",
                     "type": "bigint",
-                    "description": "0"
+                    "description": "UTXO is spent or not. 1: mean UTXO was created, -1: mean UTXO has been spent",
+                    "example": "1"
+                },
+                "key_partition": {
+                    "index": 7,
+                    "name": "key_partition",
+                    "type": "varchar",
+                    "example": "cbc1qt"
                 }
             },
             "stats": {},
@@ -655,43 +689,49 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2022-12-17"
+                    "description": "Date of a UTXO when created or spent", 
+                    "example": "2022-12-17"
                 },
                 "key_partition": {
                     "index": 2,
                     "name": "key_partition",
                     "type": "varchar",
-                    "description": "fbc1qd"
+                    "example": "fbc1qd"
                 },
                 "tx_id": {
                     "index": 3,
                     "name": "tx_id",
                     "type": "varchar",
-                    "description": "f14bf63604e28dc06863380b57dcfd50c63352d551b4d19dcb7d6327d25b36c8"
+                    "description": "Hash of transaction when UTXO was created",
+                    "example": "f14bf63604e28dc06863380b57dcfd50c63352d551b4d19dcb7d6327d25b36c8"
                 },
                 "n": {
                     "index": 4,
                     "name": "n",
                     "type": "bigint",
-                    "description": "6"
+                    "description": "The order of UTXO in transaction creates itself",
+                    "example": "6"
                 },
                 "value": {
                     "index": 5,
                     "name": "value",
                     "type": "double",
-                    "description": "0.00029849"
+                    "description": "Bitcoin value of this UTXO",
+                    "example": "0.00029849"
                 },
                 "address": {
                     "index": 6,
                     "name": "address",
                     "type": "varchar",
-                    "description": "bc1qdezudpkuu9nfyqqqfyp5teznlen7sn973ua9vm"
+                    "description": "Wallet address holds this UTXO",
+                    "example": "bc1qdezudpkuu9nfyqqqfyp5teznlen7sn973ua9vm"
                 },
                 "utxo": {
                     "index": 7,
                     "name": "utxo",
                     "type": "bigint",
-                    "description": "1"
+                    "description": "UTXO is spent or not. 1: mean UTXO was created, -1: mean UTXO has been spent",
+                    "example": "1"
                 }
             },
             "stats": {},
@@ -711,49 +751,56 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2022-11-02"
+                    "description": "Date of a UTXO when created or spent",
+                    "example": "2022-11-02"
                 },
                 "key_partition": {
                     "index": 2,
                     "name": "key_partition",
                     "type": "varchar",
-                    "description": "fbc1q4"
+                    "example": "fbc1q4"
                 },
                 "block_hour": {
                     "index": 3,
                     "name": "block_hour",
+                    "description": "Hour of a UTXO when created or spent",
                     "type": "timestamp(3) with time zone",
-                    "description": "2022-11-02 00:00:00+00:00"
+                    "example": "2022-11-02 00:00:00+00:00"
                 },
                 "tx_id": {
                     "index": 4,
                     "name": "tx_id",
                     "type": "varchar",
-                    "description": "f20a798665da17df41f90971f13ee365d1bd921c46590d6a3f62b98f43028a81"
+                    "description": "Hash of transaction when UTXO was created",
+                    "example": "f20a798665da17df41f90971f13ee365d1bd921c46590d6a3f62b98f43028a81"
                 },
                 "n": {
                     "index": 5,
                     "name": "n",
+                    "description": "The order of UTXO in transaction creates itself",
                     "type": "bigint",
-                    "description": "195"
+                    "example": "195"
                 },
                 "value": {
                     "index": 6,
                     "name": "value",
                     "type": "double",
-                    "description": "0.00016384"
+                    "description": "Bitcoin value of this UTXO",
+                    "example": "0.00016384"
                 },
                 "address": {
                     "index": 7,
                     "name": "address",
                     "type": "varchar",
-                    "description": "bc1q4jyj9gtz0a6u2vgwl08tgfk3q84fy9a4k499ex"
+                    "description": "Wallet address holds this UTXO",
+                    "example": "bc1q4jyj9gtz0a6u2vgwl08tgfk3q84fy9a4k499ex"
                 },
                 "utxo": {
                     "index": 8,
                     "name": "utxo",
                     "type": "bigint",
-                    "description": "1"
+                    "description": "UTXO is spent or not. 1: mean UTXO was created, -1: mean UTXO has been spent",
+                    "example": "1"
                 }
             },
             "stats": {},
@@ -773,25 +820,25 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2022-08-09"
+                    "example": "2022-08-09"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "748753"
+                    "example": "748753"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2022-08-09 23:54:28+00:00"
+                    "example": "2022-08-09 23:54:28+00:00"
                 },
                 "block": {
                     "index": 4,
                     "name": "block",
                     "type": "varchar",
-                    "description": "{\"result\":{\"hash\":\"00000000000000000002bb8c7b51a317568839c562b6f1263b1dab93b7b91df1\",\"confirmations\""
+                    "example": "{\"result\":{\"hash\":\"00000000000000000002bb8c7b51a317568839c562b6f1263b1dab93b7b91df1\",\"confirmations\""
                 }
             },
             "stats": {},
@@ -811,85 +858,91 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-09-01"
+                    "description": "Date when the event log is emitted",
+                    "example": "2015-09-01"
                 },
                 "block_time": {
                     "index": 2,
                     "name": "block_time",
+                    "description": "Time when the event log is emitted",
                     "type": "timestamp(3) with time zone",
-                    "description": "2015-09-01 07:43:32+00:00"
+                    "example": "2015-09-01 07:43:32+00:00"
                 },
                 "block_number": {
                     "index": 3,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "171642"
+                    "description": "Blocknumber of transaction when the event log is emitted",
+                    "example": "171642"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-08-24 09:44:00.842000+00:00"
+                    "example": "2024-08-24 09:44:00.842000+00:00"
                 },
                 "block_hash": {
                     "index": 5,
                     "name": "block_hash",
                     "type": "varchar",
-                    "description": "0x806cfd3130200ecd96aa56262ec752101314dc5aef749055c1f4c7641ce6430e"
+                    "example": "0x806cfd3130200ecd96aa56262ec752101314dc5aef749055c1f4c7641ce6430e"
                 },
                 "contract_address": {
                     "index": 6,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x0155ce35fe73249fa5d6a29f3b4b7b98732eb2ed"
+                    "description": "Address of contract emitted the event log",
+                    "example": "0x0155ce35fe73249fa5d6a29f3b4b7b98732eb2ed"
                 },
                 "topic1": {
                     "index": 7,
                     "name": "topic1",
                     "type": "varchar",
-                    "description": "0xf82c50f1848136e6c140b186ea0c768b7deda5efffe42c25e96336a90b26c744"
+                    "description": "Singature of Event log, helps distinguish different types of event logs", 
+                    "example": "0xf82c50f1848136e6c140b186ea0c768b7deda5efffe42c25e96336a90b26c744"
                 },
                 "topic2": {
                     "index": 8,
                     "name": "topic2",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "topic3": {
                     "index": 9,
                     "name": "topic3",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "topic4": {
                     "index": 10,
                     "name": "topic4",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "data": {
                     "index": 11,
                     "name": "data",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000000000000000000000000003"
+                    "example": "0x0000000000000000000000000000000000000000000000000000000000000003"
                 },
                 "tx_hash": {
                     "index": 12,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0xd0e17da90f5a43cf5c050f0893f88adc0de1ee27ae859b3cc49ef9c18dd63013"
+                    "description": "Hash of transaction when the event log is emitted",
+                    "example": "0xd0e17da90f5a43cf5c050f0893f88adc0de1ee27ae859b3cc49ef9c18dd63013"
                 },
                 "index": {
                     "index": 13,
                     "name": "index",
                     "type": "integer",
-                    "description": "0"
+                    "example": "0"
                 },
                 "tx_index": {
                     "index": 14,
                     "name": "tx_index",
                     "type": "integer",
-                    "description": "0"
+                    "example": "0"
                 }
             },
             "stats": {},
@@ -909,109 +962,118 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2016-10-23"
+                    "description": "Date when the transaction is executed",
+                    "example": "2016-10-23"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "2489977"
+                    "description": "Blocknumber of transaction",
+                    "example": "2489977"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2016-10-23 00:02:05+00:00"
+                    "description": "Time when the transaction is executed",
+                    "example": "2016-10-23 00:02:05+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-09-14 05:33:44.622000+00:00"
+                    "example": "2024-09-14 05:33:44.622000+00:00"
                 },
                 "tx_hash": {
                     "index": 5,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0xccf3c39164c502d399be61cd976a8e88bbbf54e6f5d3ee2c1890bda713fd36c4"
+                    "description": "Hash of transaction",
+                    "example": "0xccf3c39164c502d399be61cd976a8e88bbbf54e6f5d3ee2c1890bda713fd36c4"
                 },
                 "block_hash": {
                     "index": 6,
                     "name": "block_hash",
                     "type": "varchar",
-                    "description": "0x68b7f47ca23b68efb548c53972c04865dc0b89331769081c907e8d3d7e1b2857"
+                    "example": "0x68b7f47ca23b68efb548c53972c04865dc0b89331769081c907e8d3d7e1b2857"
                 },
                 "method_id": {
                     "index": 7,
                     "name": "method_id",
                     "type": "varchar",
-                    "description": "0x8b147245"
+                    "description": "Method id of this internal transaction, helps distinguish between types of internal transactions",
+                    "example": "0x8b147245"
                 },
                 "gas": {
                     "index": 8,
                     "name": "gas",
                     "type": "decimal(38,0)",
-                    "description": "28456.0"
+                    "example": "28456.0"
                 },
                 "gas_used": {
                     "index": 9,
                     "name": "gas_used",
                     "type": "decimal(38,0)",
-                    "description": "5432.0"
+                    "example": "5432.0"
                 },
                 "from": {
                     "index": 10,
                     "name": "from",
                     "type": "varchar",
-                    "description": "0x5ce174e21ec9e29af1132c606f41305e2905f1db"
+                    "description": "Sending Address",
+                    "example": "0x5ce174e21ec9e29af1132c606f41305e2905f1db"
                 },
                 "to": {
                     "index": 11,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0x3f28fb687a9fe6a15769f7f4b745e9133a375aa1"
+                    "description": "Receiving Address",
+                    "example": "0x3f28fb687a9fe6a15769f7f4b745e9133a375aa1"
                 },
                 "input": {
                     "index": 12,
                     "name": "input",
                     "type": "varchar",
-                    "description": "0x8b147245302e3431"
+                    "example": "0x8b147245302e3431"
                 },
                 "output": {
                     "index": 13,
                     "name": "output",
                     "type": "varchar",
-                    "description": "0x"
+                    "example": "0x"
                 },
                 "value": {
                     "index": 14,
                     "name": "value",
                     "type": "decimal(38,0)",
-                    "description": "0.0"
+                    "description": "Transfer value in wei, 1 Ether = 10^18 wei",
+                    "example": "0.0"
                 },
                 "type": {
                     "index": 15,
                     "name": "type",
                     "type": "varchar",
-                    "description": "call"
+                    "example": "call"
                 },
                 "sub_traces": {
                     "index": 16,
                     "name": "sub_traces",
                     "type": "integer",
-                    "description": "0"
+                    "example": "0"
                 },
                 "trace_address": {
                     "index": 17,
                     "name": "trace_address",
                     "type": "array(integer)",
-                    "description": "[]"
+                    "example": "[]"
                 },
                 "success": {
                     "index": 18,
                     "name": "success",
                     "type": "boolean",
-                    "description": "True"
+                    "description": "Transaction is success or not",
+                    "example": "True"
                 }
             },
             "stats": {},
@@ -1031,133 +1093,142 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-09-25"
+                    "description": "Date when the transaction is executed",
+                    "example": "2015-09-25"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "285658"
+                    "description": "Blocknumber of transaction",
+                    "example": "285658"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2015-09-25 00:13:13+00:00"
+                    "description": "Time when the transaction is executed",
+                    "example": "2015-09-25 00:13:13+00:00"
                 },
                 "hash": {
                     "index": 4,
                     "name": "hash",
                     "type": "varchar",
-                    "description": "0xc35cdb878dbe09d2a84384eb87c6f8f9f2b9dcb093fbc3a5247dba4c05312e67"
+                    "description": "Hash of transaction",
+                    "example": "0xc35cdb878dbe09d2a84384eb87c6f8f9f2b9dcb093fbc3a5247dba4c05312e67"
                 },
                 "updated_time": {
                     "index": 5,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-08-24 13:05:43.353000+00:00"
+                    "example": "2024-08-24 13:05:43.353000+00:00"
                 },
                 "access_list": {
                     "index": 6,
                     "name": "access_list",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "block_hash": {
                     "index": 7,
                     "name": "block_hash",
                     "type": "varchar",
-                    "description": "0x80e1b1b6f818940bed8816964e7c124893e9c11d0df200018baf562470e69f5e"
+                    "example": "0x80e1b1b6f818940bed8816964e7c124893e9c11d0df200018baf562470e69f5e"
                 },
                 "method_id": {
                     "index": 8,
                     "name": "method_id",
                     "type": "varchar",
-                    "description": "None"
+                    "description": "Method id of this transaction, helps distinguish between types of transactions",
+                    "example": "None"
                 },
                 "data": {
                     "index": 9,
                     "name": "data",
                     "type": "varchar",
-                    "description": "0x"
+                    "example": "0x"
                 },
                 "from": {
                     "index": 10,
                     "name": "from",
                     "type": "varchar",
-                    "description": "0x2a65aca4d5fc5b5c859090a6c34d164135398226"
+                    "description": "Wallet address which created and required to execute transaction",
+                    "example": "0x2a65aca4d5fc5b5c859090a6c34d164135398226"
                 },
                 "gas_limit": {
                     "index": 11,
                     "name": "gas_limit",
                     "type": "decimal(38,0)",
-                    "description": "90000.0"
+                    "example": "90000.0"
                 },
                 "gas_price": {
                     "index": 12,
                     "name": "gas_price",
                     "type": "decimal(38,0)",
-                    "description": "50000000000.0"
+                    "example": "50000000000.0"
                 },
                 "gas_used": {
                     "index": 13,
                     "name": "gas_used",
                     "type": "decimal(38,0)",
-                    "description": "21000.0"
+                    "example": "21000.0"
                 },
                 "index": {
                     "index": 14,
                     "name": "index",
                     "type": "decimal(38,0)",
-                    "description": "0.0"
+                    "example": "0.0"
                 },
                 "max_fee_per_gas": {
                     "index": 15,
                     "name": "max_fee_per_gas",
                     "type": "decimal(38,0)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "max_priority_fee_per_gas": {
                     "index": 16,
                     "name": "max_priority_fee_per_gas",
                     "type": "decimal(38,0)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "nonce": {
                     "index": 17,
                     "name": "nonce",
                     "type": "decimal(38,0)",
-                    "description": "639.0"
+                    "example": "639.0"
                 },
                 "priority_fee_per_gas": {
                     "index": 18,
                     "name": "priority_fee_per_gas",
                     "type": "decimal(38,0)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "success": {
                     "index": 19,
                     "name": "success",
                     "type": "boolean",
-                    "description": "True"
+                    "description": "Transaction is success or not",
+                    "example": "True"
                 },
                 "to": {
                     "index": 20,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0xbf816462aac1d651abb61d12dbe60a49a9bd96cc"
+                    "description": "Transaction receiving Address",
+                    "example": "0xbf816462aac1d651abb61d12dbe60a49a9bd96cc"
                 },
                 "type": {
                     "index": 21,
                     "name": "type",
                     "type": "varchar",
-                    "description": "0x0"
+                    "example": "0x0"
                 },
                 "value": {
                     "index": 22,
                     "name": "value",
                     "type": "decimal(38,18)",
-                    "description": "2.96406322e+18"
+                    "description": "Transfer value in wei, 1 Ether = 10^18 wei",
+                    "example": "2.96406322e+18"
                 }
             },
             "stats": {},
@@ -1173,53 +1244,60 @@
                 "owner": "Chainslake"
             },
             "columns": {
-                "is_change": {
+                "version": {
                     "index": 1,
-                    "name": "is_change",
+                    "name": "version",
                     "type": "integer",
-                    "description": "1"
-                },
-                "key_partition": {
-                    "index": 2,
-                    "name": "key_partition",
-                    "type": "varchar",
-                    "description": "0xa0x5"
-                },
-                "nft_type": {
-                    "index": 3,
-                    "name": "nft_type",
-                    "type": "varchar",
-                    "description": "ERC721"
+                    "description": "Version of data, table only keeps the latest version",
+                    "example": "10"
                 },
                 "wallet_address": {
-                    "index": 4,
+                    "index": 2,
                     "name": "wallet_address",
                     "type": "varchar",
-                    "description": "0x5004b9e9094ca2e193bfecc9e3792a8ff0adf807"
+                    "description": "Address of holder",
+                    "example": "0x2a2b13131296294a1e70c2126f8e61c9b7aa18cf"
                 },
                 "token_address": {
-                    "index": 5,
+                    "index": 3,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xa08126f5e1ed91a635987071e6ff5eb2aeb67c48"
+                    "description": "Address of NFT contract",
+                    "example": "0x6fd8e343c107a24bd6b8ac19b56d9aeb967c0131"
                 },
                 "token_id": {
-                    "index": 6,
+                    "index": 4,
                     "name": "token_id",
                     "type": "varchar",
-                    "description": "800"
+                    "description": "Token ID of NFT",
+                    "example": "1415"
                 },
                 "symbol": {
-                    "index": 7,
+                    "index": 5,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "GLXY"
+                    "description": "Symbol of NFT",
+                    "example": "$RGBT"
                 },
                 "balance": {
-                    "index": 8,
+                    "index": 6,
                     "name": "balance",
                     "type": "double",
-                    "description": "-1.0"
+                    "description": "Balance of NFT that holder is holding",
+                    "example": "1.0"
+                },
+                "nft_type": {
+                    "index": 7,
+                    "name": "nft_type",
+                    "type": "varchar",
+                    "description": "Type of NFT: ERC721 or ERC1155",
+                    "example": "ERC721"
+                },
+                "key_partition": {
+                    "index": 8,
+                    "name": "key_partition",
+                    "type": "varchar",
+                    "example": "0x60x2"
                 }
             },
             "stats": {},
@@ -1239,49 +1317,56 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2021-07-15"
+                    "description": "Date of record",
+                    "example": "2021-07-15"
                 },
                 "key_partition": {
                     "index": 2,
                     "name": "key_partition",
                     "type": "varchar",
-                    "description": "0xa0x9"
+                    "example": "0xa0x9"
                 },
                 "nft_type": {
                     "index": 3,
                     "name": "nft_type",
                     "type": "varchar",
-                    "description": "ERC721"
+                    "description": "Type of NFT: ERC721 or ERC1155",
+                    "example": "ERC721"
                 },
                 "wallet_address": {
                     "index": 4,
                     "name": "wallet_address",
                     "type": "varchar",
-                    "description": "0x93ff6375e9ba6e8fba84b322944b237d7decc2d8"
+                    "description": "Address of holder",
+                    "example": "0x93ff6375e9ba6e8fba84b322944b237d7decc2d8"
                 },
                 "token_address": {
                     "index": 5,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270"
+                    "description": "Address of NFT contract",
+                    "example": "0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270"
                 },
                 "token_id": {
                     "index": 6,
                     "name": "token_id",
                     "type": "varchar",
-                    "description": "89000494"
+                    "description": "Token ID of NFT",
+                    "example": "89000494"
                 },
                 "symbol": {
                     "index": 7,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "BLOCKS"
+                    "description": "Symbol of NFT",
+                    "example": "BLOCKS"
                 },
                 "amount": {
                     "index": 8,
                     "name": "amount",
                     "type": "double",
-                    "description": "-1.0"
+                    "description": "Number amount of NFTs transferred this day",
+                    "example": "-1.0"
                 }
             },
             "stats": {},
@@ -1301,55 +1386,63 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2021-06-10"
+                    "description": "Date of record",
+                    "example": "2021-06-10"
                 },
                 "block_hour": {
                     "index": 2,
                     "name": "block_hour",
                     "type": "timestamp(3) with time zone",
-                    "description": "2021-06-10 00:00:00+00:00"
+                    "description": "Hour of record",
+                    "example": "2021-06-10 00:00:00+00:00"
                 },
                 "key_partition": {
                     "index": 3,
                     "name": "key_partition",
                     "type": "varchar",
-                    "description": "0x30x0"
+                    "example": "0x30x0"
                 },
                 "nft_type": {
                     "index": 4,
                     "name": "nft_type",
                     "type": "varchar",
-                    "description": "ERC721"
+                    "description":"Type of NFT: ERC721 or ERC1155",
+                    "example": "ERC721"
                 },
                 "wallet_address": {
                     "index": 5,
                     "name": "wallet_address",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000"
+                    "description": "Address of holder",
+                    "example": "0x0000000000000000000000000000000000000000"
                 },
                 "token_address": {
                     "index": 6,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0x3f0785095a660fee131eebcd5aa243e529c21786"
+                    "description": "Address of NFT contract",
+                    "example": "0x3f0785095a660fee131eebcd5aa243e529c21786"
                 },
                 "token_id": {
                     "index": 7,
                     "name": "token_id",
                     "type": "varchar",
-                    "description": "2498"
+                    "description": "Token ID of NFT",
+                    "example": "2498"
                 },
                 "symbol": {
                     "index": 8,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "defra"
+                    "description": "Symbol of NFT",
+                    "example": "defra"
                 },
                 "amount": {
                     "index": 9,
                     "name": "amount",
                     "type": "double",
-                    "description": "-1.0"
+                    "description": "Number amount of NFTs transferred this hour",
+                    "example": "-1.0"
                 }
             },
             "stats": {},
@@ -1365,41 +1458,46 @@
                 "owner": "Chainslake"
             },
             "columns": {
-                "is_change": {
+                "version": {
                     "index": 1,
-                    "name": "is_change",
+                    "name": "version",
                     "type": "integer",
-                    "description": "1"
-                },
-                "key_partition": {
-                    "index": 2,
-                    "name": "key_partition",
-                    "type": "varchar",
-                    "description": "0x00x5"
+                    "description": "Version of data, table only keeps the latest version",
+                    "example": "15"
                 },
                 "wallet_address": {
-                    "index": 3,
+                    "index": 2,
                     "name": "wallet_address",
                     "type": "varchar",
-                    "description": "0x50e9ee9a6f6a3f096b740a9f917fe66122dd3833"
+                    "description": "Address of holder",
+                    "example": "0x86dcddbae05e4255f33db7adece0ae67242a49e7"
                 },
                 "token_address": {
-                    "index": 4,
+                    "index": 3,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0x0f5d2fb29fb7d3cfee444a200298f468908cc942"
+                    "description": "Address of token contract, 0x if is ethereum native token",
+                    "example": "0x"
                 },
                 "symbol": {
-                    "index": 5,
+                    "index": 4,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "MANA"
+                    "description": "Symbol of token",
+                    "example": "ETH"
                 },
                 "balance": {
-                    "index": 6,
+                    "index": 5,
                     "name": "balance",
                     "type": "double",
-                    "description": "-1.8189894035458565e-12"
+                    "description": "Latest balance token of holder",
+                    "example": "0.0001284"
+                },
+                "key_partition": {
+                    "index": 6,
+                    "name": "key_partition",
+                    "type": "varchar",
+                    "example": "0x0x86d"
                 }
             },
             "stats": {},
@@ -1419,37 +1517,42 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-09-12"
+                    "description": "Date of record",
+                    "example": "2015-09-12"
                 },
                 "key_partition": {
                     "index": 2,
                     "name": "key_partition",
                     "type": "varchar",
-                    "description": "0x0xc8b"
+                    "example": "0x0xc8b"
                 },
                 "wallet_address": {
                     "index": 3,
                     "name": "wallet_address",
                     "type": "varchar",
-                    "description": "0xc8b320bf570847851af89bc72563523f7db16ea3"
+                    "description": "Address of holder",
+                    "example": "0xc8b320bf570847851af89bc72563523f7db16ea3"
                 },
                 "token_address": {
                     "index": 4,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0x"
+                    "description": "Address of token contract, 0x if is ethereum native token",
+                    "example": "0x"
                 },
                 "symbol": {
                     "index": 5,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "ETH"
+                    "description": "Symbol of token",
+                    "example": "ETH"
                 },
                 "amount": {
                     "index": 6,
                     "name": "amount",
                     "type": "double",
-                    "description": "250.05"
+                    "description": "Number amount of tokens transfer in day of this holder",
+                    "example": "250.05"
                 }
             },
             "stats": {},
@@ -1469,43 +1572,49 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-11-19"
+                    "description": "Date of record",
+                    "example": "2015-11-19"
                 },
                 "block_hour": {
                     "index": 2,
                     "name": "block_hour",
                     "type": "timestamp(3) with time zone",
-                    "description": "2015-11-19 11:00:00+00:00"
+                    "description": "Hour of record",
+                    "example": "2015-11-19 11:00:00+00:00"
                 },
                 "key_partition": {
                     "index": 3,
                     "name": "key_partition",
                     "type": "varchar",
-                    "description": "0x0x63a"
+                    "example": "0x0x63a"
                 },
                 "wallet_address": {
                     "index": 4,
                     "name": "wallet_address",
                     "type": "varchar",
-                    "description": "0x63a9975ba31b0b9626b34300f7f627147df1f526"
+                    "description": "Address of holder",
+                    "example": "0x63a9975ba31b0b9626b34300f7f627147df1f526"
                 },
                 "token_address": {
                     "index": 5,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0x"
+                    "description": "Address of token contract, 0x if is ethereum native token",
+                    "example": "0x"
                 },
                 "symbol": {
                     "index": 6,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "ETH"
+                    "description": "Symbol of token",
+                    "example": "ETH"
                 },
                 "amount": {
                     "index": 7,
                     "name": "amount",
                     "type": "double",
-                    "description": "-74.65381275559378"
+                    "description": "Number amount of tokens transfer in hour of this holder",
+                    "example": "-74.65381275559378"
                 }
             },
             "stats": {},
@@ -1525,25 +1634,28 @@
                     "index": 1,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x189e143a5734a51dbf6b34a46c09b4e2ab8132b2"
+                    "description": "Address of NFT contract",
+                    "example": "0x189e143a5734a51dbf6b34a46c09b4e2ab8132b2"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-22 19:06:57.817000+00:00"
+                    "example": "2025-01-22 19:06:57.817000+00:00"
                 },
                 "name": {
                     "index": 3,
                     "name": "name",
                     "type": "varchar",
-                    "description": "BOOOOOM"
+                    "description": "Name of NFT",
+                    "example": "BOOOOOM"
                 },
                 "symbol": {
                     "index": 4,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "B"
+                    "description": "Symbol of NFT",
+                    "example": "B"
                 }
             },
             "stats": {},
@@ -1563,37 +1675,40 @@
                     "index": 1,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x983d0ae3c7abf75fb04440e95ccdf1d95f9e831f"
+                    "description": "Address of token contract",
+                    "example": "0x983d0ae3c7abf75fb04440e95ccdf1d95f9e831f"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-12-17 17:27:41.815000+00:00"
+                    "example": "2024-12-17 17:27:41.815000+00:00"
                 },
                 "name": {
                     "index": 3,
                     "name": "name",
                     "type": "varchar",
-                    "description": "culture"
+                    "description": "Name of token",
+                    "example": "culture"
                 },
                 "symbol": {
                     "index": 4,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "CLTR"
+                    "description": "Symbol of token",
+                    "example": "CLTR"
                 },
                 "decimals": {
                     "index": 5,
                     "name": "decimals",
                     "type": "integer",
-                    "description": "9"
+                    "example": "9"
                 },
                 "totalsupply": {
                     "index": 6,
                     "name": "totalsupply",
                     "type": "varchar",
-                    "description": "100000000000000000"
+                    "example": "100000000000000000"
                 }
             },
             "stats": {},
@@ -1613,31 +1728,34 @@
                     "index": 1,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x7ffa03954d81d47579300dbd965da8578df0b3c1"
+                    "description": "Address of NFT contract",
+                    "example": "0x7ffa03954d81d47579300dbd965da8578df0b3c1"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-20 17:09:34.348000+00:00"
+                    "example": "2025-01-20 17:09:34.348000+00:00"
                 },
                 "name": {
                     "index": 3,
                     "name": "name",
                     "type": "varchar",
-                    "description": "Test Astro"
+                    "description": "Name of NFT",
+                    "example": "Test Astro"
                 },
                 "symbol": {
                     "index": 4,
                     "name": "symbol",
                     "type": "varchar",
-                    "description": "TA"
+                    "description": "Symbol of NFT",
+                    "example": "TA"
                 },
                 "totalsupply": {
                     "index": 5,
                     "name": "totalsupply",
                     "type": "varchar",
-                    "description": "1"
+                    "example": "1"
                 }
             },
             "stats": {},
@@ -1657,25 +1775,28 @@
                     "index": 1,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0xeb17163553ceccedc0606ae9ea90dad19b0046c6"
+                    "description": "Address of uniswap v2 contract",
+                    "example": "0xeb17163553ceccedc0606ae9ea90dad19b0046c6"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-10-26 11:40:42.627000+00:00"
+                    "example": "2024-10-26 11:40:42.627000+00:00"
                 },
                 "token0": {
                     "index": 3,
                     "name": "token0",
                     "type": "varchar",
-                    "description": "0x53c345640ade30367cd0e34e8a3a0ea2d2bae658"
+                    "description": "Address of one token in swap pair",
+                    "example": "0x53c345640ade30367cd0e34e8a3a0ea2d2bae658"
                 },
                 "token1": {
                     "index": 4,
                     "name": "token1",
                     "type": "varchar",
-                    "description": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                    "description": "Address of one other token in swap pair",
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 }
             },
             "stats": {},
@@ -1695,25 +1816,28 @@
                     "index": 1,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x5be60281287ef84b7e23cc09c756eba72542fd5a"
+                    "description": "Address of uniswap v3 contract",
+                    "example": "0x5be60281287ef84b7e23cc09c756eba72542fd5a"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-10-31 17:07:11.147000+00:00"
+                    "example": "2024-10-31 17:07:11.147000+00:00"
                 },
                 "token0": {
                     "index": 3,
                     "name": "token0",
                     "type": "varchar",
-                    "description": "0x42069401135e0b750e737d1c0c0dba8be273a41e"
+                    "description": "Address of one token in swap pair",
+                    "example": "0x42069401135e0b750e737d1c0c0dba8be273a41e"
                 },
                 "token1": {
                     "index": 4,
                     "name": "token1",
                     "type": "varchar",
-                    "description": "0x594daad7d77592a2b97b725a7ad59d7e188b5bfa"
+                    "description": "Address of one other token in swap pair",
+                    "example": "0x594daad7d77592a2b97b725a7ad59d7e188b5bfa"
                 }
             },
             "stats": {},
@@ -1733,73 +1857,83 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2019-10-30"
+                    "description": "Date of event log",
+                    "example": "2019-10-30"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "8841367"
+                    "description": "Block number of event log",
+                    "example": "8841367"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2019-10-30 16:45:38+00:00"
+                    "description": "Time of event log",
+                    "example": "2019-10-30 16:45:38+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-25 01:44:16.147000+00:00"
+                    "example": "2024-07-25 01:44:16.147000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
+                    "description": "Address of contract emitted the event log",
+                    "example": "0xfaafdc07907ff5120a76b34b731b278c38d6043c"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0xf8f0255154791027aa2f405834a6df03496004ae7450037ea15d4142125db709"
+                    "description": "Hash of transaction when the event log is emitted",
+                    "example": "0xf8f0255154791027aa2f405834a6df03496004ae7450037ea15d4142125db709"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "57"
+                    "description": "The order of event on block",
+                    "example": "57"
                 },
                 "operator": {
                     "index": 8,
                     "name": "operator",
                     "type": "varchar",
-                    "description": "0x881f65b123f51efcfbd6828e66ffdb87054a9736"
+                    "example": "0x881f65b123f51efcfbd6828e66ffdb87054a9736"
                 },
                 "from": {
                     "index": 9,
                     "name": "from",
                     "type": "varchar",
-                    "description": "0x881f65b123f51efcfbd6828e66ffdb87054a9736"
+                    "description": "Address of sender",
+                    "example": "0x881f65b123f51efcfbd6828e66ffdb87054a9736"
                 },
                 "to": {
                     "index": 10,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0x4eaeb6f3fc975132b75fb1872fe766d6ca199621"
+                    "description": "Address of receiver",
+                    "example": "0x4eaeb6f3fc975132b75fb1872fe766d6ca199621"
                 },
                 "ids": {
                     "index": 11,
                     "name": "ids",
                     "type": "array(varchar)",
-                    "description": "['36411184310952944508859562575390614563768575651911745716961922930335654354482', '36411184310952944"
+                    "description": "List NFT ids were sent",
+                    "example": "['36411184310952944508859562575390614563768575651911745716961922930335654354482', '36411184310952944"
                 },
                 "values": {
                     "index": 12,
                     "name": "values",
                     "type": "array(varchar)",
-                    "description": "['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1']"
+                    "description": "The number of NFTs sent corresponds to the list id",
+                    "example": "['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1']"
                 }
             },
             "stats": {},
@@ -1819,73 +1953,83 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2018-12-22"
+                    "description": "Date of event log",
+                    "example": "2018-12-22"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "6932422"
+                    "description": "Block number of event log",
+                    "example": "6932422"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2018-12-22 12:15:44+00:00"
+                    "description": "Time of event log",
+                    "example": "2018-12-22 12:15:44+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-26 20:06:05.304000+00:00"
+                    "example": "2024-07-26 20:06:05.304000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0xd0e4847359ae76c2786d242e5f45c4f6f1abd752"
+                    "description": "Address of contract emitted the event log",
+                    "example": "0xd0e4847359ae76c2786d242e5f45c4f6f1abd752"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x78752c6daf10c2bf9a9105c8b3bc7b912e2cdd3522dada70040ed3d4fd2b0e06"
+                    "description": "Hash of transaction when the event log is emitted",
+                    "example": "0x78752c6daf10c2bf9a9105c8b3bc7b912e2cdd3522dada70040ed3d4fd2b0e06"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "84"
+                    "description": "The order of event on block",
+                    "example": "84"
                 },
                 "operator": {
                     "index": 8,
                     "name": "operator",
                     "type": "varchar",
-                    "description": "0x6e8a8a0de641161b306cd548710c6175546faf76"
+                    "example": "0x6e8a8a0de641161b306cd548710c6175546faf76"
                 },
                 "from": {
                     "index": 9,
                     "name": "from",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000"
+                    "description": "Address of Sender",
+                    "example": "0x0000000000000000000000000000000000000000"
                 },
                 "to": {
                     "index": 10,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0x22de809abc7257fac7e41a175a09fe0be68ae33c"
+                    "description": "Address of receiver",
+                    "example": "0x22de809abc7257fac7e41a175a09fe0be68ae33c"
                 },
                 "id": {
                     "index": 11,
                     "name": "id",
                     "type": "varchar",
-                    "description": "32"
+                    "description": "Token ID of NFT",
+                    "example": "32"
                 },
                 "value": {
                     "index": 12,
                     "name": "value",
                     "type": "varchar",
-                    "description": "100000000"
+                    "description": "Number amount of NFTs transferred",
+                    "example": "100000000"
                 }
             },
             "stats": {},
@@ -1905,61 +2049,70 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2017-01-18"
+                    "description": "Date of event log",
+                    "example": "2017-01-18"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "3017999"
+                    "description": "Block number of event log",
+                    "example": "3017999"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2017-01-18 09:33:48+00:00"
+                    "description": "Time of event log",
+                    "example": "2017-01-18 09:33:48+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-30 13:28:06.052000+00:00"
+                    "example": "2024-07-30 13:28:06.052000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x87b127ee022abcf9881b9bad6bb6aac25229dff0"
+                    "description": "Address of contract emitted the event log",
+                    "example": "0x87b127ee022abcf9881b9bad6bb6aac25229dff0"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x8c9d44d0f52e0231341421981151fad78d438e723baa197524d7b4885373d75c"
+                    "description": "Hash of transaction when the event log is emitted",
+                    "example": "0x8c9d44d0f52e0231341421981151fad78d438e723baa197524d7b4885373d75c"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "0"
+                    "description": "The order of event on block",
+                    "example": "0"
                 },
                 "from": {
                     "index": 8,
                     "name": "from",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000"
+                    "description": "Address of Sender",
+                    "example": "0x0000000000000000000000000000000000000000"
                 },
                 "to": {
                     "index": 9,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0x04e1b2ff4ece25f07c67b97757f1c490924e0a04"
+                    "description": "Address of receiver",
+                    "example": "0x04e1b2ff4ece25f07c67b97757f1c490924e0a04"
                 },
                 "value": {
                     "index": 10,
                     "name": "value",
                     "type": "varchar",
-                    "description": "10"
+                    "description": "Value of this transfer",
+                    "example": "10"
                 }
             },
             "stats": {},
@@ -1979,61 +2132,70 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2018-01-26"
+                    "description": "Date of event log",
+                    "example": "2018-01-26"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "4975212"
+                    "description": "Block number of event log",
+                    "example": "4975212"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2018-01-26 09:37:29+00:00"
+                    "description": "Time of event log",
+                    "example": "2018-01-26 09:37:29+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-30 16:47:21.138000+00:00"
+                    "example": "2024-07-30 16:47:21.138000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x87d598064c736dd0c712d329afcfaa0ccc1921a1"
+                    "description": "Address of contract emitted the event log",
+                    "example": "0x87d598064c736dd0c712d329afcfaa0ccc1921a1"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0xf6bbc8275c33b6d3306a81321e57fd3b5df21d4f150d58877d659994770b13c2"
+                    "description": "Hash of transaction when the event log is emitted",
+                    "example": "0xf6bbc8275c33b6d3306a81321e57fd3b5df21d4f150d58877d659994770b13c2"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "30"
+                    "description": "The order of event on block",
+                    "example": "30"
                 },
                 "from": {
                     "index": 8,
                     "name": "from",
                     "type": "varchar",
-                    "description": "0x7192bb75777dab47ef6fbf6f6c0e4bcbb2294f38"
+                    "description": "Address of Sender",
+                    "example": "0x7192bb75777dab47ef6fbf6f6c0e4bcbb2294f38"
                 },
                 "to": {
                     "index": 9,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0x63c646a7c355b5318eb1ae9fb93d91a5c660fbf4"
+                    "description": "Address of receiver",
+                    "example": "0x63c646a7c355b5318eb1ae9fb93d91a5c660fbf4"
                 },
                 "tokenid": {
                     "index": 10,
                     "name": "tokenid",
                     "type": "varchar",
-                    "description": "101"
+                    "description": "Token ID of NFT",
+                    "example": "101"
                 }
             },
             "stats": {},
@@ -2053,67 +2215,73 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-07-05"
+                    "description": "Date of event log",
+                    "example": "2020-07-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "10396561"
+                    "description": "Block number of event log",
+                    "example": "10396561"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-07-05 01:54:17+00:00"
+                    "description": "Time of event log",
+                    "example": "2020-07-05 01:54:17+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-21 13:38:50.226000+00:00"
+                    "example": "2024-07-21 13:38:50.226000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"
+                    "description": "Address of contract emitted the event log",
+                    "example": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x92ecff2df6871cf6eb972bc666ffaed948f34eed98c7da07ca027502d6320721"
+                    "description": "Hash of transaction when the event log is emitted",
+                    "example": "0x92ecff2df6871cf6eb972bc666ffaed948f34eed98c7da07ca027502d6320721"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "10"
+                    "description": "The order of event on block",
+                    "example": "10"
                 },
                 "token0": {
                     "index": 8,
                     "name": "token0",
                     "type": "varchar",
-                    "description": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 },
                 "token1": {
                     "index": 9,
                     "name": "token1",
                     "type": "varchar",
-                    "description": "0xea52d0d5659d6c897068c8eb9bdeeb1fe1d44cf6"
+                    "example": "0xea52d0d5659d6c897068c8eb9bdeeb1fe1d44cf6"
                 },
                 "pair": {
                     "index": 10,
                     "name": "pair",
                     "type": "varchar",
-                    "description": "0xa78710b1fdaf3114e8e064159d07365b64aee3fc"
+                    "example": "0xa78710b1fdaf3114e8e064159d07365b64aee3fc"
                 },
                 "ordinal": {
                     "index": 11,
                     "name": "ordinal",
                     "type": "varchar",
-                    "description": "1846"
+                    "example": "1846"
                 }
             },
             "stats": {},
@@ -2133,79 +2301,79 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-05-16"
+                    "example": "2020-05-16"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "10073990"
+                    "example": "10073990"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-05-16 00:45:40+00:00"
+                    "example": "2020-05-16 00:45:40+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-22 12:06:22.116000+00:00"
+                    "example": "2024-07-22 12:06:22.116000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11"
+                    "example": "0xa478c2975ab1ea89e8196811f51a7b7ade33eb11"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x89d40ce59a2e1b11de2ce38634bcd9d949236a3dcd19b2998f29947083cc4aa8"
+                    "example": "0x89d40ce59a2e1b11de2ce38634bcd9d949236a3dcd19b2998f29947083cc4aa8"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "152"
+                    "example": "152"
                 },
                 "sender": {
                     "index": 8,
                     "name": "sender",
                     "type": "varchar",
-                    "description": "0xf164fc0ec4e93095b804a4795bbe1e041497b92a"
+                    "example": "0xf164fc0ec4e93095b804a4795bbe1e041497b92a"
                 },
                 "amount0in": {
                     "index": 9,
                     "name": "amount0in",
                     "type": "varchar",
-                    "description": "0"
+                    "example": "0"
                 },
                 "amount1in": {
                     "index": 10,
                     "name": "amount1in",
                     "type": "varchar",
-                    "description": "14958448656817409"
+                    "example": "14958448656817409"
                 },
                 "amount0out": {
                     "index": 11,
                     "name": "amount0out",
                     "type": "varchar",
-                    "description": "2858827286080590753"
+                    "example": "2858827286080590753"
                 },
                 "amount1out": {
                     "index": 12,
                     "name": "amount1out",
                     "type": "varchar",
-                    "description": "0"
+                    "example": "0"
                 },
                 "to": {
                     "index": 13,
                     "name": "to",
                     "type": "varchar",
-                    "description": "0x379b4609bdf93b3584cf7b64bc78199cf185f1cd"
+                    "example": "0x379b4609bdf93b3584cf7b64bc78199cf185f1cd"
                 }
             },
             "stats": {},
@@ -2225,73 +2393,73 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2021-06-07"
+                    "example": "2021-06-07"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "12587787"
+                    "example": "12587787"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2021-06-07 13:59:16+00:00"
+                    "example": "2021-06-07 13:59:16+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-18 01:47:03.908000+00:00"
+                    "example": "2024-07-18 01:47:03.908000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x1f98431c8ad98523631ae4a59f267346ea31f984"
+                    "example": "0x1f98431c8ad98523631ae4a59f267346ea31f984"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x6ea57425543af3e831451c6b3fe2fcbe967711723dd5fc335c118917eac704e0"
+                    "example": "0x6ea57425543af3e831451c6b3fe2fcbe967711723dd5fc335c118917eac704e0"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "232"
+                    "example": "232"
                 },
                 "token0": {
                     "index": 8,
                     "name": "token0",
                     "type": "varchar",
-                    "description": "0x4f7aff8f0c78b51c0e30f02f27a67b5a6a11552b"
+                    "example": "0x4f7aff8f0c78b51c0e30f02f27a67b5a6a11552b"
                 },
                 "token1": {
                     "index": 9,
                     "name": "token1",
                     "type": "varchar",
-                    "description": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 },
                 "fee": {
                     "index": 10,
                     "name": "fee",
                     "type": "decimal(7,0)",
-                    "description": "10000.0"
+                    "example": "10000.0"
                 },
                 "tickspacing": {
                     "index": 11,
                     "name": "tickspacing",
                     "type": "decimal(7,0)",
-                    "description": "200.0"
+                    "example": "200.0"
                 },
                 "pool": {
                     "index": 12,
                     "name": "pool",
                     "type": "varchar",
-                    "description": "0xd9f6605f6ad367d072c342dd290bbd8ffe0a7151"
+                    "example": "0xd9f6605f6ad367d072c342dd290bbd8ffe0a7151"
                 }
             },
             "stats": {},
@@ -2311,85 +2479,85 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2021-05-30"
+                    "example": "2021-05-30"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "12538189"
+                    "example": "12538189"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2021-05-30 21:42:54+00:00"
+                    "example": "2021-05-30 21:42:54+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-18 03:05:31.454000+00:00"
+                    "example": "2024-07-18 03:05:31.454000+00:00"
                 },
                 "contract_address": {
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
+                    "example": "0x8ad599c3a0ff1de082011efddc58f1908eb6e6d8"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x46338350158f7aa7495a783fb7bef3986f6944a8edb0bbf3054dec64ba6d17a0"
+                    "example": "0x46338350158f7aa7495a783fb7bef3986f6944a8edb0bbf3054dec64ba6d17a0"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "2"
+                    "example": "2"
                 },
                 "sender": {
                     "index": 8,
                     "name": "sender",
                     "type": "varchar",
-                    "description": "0xe592427a0aece92de3edee1f18e0157c05861564"
+                    "example": "0xe592427a0aece92de3edee1f18e0157c05861564"
                 },
                 "recipient": {
                     "index": 9,
                     "name": "recipient",
                     "type": "varchar",
-                    "description": "0x422162745b12b8c58d19e348d7c8c134bbedf886"
+                    "example": "0x422162745b12b8c58d19e348d7c8c134bbedf886"
                 },
                 "amount0": {
                     "index": 10,
                     "name": "amount0",
                     "type": "varchar",
-                    "description": "473525806091"
+                    "example": "473525806091"
                 },
                 "amount1": {
                     "index": 11,
                     "name": "amount1",
                     "type": "varchar",
-                    "description": "-193657596088240520959"
+                    "example": "-193657596088240520959"
                 },
                 "sqrtpricex96": {
                     "index": 12,
                     "name": "sqrtpricex96",
                     "type": "varchar",
-                    "description": "1604485310181134252828182642063556"
+                    "example": "1604485310181134252828182642063556"
                 },
                 "liquidity": {
                     "index": 13,
                     "name": "liquidity",
                     "type": "decimal(38,0)",
-                    "description": "4.978960430332237e+19"
+                    "example": "4.978960430332237e+19"
                 },
                 "tick": {
                     "index": 14,
                     "name": "tick",
                     "type": "decimal(7,0)",
-                    "description": "198329.0"
+                    "example": "198329.0"
                 }
             },
             "stats": {},
@@ -2409,85 +2577,85 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2021-11-23"
+                    "example": "2021-11-23"
                 },
                 "block_minute": {
                     "index": 2,
                     "name": "block_minute",
                     "type": "timestamp(3) with time zone",
-                    "description": "2021-11-23 23:50:00+00:00"
+                    "example": "2021-11-23 23:50:00+00:00"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2021-11-23 23:50:03+00:00"
+                    "example": "2021-11-23 23:50:03+00:00"
                 },
                 "tx_hash": {
                     "index": 4,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x56e1e4decf38d227a4209b1f9387017ec96dbdc1d64f6bab189f4d7f4e8113ff"
+                    "example": "0x56e1e4decf38d227a4209b1f9387017ec96dbdc1d64f6bab189f4d7f4e8113ff"
                 },
                 "taker": {
                     "index": 5,
                     "name": "taker",
                     "type": "varchar",
-                    "description": "0x000000005736775feb0c8568e7dee77222a26880"
+                    "example": "0x000000005736775feb0c8568e7dee77222a26880"
                 },
                 "pair_contract": {
                     "index": 6,
                     "name": "pair_contract",
                     "type": "varchar",
-                    "description": "0x6ae683767de602354f394a6bc0439d86669beaaf"
+                    "example": "0x6ae683767de602354f394a6bc0439d86669beaaf"
                 },
                 "trade_type": {
                     "index": 7,
                     "name": "trade_type",
                     "type": "varchar",
-                    "description": "buy"
+                    "example": "buy"
                 },
                 "token_address": {
                     "index": 8,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xfa898efdb91e35bd311c45b9b955f742b6719aa2"
+                    "example": "0xfa898efdb91e35bd311c45b9b955f742b6719aa2"
                 },
                 "token_symbol": {
                     "index": 9,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "APED"
+                    "example": "APED"
                 },
                 "token_value": {
                     "index": 10,
                     "name": "token_value",
                     "type": "double",
-                    "description": "302.89996256954095"
+                    "example": "302.89996256954095"
                 },
                 "wrap_native_value": {
                     "index": 11,
                     "name": "wrap_native_value",
                     "type": "double",
-                    "description": "0.5518528446145541"
+                    "example": "0.5518528446145541"
                 },
                 "wrap_native_price": {
                     "index": 12,
                     "name": "wrap_native_price",
                     "type": "double",
-                    "description": "4353.866191601814"
+                    "example": "4353.866191601814"
                 },
                 "volume": {
                     "index": 13,
                     "name": "volume",
                     "type": "double",
-                    "description": "2402.693442906596"
+                    "example": "2402.693442906596"
                 },
                 "token_price": {
                     "index": 14,
                     "name": "token_price",
                     "type": "double",
-                    "description": "7.932300230492687"
+                    "example": "7.932300230492687"
                 }
             },
             "stats": {},
@@ -2507,127 +2675,127 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-05-22"
+                    "example": "2020-05-22"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "10116889"
+                    "example": "10116889"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-05-22 17:12:18+00:00"
+                    "example": "2020-05-22 17:12:18+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-22 10:39:37.209000+00:00"
+                    "example": "2024-07-22 10:39:37.209000+00:00"
                 },
                 "tx_hash": {
                     "index": 5,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x21a20295b09bc594aa42ff2f4940351c51acce8abfca6c1c704a301688251255"
+                    "example": "0x21a20295b09bc594aa42ff2f4940351c51acce8abfca6c1c704a301688251255"
                 },
                 "evt_index": {
                     "index": 6,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "31"
+                    "example": "31"
                 },
                 "taker": {
                     "index": 7,
                     "name": "taker",
                     "type": "varchar",
-                    "description": "0xf164fc0ec4e93095b804a4795bbe1e041497b92a"
+                    "example": "0xf164fc0ec4e93095b804a4795bbe1e041497b92a"
                 },
                 "swap_protocol_name": {
                     "index": 8,
                     "name": "swap_protocol_name",
                     "type": "varchar",
-                    "description": "Uniswap V2"
+                    "example": "Uniswap V2"
                 },
                 "pair_contract": {
                     "index": 9,
                     "name": "pair_contract",
                     "type": "varchar",
-                    "description": "0x121b382b5f003c41fb49e7b88d079c8f513feaac"
+                    "example": "0x121b382b5f003c41fb49e7b88d079c8f513feaac"
                 },
                 "trade_type": {
                     "index": 10,
                     "name": "trade_type",
                     "type": "varchar",
-                    "description": "sell"
+                    "example": "sell"
                 },
                 "token_address": {
                     "index": 11,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xd6a55c63865affd67e2fb9f284f87b7a9e5ff3bd"
+                    "example": "0xd6a55c63865affd67e2fb9f284f87b7a9e5ff3bd"
                 },
                 "token_symbol": {
                     "index": 12,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "ESH"
+                    "example": "ESH"
                 },
                 "token_decimals": {
                     "index": 13,
                     "name": "token_decimals",
                     "type": "integer",
-                    "description": "18"
+                    "example": "18"
                 },
                 "token_wei": {
                     "index": 14,
                     "name": "token_wei",
                     "type": "varchar",
-                    "description": "1645109314289818223741"
+                    "example": "1645109314289818223741"
                 },
                 "currency_address": {
                     "index": 15,
                     "name": "currency_address",
                     "type": "varchar",
-                    "description": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 },
                 "currency_symbol": {
                     "index": 16,
                     "name": "currency_symbol",
                     "type": "varchar",
-                    "description": "WETH"
+                    "example": "WETH"
                 },
                 "currency_decimals": {
                     "index": 17,
                     "name": "currency_decimals",
                     "type": "integer",
-                    "description": "18"
+                    "example": "18"
                 },
                 "currency_wei": {
                     "index": 18,
                     "name": "currency_wei",
                     "type": "varchar",
-                    "description": "9549865409746473812"
+                    "example": "9549865409746473812"
                 },
                 "token_value": {
                     "index": 19,
                     "name": "token_value",
                     "type": "double",
-                    "description": "1645.109314289818"
+                    "example": "1645.109314289818"
                 },
                 "currency_value": {
                     "index": 20,
                     "name": "currency_value",
                     "type": "double",
-                    "description": "9.549865409746474"
+                    "example": "9.549865409746474"
                 },
                 "token_price": {
                     "index": 21,
                     "name": "token_price",
                     "type": "double",
-                    "description": "0.0058050035500948356"
+                    "example": "0.0058050035500948356"
                 }
             },
             "stats": {},
@@ -2647,121 +2815,121 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2021-05-13"
+                    "example": "2021-05-13"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "12422661"
+                    "example": "12422661"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2021-05-13 00:00:01+00:00"
+                    "example": "2021-05-13 00:00:01+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-18 06:23:20.696000+00:00"
+                    "example": "2024-07-18 06:23:20.696000+00:00"
                 },
                 "tx_hash": {
                     "index": 5,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "0x94ec7b9043c7c6b43d2604b99ed8ced1e96c2ba70edae8d99a08fb6234d56287"
+                    "example": "0x94ec7b9043c7c6b43d2604b99ed8ced1e96c2ba70edae8d99a08fb6234d56287"
                 },
                 "evt_index": {
                     "index": 6,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "235"
+                    "example": "235"
                 },
                 "taker": {
                     "index": 7,
                     "name": "taker",
                     "type": "varchar",
-                    "description": "0xe592427a0aece92de3edee1f18e0157c05861564"
+                    "example": "0xe592427a0aece92de3edee1f18e0157c05861564"
                 },
                 "pair_contract": {
                     "index": 8,
                     "name": "pair_contract",
                     "type": "varchar",
-                    "description": "0x69d91b94f0aaf8e8a2586909fa77a5c2c89818d5"
+                    "example": "0x69d91b94f0aaf8e8a2586909fa77a5c2c89818d5"
                 },
                 "trade_type": {
                     "index": 9,
                     "name": "trade_type",
                     "type": "varchar",
-                    "description": "buy"
+                    "example": "buy"
                 },
                 "token_address": {
                     "index": 10,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                    "example": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
                 },
                 "token_symbol": {
                     "index": 11,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "USDC"
+                    "example": "USDC"
                 },
                 "token_decimals": {
                     "index": 12,
                     "name": "token_decimals",
                     "type": "integer",
-                    "description": "6"
+                    "example": "6"
                 },
                 "token_wei": {
                     "index": 13,
                     "name": "token_wei",
                     "type": "varchar",
-                    "description": "4.381645633E9"
+                    "example": "4.381645633E9"
                 },
                 "currency_address": {
                     "index": 14,
                     "name": "currency_address",
                     "type": "varchar",
-                    "description": "0x2b591e99afe9f32eaa6214f7b7629768c40eeb39"
+                    "example": "0x2b591e99afe9f32eaa6214f7b7629768c40eeb39"
                 },
                 "currency_symbol": {
                     "index": 15,
                     "name": "currency_symbol",
                     "type": "varchar",
-                    "description": "HEX"
+                    "example": "HEX"
                 },
                 "currency_decimals": {
                     "index": 16,
                     "name": "currency_decimals",
                     "type": "integer",
-                    "description": "8"
+                    "example": "8"
                 },
                 "currency_wei": {
                     "index": 17,
                     "name": "currency_wei",
                     "type": "varchar",
-                    "description": "7700000000000"
+                    "example": "7700000000000"
                 },
                 "token_value": {
                     "index": 18,
                     "name": "token_value",
                     "type": "double",
-                    "description": "4381.645633"
+                    "example": "4381.645633"
                 },
                 "currency_value": {
                     "index": 19,
                     "name": "currency_value",
                     "type": "double",
-                    "description": "77000.0"
+                    "example": "77000.0"
                 },
                 "token_price": {
                     "index": 20,
                     "name": "token_price",
                     "type": "double",
-                    "description": "17.573306115875937"
+                    "example": "17.573306115875937"
                 }
             },
             "stats": {},
@@ -2781,31 +2949,31 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-08-10"
+                    "example": "2015-08-10"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "63889"
+                    "example": "63889"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2015-08-10 13:05:40+00:00"
+                    "example": "2015-08-10 13:05:40+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-30 08:06:55.990000+00:00"
+                    "example": "2024-07-30 08:06:55.990000+00:00"
                 },
                 "block_receipt": {
                     "index": 5,
                     "name": "block_receipt",
                     "type": "varchar",
-                    "description": "[]"
+                    "example": "[]"
                 }
             },
             "stats": {},
@@ -2825,31 +2993,31 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-08-12"
+                    "example": "2015-08-12"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "72589"
+                    "example": "72589"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2015-08-12 04:52:04+00:00"
+                    "example": "2015-08-12 04:52:04+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-30 09:33:39.368000+00:00"
+                    "example": "2024-07-30 09:33:39.368000+00:00"
                 },
                 "traces": {
                     "index": 5,
                     "name": "traces",
                     "type": "varchar",
-                    "description": "[{\"action\":{\"value\":\"0x4563918244f40000\"},\"blockHash\":\"0x2e6c010911646d3d2370ea51843cb26ef8ce9d3eba8"
+                    "example": "[{\"action\":{\"value\":\"0x4563918244f40000\"},\"blockHash\":\"0x2e6c010911646d3d2370ea51843cb26ef8ce9d3eba8"
                 }
             },
             "stats": {},
@@ -2869,31 +3037,31 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2015-08-10"
+                    "example": "2015-08-10"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "60993"
+                    "example": "60993"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2015-08-10 00:00:55+00:00"
+                    "example": "2015-08-10 00:00:55+00:00"
                 },
                 "updated_time": {
                     "index": 4,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-30 06:42:52.288000+00:00"
+                    "example": "2024-07-30 06:42:52.288000+00:00"
                 },
                 "transactions": {
                     "index": 5,
                     "name": "transactions",
                     "type": "varchar",
-                    "description": "{\"number\":\"0xee41\",\"hash\":\"0x8ee401a5aaae86c4f9f18fb48db69534cfdfab28e62e28d1aaa379362a37ae41\",\"pare"
+                    "example": "{\"number\":\"0xee41\",\"hash\":\"0x8ee401a5aaae86c4f9f18fb48db69534cfdfab28e62e28d1aaa379362a37ae41\",\"pare"
                 }
             },
             "stats": {},
@@ -2913,67 +3081,67 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-06-02"
+                    "example": "2020-06-02"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-24 18:37:48.799000+00:00"
+                    "example": "2024-07-24 18:37:48.799000+00:00"
                 },
                 "token_address": {
                     "index": 3,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xaaaebe6fe48e54f431b0c390cfaf0b017d09d42d"
+                    "example": "0xaaaebe6fe48e54f431b0c390cfaf0b017d09d42d"
                 },
                 "token_symbol": {
                     "index": 4,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "CEL"
+                    "example": "CEL"
                 },
                 "token_volume": {
                     "index": 5,
                     "name": "token_volume",
                     "type": "double",
-                    "description": "100522.01120000002"
+                    "example": "100522.01120000002"
                 },
                 "currency_volume": {
                     "index": 6,
                     "name": "currency_volume",
                     "type": "double",
-                    "description": "26937.398901442823"
+                    "example": "26937.398901442823"
                 },
                 "open_price": {
                     "index": 7,
                     "name": "open_price",
                     "type": "double",
-                    "description": "0.2665917927042054"
+                    "example": "0.2665917927042054"
                 },
                 "high_price": {
                     "index": 8,
                     "name": "high_price",
                     "type": "double",
-                    "description": "0.33573832395426534"
+                    "example": "0.33573832395426534"
                 },
                 "low_price": {
                     "index": 9,
                     "name": "low_price",
                     "type": "double",
-                    "description": "0.2368286736145553"
+                    "example": "0.2368286736145553"
                 },
                 "close_price": {
                     "index": 10,
                     "name": "close_price",
                     "type": "double",
-                    "description": "0.24917261717710118"
+                    "example": "0.24917261717710118"
                 },
                 "avg_price": {
                     "index": 11,
                     "name": "avg_price",
                     "type": "double",
-                    "description": "0.26797512882872776"
+                    "example": "0.26797512882872776"
                 }
             },
             "stats": {},
@@ -2993,73 +3161,73 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-06-28"
+                    "example": "2020-06-28"
                 },
                 "block_hour": {
                     "index": 2,
                     "name": "block_hour",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-06-28 00:00:00+00:00"
+                    "example": "2020-06-28 00:00:00+00:00"
                 },
                 "updated_time": {
                     "index": 3,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-24 18:27:49.096000+00:00"
+                    "example": "2024-07-24 18:27:49.096000+00:00"
                 },
                 "token_address": {
                     "index": 4,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xe9bb22b2063daba021b0384d8535badd1426fba7"
+                    "example": "0xe9bb22b2063daba021b0384d8535badd1426fba7"
                 },
                 "token_symbol": {
                     "index": 5,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "PBPRV"
+                    "example": "PBPRV"
                 },
                 "token_volume": {
                     "index": 6,
                     "name": "token_volume",
                     "type": "double",
-                    "description": "1246728874.1095622"
+                    "example": "1246728874.1095622"
                 },
                 "currency_volume": {
                     "index": 7,
                     "name": "currency_volume",
                     "type": "double",
-                    "description": "12638.78762500386"
+                    "example": "12638.78762500386"
                 },
                 "open_price": {
                     "index": 8,
                     "name": "open_price",
                     "type": "double",
-                    "description": "9.738707309829332e-06"
+                    "example": "9.738707309829332e-06"
                 },
                 "high_price": {
                     "index": 9,
                     "name": "high_price",
                     "type": "double",
-                    "description": "1.0613383810208846e-05"
+                    "example": "1.0613383810208846e-05"
                 },
                 "low_price": {
                     "index": 10,
                     "name": "low_price",
                     "type": "double",
-                    "description": "9.321705181763075e-06"
+                    "example": "9.321705181763075e-06"
                 },
                 "close_price": {
                     "index": 11,
                     "name": "close_price",
                     "type": "double",
-                    "description": "1.0613383810208846e-05"
+                    "example": "1.0613383810208846e-05"
                 },
                 "avg_price": {
                     "index": 12,
                     "name": "avg_price",
                     "type": "double",
-                    "description": "1.0137559085595677e-05"
+                    "example": "1.0137559085595677e-05"
                 }
             },
             "stats": {},
@@ -3079,49 +3247,49 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-06-02"
+                    "example": "2020-06-02"
                 },
                 "updated_time": {
                     "index": 2,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-24 18:36:39.594000+00:00"
+                    "example": "2024-07-24 18:36:39.594000+00:00"
                 },
                 "block_minute": {
                     "index": 3,
                     "name": "block_minute",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-06-02 00:55:00+00:00"
+                    "example": "2020-06-02 00:55:00+00:00"
                 },
                 "token_address": {
                     "index": 4,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 },
                 "token_symbol": {
                     "index": 5,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "WETH"
+                    "example": "WETH"
                 },
                 "token_volume": {
                     "index": 6,
                     "name": "token_volume",
                     "type": "double",
-                    "description": "2.6324807296730595"
+                    "example": "2.6324807296730595"
                 },
                 "currency_volume": {
                     "index": 7,
                     "name": "currency_volume",
                     "type": "double",
-                    "description": "654.213383"
+                    "example": "654.213383"
                 },
                 "price": {
                     "index": 8,
                     "name": "price",
                     "type": "double",
-                    "description": "248.5159247799128"
+                    "example": "248.5159247799128"
                 }
             },
             "stats": {},
@@ -3141,49 +3309,49 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-12-22"
+                    "example": "2020-12-22"
                 },
                 "block_minute": {
                     "index": 2,
                     "name": "block_minute",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-12-22 23:16:00+00:00"
+                    "example": "2020-12-22 23:16:00+00:00"
                 },
                 "updated_time": {
                     "index": 3,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-19 11:58:14.315000+00:00"
+                    "example": "2024-07-19 11:58:14.315000+00:00"
                 },
                 "token_address": {
                     "index": 4,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0x037a54aab062628c9bbae1fdb1583c195585fe41"
+                    "example": "0x037a54aab062628c9bbae1fdb1583c195585fe41"
                 },
                 "token_symbol": {
                     "index": 5,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "LCX"
+                    "example": "LCX"
                 },
                 "token_volume": {
                     "index": 6,
                     "name": "token_volume",
                     "type": "double",
-                    "description": "11995.540488532093"
+                    "example": "11995.540488532093"
                 },
                 "currency_volume": {
                     "index": 7,
                     "name": "currency_volume",
                     "type": "double",
-                    "description": "0.20611116622340697"
+                    "example": "0.20611116622340697"
                 },
                 "price": {
                     "index": 8,
                     "name": "price",
                     "type": "double",
-                    "description": "1.7182315913188918e-05"
+                    "example": "1.7182315913188918e-05"
                 }
             },
             "stats": {},
@@ -3203,49 +3371,49 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2020-12-26"
+                    "example": "2020-12-26"
                 },
                 "block_minute": {
                     "index": 2,
                     "name": "block_minute",
                     "type": "timestamp(3) with time zone",
-                    "description": "2020-12-26 08:16:00+00:00"
+                    "example": "2020-12-26 08:16:00+00:00"
                 },
                 "updated_time": {
                     "index": 3,
                     "name": "updated_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2024-07-19 11:07:26.628000+00:00"
+                    "example": "2024-07-19 11:07:26.628000+00:00"
                 },
                 "token_address": {
                     "index": 4,
                     "name": "token_address",
                     "type": "varchar",
-                    "description": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
                 },
                 "token_symbol": {
                     "index": 5,
                     "name": "token_symbol",
                     "type": "varchar",
-                    "description": "WETH"
+                    "example": "WETH"
                 },
                 "token_volume": {
                     "index": 6,
                     "name": "token_volume",
                     "type": "double",
-                    "description": "57.597953984686185"
+                    "example": "57.597953984686185"
                 },
                 "currency_volume": {
                     "index": 7,
                     "name": "currency_volume",
                     "type": "double",
-                    "description": "36110.009599"
+                    "example": "36110.009599"
                 },
                 "price": {
                     "index": 8,
                     "name": "price",
                     "type": "double",
-                    "description": "626.9321581909094"
+                    "example": "626.9321581909094"
                 }
             },
             "stats": {},
@@ -3265,43 +3433,43 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311741928"
+                    "example": "311741928"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:22:13+00:00"
+                    "example": "2025-01-04 03:22:13+00:00"
                 },
                 "block_hash": {
                     "index": 4,
                     "name": "block_hash",
                     "type": "varchar",
-                    "description": "5y3v8FPwkNskDfsjXBWi5QdeGnHzgcLnrPSh3iRMVu4B"
+                    "example": "5y3v8FPwkNskDfsjXBWi5QdeGnHzgcLnrPSh3iRMVu4B"
                 },
                 "block_height": {
                     "index": 5,
                     "name": "block_height",
                     "type": "bigint",
-                    "description": "290063823"
+                    "example": "290063823"
                 },
                 "parent_slot": {
                     "index": 6,
                     "name": "parent_slot",
                     "type": "bigint",
-                    "description": "311741927"
+                    "example": "311741927"
                 },
                 "previous_block_hash": {
                     "index": 7,
                     "name": "previous_block_hash",
                     "type": "varchar",
-                    "description": "HaoVWQrX4QhxpbkkhfLbg1GECEeA7TagmQp3Xq6mxNSk"
+                    "example": "HaoVWQrX4QhxpbkkhfLbg1GECEeA7TagmQp3Xq6mxNSk"
                 }
             },
             "stats": {},
@@ -3321,61 +3489,61 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311742095"
+                    "example": "311742095"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:23:21+00:00"
+                    "example": "2025-01-04 03:23:21+00:00"
                 },
                 "signature": {
                     "index": 4,
                     "name": "signature",
                     "type": "varchar",
-                    "description": "2pJB7GM6qdRqFX29typGpp3BD6ECuMFBeqUk6uwNQ1ZmDzvwRAKnsFJKDjjJ6c4GMkx5F7bL2F9fbNRfvP3Rm9dT"
+                    "example": "2pJB7GM6qdRqFX29typGpp3BD6ECuMFBeqUk6uwNQ1ZmDzvwRAKnsFJKDjjJ6c4GMkx5F7bL2F9fbNRfvP3Rm9dT"
                 },
                 "program_id_index": {
                     "index": 5,
                     "name": "program_id_index",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "program_id": {
                     "index": 6,
                     "name": "program_id",
                     "type": "varchar",
-                    "description": "Vote111111111111111111111111111111111111111"
+                    "example": "Vote111111111111111111111111111111111111111"
                 },
                 "program": {
                     "index": 7,
                     "name": "program",
                     "type": "varchar",
-                    "description": "vote"
+                    "example": "vote"
                 },
                 "parsed": {
                     "index": 8,
                     "name": "parsed",
                     "type": "varchar",
-                    "description": "{\"info\":{\"voteAccount\":\"BHZCk3XnebkC7QKk6az18LBPrqgrL6HRp8bUKX9Mg46v\",\"voteAuthority\":\"3qmEGZpEUFYxX"
+                    "example": "{\"info\":{\"voteAccount\":\"BHZCk3XnebkC7QKk6az18LBPrqgrL6HRp8bUKX9Mg46v\",\"voteAuthority\":\"3qmEGZpEUFYxX"
                 },
                 "accounts": {
                     "index": 9,
                     "name": "accounts",
                     "type": "array(varchar)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "data": {
                     "index": 10,
                     "name": "data",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 }
             },
             "stats": {},
@@ -3395,43 +3563,43 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311742138"
+                    "example": "311742138"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:23:39+00:00"
+                    "example": "2025-01-04 03:23:39+00:00"
                 },
                 "signature": {
                     "index": 4,
                     "name": "signature",
                     "type": "varchar",
-                    "description": "2Zx1bYrE1CruSL1kD7EidZH4m5DrfbTFcbuYUyYYVTGu9KTy7CHK5D7Q3V7tdUyDc7HeRCcdn1hgJQbFEdQyw9AJ"
+                    "example": "2Zx1bYrE1CruSL1kD7EidZH4m5DrfbTFcbuYUyYYVTGu9KTy7CHK5D7Q3V7tdUyDc7HeRCcdn1hgJQbFEdQyw9AJ"
                 },
                 "pubkey": {
                     "index": 5,
                     "name": "pubkey",
                     "type": "varchar",
-                    "description": "7N6ZMcfhSxsgfNgYFN6TvVNXXTPsjGkiTL1Hjeu87123"
+                    "example": "7N6ZMcfhSxsgfNgYFN6TvVNXXTPsjGkiTL1Hjeu87123"
                 },
                 "pre_balance": {
                     "index": 6,
                     "name": "pre_balance",
                     "type": "bigint",
-                    "description": "1388657005"
+                    "example": "1388657005"
                 },
                 "post_balance": {
                     "index": 7,
                     "name": "post_balance",
                     "type": "bigint",
-                    "description": "1388646005"
+                    "example": "1388646005"
                 }
             },
             "stats": {},
@@ -3451,49 +3619,49 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311741928"
+                    "example": "311741928"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:22:13+00:00"
+                    "example": "2025-01-04 03:22:13+00:00"
                 },
                 "commission": {
                     "index": 4,
                     "name": "commission",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "lamports": {
                     "index": 5,
                     "name": "lamports",
                     "type": "bigint",
-                    "description": "51681699"
+                    "example": "51681699"
                 },
                 "post_balance": {
                     "index": 6,
                     "name": "post_balance",
                     "type": "bigint",
-                    "description": "244920582156"
+                    "example": "244920582156"
                 },
                 "pubkey": {
                     "index": 7,
                     "name": "pubkey",
                     "type": "varchar",
-                    "description": "5EhGYUyQNrxgUbuYF4vbL2SZDT6RMfhq3yjeyevvULeC"
+                    "example": "5EhGYUyQNrxgUbuYF4vbL2SZDT6RMfhq3yjeyevvULeC"
                 },
                 "reward_type": {
                     "index": 8,
                     "name": "reward_type",
                     "type": "varchar",
-                    "description": "Fee"
+                    "example": "Fee"
                 }
             },
             "stats": {},
@@ -3513,91 +3681,91 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311741928"
+                    "example": "311741928"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:22:13+00:00"
+                    "example": "2025-01-04 03:22:13+00:00"
                 },
                 "signature": {
                     "index": 4,
                     "name": "signature",
                     "type": "varchar",
-                    "description": "fm44V7T1zSmDKuewGTQ2nFMed2sLLJdauPWGY8drXXAdVGKat2Uhk2KqpogvPbuAWpHx4qsrZ7GiQF59cYggJzG"
+                    "example": "fm44V7T1zSmDKuewGTQ2nFMed2sLLJdauPWGY8drXXAdVGKat2Uhk2KqpogvPbuAWpHx4qsrZ7GiQF59cYggJzG"
                 },
                 "pubkey": {
                     "index": 5,
                     "name": "pubkey",
                     "type": "varchar",
-                    "description": "5wms5Jfc3vtSr4gyhRPaF3nSrrNgsnmoxBBoaQ7cMyLU"
+                    "example": "5wms5Jfc3vtSr4gyhRPaF3nSrrNgsnmoxBBoaQ7cMyLU"
                 },
                 "mint": {
                     "index": 6,
                     "name": "mint",
                     "type": "varchar",
-                    "description": "B44TxFzatrNhGQaF9rMCPmUVViK1HhFaUiiMeKbjpump"
+                    "example": "B44TxFzatrNhGQaF9rMCPmUVViK1HhFaUiiMeKbjpump"
                 },
                 "owner": {
                     "index": 7,
                     "name": "owner",
                     "type": "varchar",
-                    "description": "DYmsQudNqJyyDvq86XmzAvrU9T7xwfQEwh6gPQw9TPNF"
+                    "example": "DYmsQudNqJyyDvq86XmzAvrU9T7xwfQEwh6gPQw9TPNF"
                 },
                 "program_id": {
                     "index": 8,
                     "name": "program_id",
                     "type": "varchar",
-                    "description": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                    "example": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
                 },
                 "decimals": {
                     "index": 9,
                     "name": "decimals",
                     "type": "bigint",
-                    "description": "6"
+                    "example": "6"
                 },
                 "pre_amount": {
                     "index": 10,
                     "name": "pre_amount",
                     "type": "varchar",
-                    "description": "7362060991940"
+                    "example": "7362060991940"
                 },
                 "pre_str_ui_amount": {
                     "index": 11,
                     "name": "pre_str_ui_amount",
                     "type": "varchar",
-                    "description": "7362060.99194"
+                    "example": "7362060.99194"
                 },
                 "pre_ui_amount": {
                     "index": 12,
                     "name": "pre_ui_amount",
                     "type": "double",
-                    "description": "7362060.99194"
+                    "example": "7362060.99194"
                 },
                 "post_amount": {
                     "index": 13,
                     "name": "post_amount",
                     "type": "varchar",
-                    "description": "0"
+                    "example": "0"
                 },
                 "post_str_ui_amount": {
                     "index": 14,
                     "name": "post_str_ui_amount",
                     "type": "varchar",
-                    "description": "0"
+                    "example": "0"
                 },
                 "post_ui_amount": {
                     "index": 15,
                     "name": "post_ui_amount",
                     "type": "double",
-                    "description": "0.0"
+                    "example": "0.0"
                 }
             },
             "stats": {},
@@ -3617,67 +3785,67 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311742136"
+                    "example": "311742136"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:23:38+00:00"
+                    "example": "2025-01-04 03:23:38+00:00"
                 },
                 "signature": {
                     "index": 4,
                     "name": "signature",
                     "type": "varchar",
-                    "description": "2i16s7VK8dVC8Rcy1jGr8GjpA7eaVKUb7wSWysGuS7t9iEmXQuubLHGiEGnf13EsD2VkDpEgKB5u26D4tMkRZwCR"
+                    "example": "2i16s7VK8dVC8Rcy1jGr8GjpA7eaVKUb7wSWysGuS7t9iEmXQuubLHGiEGnf13EsD2VkDpEgKB5u26D4tMkRZwCR"
                 },
                 "signers": {
                     "index": 5,
                     "name": "signers",
                     "type": "array(varchar)",
-                    "description": "['CQY7Va3CRCiwEw3ZEvdtZDzqK8A1ABnqq7Cte5zpGMnW']"
+                    "example": "['CQY7Va3CRCiwEw3ZEvdtZDzqK8A1ABnqq7Cte5zpGMnW']"
                 },
                 "version": {
                     "index": 6,
                     "name": "version",
                     "type": "varchar",
-                    "description": "legacy"
+                    "example": "legacy"
                 },
                 "computer_units_consumed": {
                     "index": 7,
                     "name": "computer_units_consumed",
                     "type": "bigint",
-                    "description": "2100"
+                    "example": "2100"
                 },
                 "err": {
                     "index": 8,
                     "name": "err",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "fee": {
                     "index": 9,
                     "name": "fee",
                     "type": "bigint",
-                    "description": "5000"
+                    "example": "5000"
                 },
                 "log_messages": {
                     "index": 10,
                     "name": "log_messages",
                     "type": "array(varchar)",
-                    "description": "['Program Vote111111111111111111111111111111111111111 invoke [1]', 'Program Vote11111111111111111111"
+                    "example": "['Program Vote111111111111111111111111111111111111111 invoke [1]', 'Program Vote11111111111111111111"
                 },
                 "recent_block_hash": {
                     "index": 11,
                     "name": "recent_block_hash",
                     "type": "varchar",
-                    "description": "BbdUHDX7duKxUr2FyHoeVmjMj99jAyfdhw58j8dGyB19"
+                    "example": "BbdUHDX7duKxUr2FyHoeVmjMj99jAyfdhw58j8dGyB19"
                 }
             },
             "stats": {},
@@ -3697,25 +3865,25 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-04"
+                    "example": "2025-01-04"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "311742115"
+                    "example": "311742115"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-04 03:23:30+00:00"
+                    "example": "2025-01-04 03:23:30+00:00"
                 },
                 "block": {
                     "index": 4,
                     "name": "block",
                     "type": "varchar",
-                    "description": "{\"jsonrpc\":\"2.0\",\"result\":{\"blockHeight\":290064010,\"blockTime\":1735961010,\"blockhash\":\"FBDXDsamv8Mr5"
+                    "example": "{\"jsonrpc\":\"2.0\",\"result\":{\"blockHeight\":290064010,\"blockTime\":1735961010,\"blockhash\":\"FBDXDsamv8Mr5"
                 }
             },
             "stats": {},
@@ -3735,43 +3903,43 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-05"
+                    "example": "2025-01-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "98094524"
+                    "example": "98094524"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-05 03:59:42.785000+00:00"
+                    "example": "2025-01-05 03:59:42.785000+00:00"
                 },
                 "tx_digest": {
                     "index": 4,
                     "name": "tx_digest",
                     "type": "varchar",
-                    "description": "3kUsnw17KKDvxskyuKYkaGvEwFnkSLtqCqpLeJefRvzh"
+                    "example": "3kUsnw17KKDvxskyuKYkaGvEwFnkSLtqCqpLeJefRvzh"
                 },
                 "owner_address": {
                     "index": 5,
                     "name": "owner_address",
                     "type": "varchar",
-                    "description": "0x049a6a4421c8a6c43e1ae142286ade91fdec9a3737a5e7af5070fa78feaca9ba"
+                    "example": "0x049a6a4421c8a6c43e1ae142286ade91fdec9a3737a5e7af5070fa78feaca9ba"
                 },
                 "coin_type": {
                     "index": 6,
                     "name": "coin_type",
                     "type": "varchar",
-                    "description": "0x2::sui::SUI"
+                    "example": "0x2::sui::SUI"
                 },
                 "amount": {
                     "index": 7,
                     "name": "amount",
                     "type": "double",
-                    "description": "1663000.0"
+                    "example": "1663000.0"
                 }
             },
             "stats": {},
@@ -3791,79 +3959,79 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-05"
+                    "example": "2025-01-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "98104032"
+                    "example": "98104032"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-05 04:38:10.911000+00:00"
+                    "example": "2025-01-05 04:38:10.911000+00:00"
                 },
                 "digest": {
                     "index": 4,
                     "name": "digest",
                     "type": "varchar",
-                    "description": "8UTb3VtXHJ6Tji3TmUcGxJHTYfATBm6iNYagZQ3hx88f"
+                    "example": "8UTb3VtXHJ6Tji3TmUcGxJHTYfATBm6iNYagZQ3hx88f"
                 },
                 "epoch": {
                     "index": 5,
                     "name": "epoch",
                     "type": "bigint",
-                    "description": "633"
+                    "example": "633"
                 },
                 "network_total_transactions": {
                     "index": 6,
                     "name": "network_total_transactions",
                     "type": "bigint",
-                    "description": "2918928457"
+                    "example": "2918928457"
                 },
                 "previous_digest": {
                     "index": 7,
                     "name": "previous_digest",
                     "type": "varchar",
-                    "description": "AJDxD4jykEbPaaVM8Rx4Ty3dj3jyBusnMMuFa3D9SjPc"
+                    "example": "AJDxD4jykEbPaaVM8Rx4Ty3dj3jyBusnMMuFa3D9SjPc"
                 },
                 "computation_cost": {
                     "index": 8,
                     "name": "computation_cost",
                     "type": "bigint",
-                    "description": "5930703863651"
+                    "example": "5930703863651"
                 },
                 "storage_cost": {
                     "index": 9,
                     "name": "storage_cost",
                     "type": "bigint",
-                    "description": "64441132130800"
+                    "example": "64441132130800"
                 },
                 "storage_rebate": {
                     "index": 10,
                     "name": "storage_rebate",
                     "type": "bigint",
-                    "description": "63072287336916"
+                    "example": "63072287336916"
                 },
                 "non_refundable_storage_fee": {
                     "index": 11,
                     "name": "non_refundable_storage_fee",
                     "type": "bigint",
-                    "description": "637093811484"
+                    "example": "637093811484"
                 },
                 "signature": {
                     "index": 12,
                     "name": "signature",
                     "type": "varchar",
-                    "description": "gBmfUBmLf4x4SDU0bDrtjn+Fx3vhBuCdXKwl5iv3DAvsu6HMAgAJ1aHHC/tk5kWI"
+                    "example": "gBmfUBmLf4x4SDU0bDrtjn+Fx3vhBuCdXKwl5iv3DAvsu6HMAgAJ1aHHC/tk5kWI"
                 },
                 "total_transactions": {
                     "index": 13,
                     "name": "total_transactions",
                     "type": "bigint",
-                    "description": "18"
+                    "example": "18"
                 }
             },
             "stats": {},
@@ -3883,73 +4051,73 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-05"
+                    "example": "2025-01-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "98115011"
+                    "example": "98115011"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-05 05:22:30.238000+00:00"
+                    "example": "2025-01-05 05:22:30.238000+00:00"
                 },
                 "tx_digest": {
                     "index": 4,
                     "name": "tx_digest",
                     "type": "varchar",
-                    "description": "E9Lbr6zdACprhMrHJBSkG61JG3aZ18wStkQBLWiBDnVp"
+                    "example": "E9Lbr6zdACprhMrHJBSkG61JG3aZ18wStkQBLWiBDnVp"
                 },
                 "event_seq": {
                     "index": 5,
                     "name": "event_seq",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "package_id": {
                     "index": 6,
                     "name": "package_id",
                     "type": "varchar",
-                    "description": "0x8beb649d6a66b26d81682bee103698d0987004f3653151e1b439a23abb670dbe"
+                    "example": "0x8beb649d6a66b26d81682bee103698d0987004f3653151e1b439a23abb670dbe"
                 },
                 "transaction_module": {
                     "index": 7,
                     "name": "transaction_module",
                     "type": "varchar",
-                    "description": "exchange"
+                    "example": "exchange"
                 },
                 "sender": {
                     "index": 8,
                     "name": "sender",
                     "type": "varchar",
-                    "description": "0x70c7d1f80a53a007da65890f49c460714599f0cbdbbb39fc71da2ce6ecca2ea1"
+                    "example": "0x70c7d1f80a53a007da65890f49c460714599f0cbdbbb39fc71da2ce6ecca2ea1"
                 },
                 "type": {
                     "index": 9,
                     "name": "type",
                     "type": "varchar",
-                    "description": "0xcb4e1ee2a3d6323c70e7b06a8638de6736982cbdc08317d33e6f098747e2b438::order::OrderFillV2"
+                    "example": "0xcb4e1ee2a3d6323c70e7b06a8638de6736982cbdc08317d33e6f098747e2b438::order::OrderFillV2"
                 },
                 "parsed_json": {
                     "index": 10,
                     "name": "parsed_json",
                     "type": "varchar",
-                    "description": "{\"fillPrice\":\"3635430000000\",\"fillQty\":\"250000000\",\"newFilledQuantity\":\"250000000\",\"order\":{\"expirat"
+                    "example": "{\"fillPrice\":\"3635430000000\",\"fillQty\":\"250000000\",\"newFilledQuantity\":\"250000000\",\"order\":{\"expirat"
                 },
                 "bcs_encoding": {
                     "index": 11,
                     "name": "bcs_encoding",
                     "type": "varchar",
-                    "description": "base64"
+                    "example": "base64"
                 },
                 "bcs": {
                     "index": 12,
                     "name": "bcs",
                     "type": "varchar",
-                    "description": "5FuxAQAAAAAAAAAAAAAAACDn79nN+4LE6kAvgo48gSX8bIvz320Z1xg88zTRMvu9RTC3uuzmns0bG+pcll8i5S/7s90osVt5RJlx"
+                    "example": "5FuxAQAAAAAAAAAAAAAAACDn79nN+4LE6kAvgo48gSX8bIvz320Z1xg88zTRMvu9RTC3uuzmns0bG+pcll8i5S/7s90osVt5RJlx"
                 }
             },
             "stats": {},
@@ -3969,73 +4137,73 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-05"
+                    "example": "2025-01-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "98128307"
+                    "example": "98128307"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-05 06:16:29.459000+00:00"
+                    "example": "2025-01-05 06:16:29.459000+00:00"
                 },
                 "tx_digest": {
                     "index": 4,
                     "name": "tx_digest",
                     "type": "varchar",
-                    "description": "8gQYBXdBEqJZ2biAVigmKKeMhWfKhbYcRgeFFGVivcHK"
+                    "example": "8gQYBXdBEqJZ2biAVigmKKeMhWfKhbYcRgeFFGVivcHK"
                 },
                 "digest": {
                     "index": 5,
                     "name": "digest",
                     "type": "varchar",
-                    "description": "Ge6mUuyqN3g6CkMQcvynf611tpmrP3uXQKGkz2rQE8F3"
+                    "example": "Ge6mUuyqN3g6CkMQcvynf611tpmrP3uXQKGkz2rQE8F3"
                 },
                 "type": {
                     "index": 6,
                     "name": "type",
                     "type": "varchar",
-                    "description": "mutated"
+                    "example": "mutated"
                 },
                 "sender": {
                     "index": 7,
                     "name": "sender",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                    "example": "0x0000000000000000000000000000000000000000000000000000000000000000"
                 },
                 "owner_address": {
                     "index": 8,
                     "name": "owner_address",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "object_type": {
                     "index": 9,
                     "name": "object_type",
                     "type": "varchar",
-                    "description": "0x2::clock::Clock"
+                    "example": "0x2::clock::Clock"
                 },
                 "object_id": {
                     "index": 10,
                     "name": "object_id",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000000000000000000000000006"
+                    "example": "0x0000000000000000000000000000000000000000000000000000000000000006"
                 },
                 "version": {
                     "index": 11,
                     "name": "version",
                     "type": "bigint",
-                    "description": "236445807"
+                    "example": "236445807"
                 },
                 "previous_version": {
                     "index": 12,
                     "name": "previous_version",
                     "type": "bigint",
-                    "description": "236445806"
+                    "example": "236445806"
                 }
             },
             "stats": {},
@@ -4055,163 +4223,163 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-05"
+                    "example": "2025-01-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "98096838"
+                    "example": "98096838"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-05 04:09:06.353000+00:00"
+                    "example": "2025-01-05 04:09:06.353000+00:00"
                 },
                 "digest": {
                     "index": 4,
                     "name": "digest",
                     "type": "varchar",
-                    "description": "n3Uu3HrR1o9iWBjLNY18j5anNsViytELfG3gZskf3G6"
+                    "example": "n3Uu3HrR1o9iWBjLNY18j5anNsViytELfG3gZskf3G6"
                 },
                 "transaction_kind": {
                     "index": 5,
                     "name": "transaction_kind",
                     "type": "varchar",
-                    "description": "ConsensusCommitPrologueV3"
+                    "example": "ConsensusCommitPrologueV3"
                 },
                 "tx_signatures": {
                     "index": 6,
                     "name": "tx_signatures",
                     "type": "array(varchar)",
-                    "description": "['AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                    "example": "['AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
                 },
                 "message_version": {
                     "index": 7,
                     "name": "message_version",
                     "type": "varchar",
-                    "description": "v1"
+                    "example": "v1"
                 },
                 "sender": {
                     "index": 8,
                     "name": "sender",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                    "example": "0x0000000000000000000000000000000000000000000000000000000000000000"
                 },
                 "gas_owner": {
                     "index": 9,
                     "name": "gas_owner",
                     "type": "varchar",
-                    "description": "0x0000000000000000000000000000000000000000000000000000000000000000"
+                    "example": "0x0000000000000000000000000000000000000000000000000000000000000000"
                 },
                 "gas_price": {
                     "index": 10,
                     "name": "gas_price",
                     "type": "bigint",
-                    "description": "1"
+                    "example": "1"
                 },
                 "gas_budget": {
                     "index": 11,
                     "name": "gas_budget",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "gas_payment": {
                     "index": 12,
                     "name": "gas_payment",
                     "type": "array(varchar)",
-                    "description": "['{\"objectId\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"version\":0.0,\"di"
+                    "example": "['{\"objectId\":\"0x0000000000000000000000000000000000000000000000000000000000000000\",\"version\":0.0,\"di"
                 },
                 "inputs": {
                     "index": 13,
                     "name": "inputs",
                     "type": "array(varchar)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "internal_calls": {
                     "index": 14,
                     "name": "internal_calls",
                     "type": "array(varchar)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "status": {
                     "index": 15,
                     "name": "status",
                     "type": "varchar",
-                    "description": "{\"status\":\"success\"}"
+                    "example": "{\"status\":\"success\"}"
                 },
                 "executed_epoch": {
                     "index": 16,
                     "name": "executed_epoch",
                     "type": "bigint",
-                    "description": "633"
+                    "example": "633"
                 },
                 "computation_cost": {
                     "index": 17,
                     "name": "computation_cost",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "storage_cost": {
                     "index": 18,
                     "name": "storage_cost",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "storage_rebate": {
                     "index": 19,
                     "name": "storage_rebate",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "non_refundable_storage_fee": {
                     "index": 20,
                     "name": "non_refundable_storage_fee",
                     "type": "bigint",
-                    "description": "0"
+                    "example": "0"
                 },
                 "modified_at_versions": {
                     "index": 21,
                     "name": "modified_at_versions",
                     "type": "array(varchar)",
-                    "description": "['{\"objectId\":\"0x0000000000000000000000000000000000000000000000000000000000000006\",\"sequenceNumber\":"
+                    "example": "['{\"objectId\":\"0x0000000000000000000000000000000000000000000000000000000000000006\",\"sequenceNumber\":"
                 },
                 "shared_objects": {
                     "index": 22,
                     "name": "shared_objects",
                     "type": "array(varchar)",
-                    "description": "['{\"objectId\":\"0x0000000000000000000000000000000000000000000000000000000000000006\",\"version\":2.36340"
+                    "example": "['{\"objectId\":\"0x0000000000000000000000000000000000000000000000000000000000000006\",\"version\":2.36340"
                 },
                 "created": {
                     "index": 23,
                     "name": "created",
                     "type": "array(varchar)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "mutated": {
                     "index": 24,
                     "name": "mutated",
                     "type": "array(varchar)",
-                    "description": "['{\"owner\":{\"Shared\":{\"initial_shared_version\":1.0}},\"reference\":{\"objectId\":\"0x00000000000000000000"
+                    "example": "['{\"owner\":{\"Shared\":{\"initial_shared_version\":1.0}},\"reference\":{\"objectId\":\"0x00000000000000000000"
                 },
                 "deleted": {
                     "index": 25,
                     "name": "deleted",
                     "type": "array(varchar)",
-                    "description": "None"
+                    "example": "None"
                 },
                 "event_digest": {
                     "index": 26,
                     "name": "event_digest",
                     "type": "varchar",
-                    "description": "None"
+                    "example": "None"
                 },
                 "dependencies": {
                     "index": 27,
                     "name": "dependencies",
                     "type": "array(varchar)",
-                    "description": "['3mrRyUNBUpPKtQ4o6a3c7pX8wuFmpQmtV9jvMqD3W32J']"
+                    "example": "['3mrRyUNBUpPKtQ4o6a3c7pX8wuFmpQmtV9jvMqD3W32J']"
                 }
             },
             "stats": {},
@@ -4231,31 +4399,31 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "2025-01-05"
+                    "example": "2025-01-05"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "98092316"
+                    "example": "98092316"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "2025-01-05 03:50:50.357000+00:00"
+                    "example": "2025-01-05 03:50:50.357000+00:00"
                 },
                 "block": {
                     "index": 4,
                     "name": "block",
                     "type": "varchar",
-                    "description": "{\"jsonrpc\":\"2.0\",\"result\":{\"epoch\":\"633\",\"sequenceNumber\":\"98092316\",\"digest\":\"9sGvisaKM7SG8gg6TMoht"
+                    "example": "{\"jsonrpc\":\"2.0\",\"result\":{\"epoch\":\"633\",\"sequenceNumber\":\"98092316\",\"digest\":\"9sGvisaKM7SG8gg6TMoht"
                 },
                 "transactions": {
                     "index": 5,
                     "name": "transactions",
                     "type": "varchar",
-                    "description": "[{\"digest\":\"B8kCsNbnufgBU2MRVQ8m3vhhasKXjNWzEvhSFAM7KqW2\",\"transaction\":{\"data\":{\"messageVersion\":\"v"
+                    "example": "[{\"digest\":\"B8kCsNbnufgBU2MRVQ8m3vhhasKXjNWzEvhSFAM7KqW2\",\"transaction\":{\"data\":{\"messageVersion\":\"v"
                 }
             },
             "stats": {},

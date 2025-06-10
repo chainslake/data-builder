@@ -17,7 +17,7 @@ with input_output as (
         , v_out as n
         , 0 as value
         , "" as address
-        , -1 as utxo
+        , -1 as utxo -- -1 mean UTXO is spent
     from ${input_coin_table}
     where block_time >= cast(${from} as timestamp)
     and block_time < cast(${to} as timestamp) 
@@ -29,7 +29,7 @@ with input_output as (
         , n
         , value
         , address
-        , 1 as utxo
+        , 1 as utxo -- 1 mean UTXO was created
     from ${output_coin_table}
     where block_time >= cast(${from} as timestamp)
     and block_time < cast(${to} as timestamp)
@@ -59,4 +59,4 @@ select block_date
     , value
     , address
     , utxo
-from input_output_hour where utxo != 0
+from input_output_hour where utxo != 0 -- Filter spent UTXOs

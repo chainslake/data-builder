@@ -17,13 +17,15 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2025, 5, 21, 16),
+    start_date=datetime(2025, 5, 22, 0),
     # schedule="@continuous",
-    schedule="@hourly",
+    schedule="5 0 * * *",
     # schedule="@once",
     max_active_runs=1,
     max_active_tasks=1,
 ) as dag:
+
+    RUN_MODE = "daily"
 
     # RUN_DIR = os.environ.get("CHAINSLAKE_HOME_DIR") + "/jobs/sui"
 
@@ -139,7 +141,7 @@ with DAG(
         task_id="bitcoin_balances.utxo_transfer_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 1 ]; then
+        if [ "$current_hour" -eq 2 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./balances/utxo_transfer_day.sh 
         else
             echo "Skip run"
@@ -151,7 +153,7 @@ with DAG(
         task_id="bitcoin_balances.utxo_latest_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 2 ]; then
+        if [ "$current_hour"  -eq 3 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./balances/utxo_latest_day.sh 
         else
             echo "Skip run"
@@ -167,7 +169,7 @@ with DAG(
         task_id="binance_cex.exchange_info",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 1 ]; then
+        if [ "$current_hour"  -eq 0 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./binance/exchange_info.sh 
         else
             echo "Skip run"
@@ -189,7 +191,7 @@ with DAG(
         task_id="cex_binance.trade_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 1 ]; then
+        if [ "$current_hour"  -eq 1 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./binance/trade_day.sh 
         else
             echo "Skip run"
@@ -305,7 +307,7 @@ with DAG(
         task_id="ethereum_balances.token_transfer_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 1 ]; then
+        if [ "$current_hour"  -eq 4 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./balances/token_transfer_day.sh 
         else
             echo "Skip run"
@@ -317,7 +319,7 @@ with DAG(
         task_id="ethereum_balances.token_latest_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 3 ]; then
+        if [ "$current_hour"  -eq 5 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./balances/token_latest_day.sh 
         else
             echo "Skip run"
@@ -336,7 +338,7 @@ with DAG(
         task_id="ethereum_balances.nft_transfer_day",
         bash_command=f"""
         current_hour=$(date +"%H") 
-        if [ "$current_hour"  -eq 1 ]; then
+        if [ "$current_hour"  -eq 6 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./balances/nft_transfer_day.sh
         else
             echo "Skip run"
@@ -348,7 +350,7 @@ with DAG(
         task_id="ethereum_balances.nft_latest_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 100 ]; then
+        if [ "$current_hour"  -eq 7 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./balances/nft_latest_day.sh 
         else
             echo "Skip run"
@@ -419,7 +421,7 @@ with DAG(
         task_id="ethereum_prices.erc20_usd_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 1 ]; then
+        if [ "$current_hour"  -eq 8 ] || [ "{RUN_MODE}" == "daily" ]; then
             cd {RUN_DIR} && ./prices/day.sh erc20_usd_minute erc20_usd_day 
         else
             echo "Skip run"

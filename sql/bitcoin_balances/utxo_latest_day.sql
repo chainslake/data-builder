@@ -2,7 +2,7 @@ frequent_type=day
 repair_mode=false
 list_input_tables=${chain_name}_balances.utxo_transfer_day
 output_table=${chain_name}_balances.utxo_latest_day
-re_partition_by_range=key_partition
+re_partition_by_range=version,key_partition
 write_mode=Append
 number_index_columns=3
 partition_by=version
@@ -26,6 +26,7 @@ with new_balances as (
 ${if table_existed} 
 
 , all_balances as (
+    -- Get the current balance in this table and union with new balance
     select * from new_balances
     where utxo != 0
     union all 
@@ -49,13 +50,14 @@ ${if table_existed}
     group by tx_id, n
 )
 
-select ${next_version} as version
+select ${next_version} as version -- Increase to next version
     , * from balance_agg
-    where utxo != 0
+    where utxo != 0 -- Filter spent UTXOs
 
 ${else}
 
-SELECT 1 as version, * FROM new_balances
-where utxo != 0
+SELECT 1 as version -- version = 1 in the first run
+    , * FROM new_balances
+    where utxo != 0 -- Filter spent UTXOs
 
 ${endif}
