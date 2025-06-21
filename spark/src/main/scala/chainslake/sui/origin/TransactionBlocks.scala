@@ -6,12 +6,21 @@ import com.google.gson.Gson
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.functions.{col, explode, lit, sequence}
 import org.apache.spark.storage.StorageLevel
-import scalaj.http.Http
+import scalaj.http.{Http, HttpResponse}
 
 import java.sql.{Date, Timestamp}
 import java.util.Properties
 
 object TransactionBlocks extends TaskRun {
+
+  def defaultRpcCall(url: String, body: String): HttpResponse[String] = {
+    Http(url).header("Content-Type", "application/json")
+      .postData(body)
+      .timeout(50000, 50000)
+      .asString
+  }
+  var rpcCall: (String, String) => HttpResponse[String] = defaultRpcCall
+
   override def run(spark: SparkSession, properties: Properties): Unit = {
     val chainName = properties.getProperty("chain_name")
     properties.setProperty("frequent_type", "block")
@@ -34,10 +43,9 @@ object TransactionBlocks extends TaskRun {
       .saveAsTable(outputTable)
   }
 
-  private def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {
+  def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {
     import spark.implicits._
     val numberPartition = properties.getProperty("number_partitions").toInt
-    println(s"fromBlock = $fromBlock, toBlock = $toBlock, numberPartitions = $numberPartition")
     val blockStr = s"""{"from_block": $fromBlock, "to_block": $toBlock }"""
     val rpcList = properties.getProperty("rpc_list").split(",")
     val maxRetry = properties.getProperty("max_retry").toInt
@@ -70,9 +78,7 @@ object TransactionBlocks extends TaskRun {
         scala.util.Random.nextInt(listRpc.length)
       }
       try {
-        var response = Http(rpc).header("Content-Type", "application/json").postData(s"""{"jsonrpc":"2.0","method":"sui_getCheckpoint","params":["${blockNumber}"],"id":1}""")
-          .timeout(50000, 50000)
-          .asString
+        var response = rpcCall(rpc, s"""{"jsonrpc":"2.0","method":"sui_getCheckpoint","params":["${blockNumber}"],"id":1}""")
         val responseRawBlock = gson.fromJson(response.body, classOf[ResponseRawBlock])
         val transactionBlock = responseRawBlock.result
         if (transactionBlock == null) {
@@ -84,7 +90,7 @@ object TransactionBlocks extends TaskRun {
         val mTrans = transactionBlock.transactions.grouped(10)
         var listResult = Array[Any]()
         mTrans.foreach(trans => {
-          response = Http(rpc).header("Content-Type", "application/json").postData(s"""{"method":"sui_multiGetTransactionBlocks","params":[["${trans.mkString("\", \"")}"], {
+          response = rpcCall(rpc, s"""{"method":"sui_multiGetTransactionBlocks","params":[["${trans.mkString("\", \"")}"], {
                                                                                       |      "showInput": true,
                                                                                       |      "showRawInput": false,
                                                                                       |      "showEffects": true,
@@ -93,8 +99,6 @@ object TransactionBlocks extends TaskRun {
                                                                                       |      "showBalanceChanges": true,
                                                                                       |      "showRawEffects": false
                                                                                       |    }],"id":1,"jsonrpc":"2.0"}""".stripMargin)
-            .timeout(50000, 50000)
-            .asString
           val transactionBlock = gson.fromJson(response.body, classOf[ResponseRawTransactions]).result
           if (transactionBlock == null) {
             throw new Exception("don't have transaction block from block: " + blockNumber)
@@ -139,9 +143,7 @@ object TransactionBlocks extends TaskRun {
         scala.util.Random.nextInt(listRpc.length)
       }
       try {
-        val response = Http(rpc).header("Content-Type", "application/json").postData(s"""{"jsonrpc":"2.0","method":"sui_getLatestCheckpointSequenceNumber","params":[],"id":1}""")
-          .timeout(50000, 50000)
-          .asString
+        val response = rpcCall(rpc, s"""{"jsonrpc":"2.0","method":"sui_getLatestCheckpointSequenceNumber","params":[],"id":1}""")
         latestBlock = gson.fromJson(response.body, classOf[ResponseRawString]).result.toLong
         success = true
       } catch {

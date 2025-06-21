@@ -1,9 +1,10 @@
-package bitcoin_origin
+package chainslake.bitcoin_origin
 
 import chainslake.ChainslakeTest
 import chainslake.bitcoin.{ResponseRawNumber, ResponseRawString}
 import chainslake.bitcoin.origin.TransactionBlocks
 import com.google.gson.Gson
+import org.apache.spark.sql.SaveMode
 import scalaj.http.{Http, HttpResponse}
 
 class TransactionBlocksTest extends ChainslakeTest {
@@ -27,8 +28,13 @@ class TransactionBlocksTest extends ChainslakeTest {
 
   test("processCrawlBlocks") {
     TransactionBlocks.rpcCall = mockRpcCall
-    val result = TransactionBlocks.processCrawlBlocks(spark, 902068, 902068, properties).collect()
-    assert(result.length == 1)
+    val result = TransactionBlocks.processCrawlBlocks(spark, 902068, 902068, properties)
+    assert(result.count() == 1)
+//    result.show()
+//    spark.sql(s"create database if not exists bitcoin_origin")
+//    result.write
+//      .mode(SaveMode.Overwrite).format("delta")
+//      .saveAsTable("bitcoin_origin.transaction_blocks")
   }
 
   test("getLatestInput") {
@@ -37,29 +43,23 @@ class TransactionBlocksTest extends ChainslakeTest {
     assert(result == 902068)
   }
 
-  ignore("rpcCall") {
+  ignore("defaultRpcCall") {
     val rpc = ""
     val gson = new Gson()
-    def rpcCall(url: String, body: String): HttpResponse[String] = {
-      Http(url).header("Content-Type", "application/json")
-        .postData(body)
-        .timeout(50000, 50000)
-        .asString
-    }
 
     // Get latest block
-    var result = rpcCall(rpc, s"""{"method":"getblockcount","params":[],"id":"curltest","jsonrpc":"1.0"}""")
+    var result = TransactionBlocks.defaultRpcCall(rpc, s"""{"method":"getblockcount","params":[],"id":"curltest","jsonrpc":"1.0"}""")
     println(result.body)
     val latestBlock = gson.fromJson(result.body, classOf[ResponseRawNumber]).result
 
     // Get block hash
-    result = rpcCall(rpc, s"""{"method":"getblockhash","params":[$latestBlock],"id":"curltest","jsonrpc":"1.0"}""")
+    result = TransactionBlocks.defaultRpcCall(rpc, s"""{"method":"getblockhash","params":[$latestBlock],"id":"curltest","jsonrpc":"1.0"}""")
     println(result.body)
 
     val blockHash = gson.fromJson(result.body, classOf[ResponseRawString]).result
 
     // Get block
-    result = rpcCall(rpc, s"""{"method":"getblock","params":["$blockHash", 2],"id":"curltest","jsonrpc":"1.0"}""")
+    result = TransactionBlocks.defaultRpcCall(rpc, s"""{"method":"getblock","params":["$blockHash", 2],"id":"curltest","jsonrpc":"1.0"}""")
     println(result.body)
 
   }

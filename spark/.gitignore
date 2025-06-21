@@ -4,6 +4,5 @@ project/project
 project/target
 target
 **.log
-test/metastore_db
-test/spark-warehouse
-test/*.jar
+metastore_db
+spark-warehouse

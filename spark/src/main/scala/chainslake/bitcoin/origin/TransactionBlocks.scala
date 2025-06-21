@@ -13,7 +13,7 @@ import java.util.Properties
 
 object TransactionBlocks extends TaskRun {
 
-  private def defaultRpcCall(url: String, body: String): HttpResponse[String] = {
+  def defaultRpcCall(url: String, body: String): HttpResponse[String] = {
     Http(url).header("Content-Type", "application/json")
       .postData(body)
       .timeout(50000, 50000)

@@ -11,6 +11,7 @@ object Main {
     val spark = SparkSession.builder
       .enableHiveSupport()
       .getOrCreate()
+    spark.sparkContext.setLogLevel("ERROR")
 
     val configFile = spark.conf.get("spark.app_properties.chainslake_home_dir") + "/jobs/" + spark.conf.get("spark.app_properties.config_file")
     properties.load(new FileInputStream(configFile))
