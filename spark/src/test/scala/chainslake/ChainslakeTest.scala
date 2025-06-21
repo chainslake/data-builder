@@ -39,10 +39,4 @@ class ChainslakeTest extends AnyFunSuite with BeforeAndAfterAll with SparkTestSu
 
   }
 
-  override def afterAll(): Unit = {
-    if (spark != null) {
-      spark.stop()
-    }
-  }
-
 }

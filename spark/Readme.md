@@ -22,22 +22,8 @@ $ ./build.sh
 
 ## How to run test
 
-```sh
-$ cd test
-$ ./build.sh
-$ ./run_test.sh
-```
-
-## Check result data
-
 ```shell
-$ cd test
-$ ./spark-sql.sh
-```
-
-```sql
-spark-sql> select * from binance_cex.exchange_info;
-spark-sql> select * from binance_cex.trade_minute.sh;
+$ sbt test
 ```
 
 ## License 
