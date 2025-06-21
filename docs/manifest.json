@@ -40,6 +40,37 @@
             },
             "package_name": "cex"
         },
+        "model.chainslake.cex_binance.trade_day": {
+            "database": "chainslake",
+            "schema": "cex_binance",
+            "name": "cex_binance.trade_day",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.cex_binance.trade_day",
+            "fqn": [
+                "chainslake",
+                "cex_binance",
+                "trade_day"
+            ],
+            "alias": "trade_day",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "Trade data by day",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.cex_binance.trade_minute"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM cex_binance.trade_day LIMIT 100;",
+                "cex_binance/trade_day.sql": "frequent_type=day\nlist_input_tables=cex_binance.trade_minute\noutput_table=cex_binance.trade_day\nre_partition_by_range=block_date\nwrite_mode=Append\nnumber_index_columns=2\npartition_by=block_date\n\n===\n\nWITH\n  coin_price AS (\n    SELECT\n      block_date,\n      base_asset,\n      min_by(open_price, block_minute) AS open_price,\n      max_by(close_price, block_minute) AS close_price,\n      sum(quote_volume) as volume\n    FROM\n      cex_binance.trade_minute\n    WHERE\n      block_date >= cast(${from} as timestamp)\n      AND \n        block_date < cast(${to} as timestamp)\n    GROUP BY\n      block_date, base_asset\n  )\nSELECT\n  block_date,\n  base_asset,\n  open_price,\n  close_price,\n  (close_price - open_price) / open_price * 100 AS increase_percent,\n  volume\nFROM\n  coin_price"
+            },
+            "package_name": "cex"
+        },
         "model.chainslake.cex_binance.trade_minute": {
             "database": "chainslake",
             "schema": "cex_binance",

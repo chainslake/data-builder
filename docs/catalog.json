@@ -42,6 +42,62 @@
             "stats": {},
             "unique_id": "model.chainslake.cex_binance.exchange_info"
         },
+        "model.chainslake.cex_binance.trade_day": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "cex_binance",
+                "name": "trade_day",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "Date of record",
+                    "example": "2025-05-03"
+                },
+                "base_asset": {
+                    "index": 2,
+                    "name": "base_asset",
+                    "type": "varchar",
+                    "description": "Symbol of coin",
+                    "example": "HBAR"
+                },
+                "open_price": {
+                    "index": 3,
+                    "name": "open_price",
+                    "type": "double",
+                    "description": "Open price in day",
+                    "example": "0.187"
+                },
+                "close_price": {
+                    "index": 4,
+                    "name": "close_price",
+                    "type": "double",
+                    "description": "Close price in day",
+                    "example": "0.18024"
+                },
+                "increase_percent": {
+                    "index": 5,
+                    "name": "increase_percent",
+                    "type": "double",
+                    "description": "Change percent",
+                    "example": "-3.614973262032079"
+                },
+                "volume": {
+                    "index": 6,
+                    "name": "volume",
+                    "type": "double",
+                    "description": "Trading volume in day",
+                    "example": "17701521.076520003"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.cex_binance.trade_day"
+        },
         "model.chainslake.cex_binance.trade_minute": {
             "metadata": {
                 "type": "TABLE",

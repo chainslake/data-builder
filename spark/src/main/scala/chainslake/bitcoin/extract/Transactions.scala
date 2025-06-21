@@ -4,7 +4,7 @@ import chainslake.bitcoin.origin.TransactionBlocks
 import chainslake.bitcoin.{ExtractedTransaction, OriginBlock, ResponseBlock, TransactionBlock}
 import chainslake.job.TaskRun
 import com.google.gson.Gson
-import org.apache.spark.sql.{SaveMode, SparkSession}
+import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.storage.StorageLevel
 
@@ -26,6 +26,15 @@ object Transactions extends TaskRun {
   }
 
   override protected def onProcess(spark: SparkSession, outputTable: String, from: Long, to: Long, properties: Properties): Unit = {
+    transform(spark, from, to, properties)
+      .persist(StorageLevel.MEMORY_AND_DISK)
+      .repartitionByRange(col("block_date"), col("block_time"))
+      .write.partitionBy("block_date")
+      .mode(SaveMode.Append).format("delta")
+      .saveAsTable(outputTable)
+  }
+
+  def transform(spark: SparkSession, from: Long, to: Long, properties: Properties): Dataset[ExtractedTransaction] = {
     import spark.implicits._
     val inputTableName = properties.getProperty("list_input_tables")
     spark.read.table(inputTableName).where(col("block_number") >= from && col("block_number") <= to)
@@ -63,10 +72,5 @@ object Transactions extends TaskRun {
           )
         })
       })
-      .persist(StorageLevel.MEMORY_AND_DISK)
-      .repartitionByRange(col("block_date"), col("block_time"))
-      .write.partitionBy("block_date")
-      .mode(SaveMode.Append).format("delta")
-      .saveAsTable(outputTable)
   }
 }

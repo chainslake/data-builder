@@ -6,12 +6,20 @@ import com.google.gson.Gson
 import org.apache.spark.sql.functions.{col, explode, lit, sequence}
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.apache.spark.storage.StorageLevel
-import scalaj.http.Http
+import scalaj.http.{Http, HttpResponse}
 
 import java.sql.{Date, Timestamp}
 import java.util.Properties
 
 object TransactionBlocks extends TaskRun {
+
+  private def defaultRpcCall(url: String, body: String): HttpResponse[String] = {
+    Http(url).header("Content-Type", "application/json")
+      .postData(body)
+      .timeout(50000, 50000)
+      .asString
+  }
+  var rpcCall: (String, String) => HttpResponse[String] = defaultRpcCall
 
   override def run(spark: SparkSession, properties: Properties): Unit = {
     val chainName = properties.getProperty("chain_name")
@@ -35,7 +43,7 @@ object TransactionBlocks extends TaskRun {
       .saveAsTable(outputTable)
   }
 
-  private def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {
+  def processCrawlBlocks(spark: SparkSession, fromBlock: Long, toBlock: Long, properties: Properties): Dataset[OriginBlock] = {
     import spark.implicits._
     val numberPartition = properties.getProperty("number_partitions").toInt
     val blockStr = s"""{"from_block": $fromBlock, "to_block": $toBlock }"""
@@ -68,13 +76,9 @@ object TransactionBlocks extends TaskRun {
         scala.util.Random.nextInt(listRpc.length)
       }
       try {
-        var response = Http(rpc).header("Content-Type", "application/json")
-          .postData(s"""{"method":"getblockhash","params":[$blockNumber],"id":"curltest","jsonrpc":"1.0"}""")
-          .timeout(50000, 50000)
-          .asString
+        var response = rpcCall(rpc, s"""{"method":"getblockhash","params":[$blockNumber],"id":"curltest","jsonrpc":"1.0"}""")
         val blockHash = gson.fromJson(response.body, classOf[ResponseRawString]).result
-        response = Http(rpc).header("Content-Type", "application/json")
-          .postData(s"""{"method":"getblock","params":["$blockHash", 2],"id":"curltest","jsonrpc":"1.0"}""").asString
+        response = rpcCall(rpc, s"""{"method":"getblock","params":["$blockHash", 2],"id":"curltest","jsonrpc":"1.0"}""")
         val transactionBlock = gson.fromJson(response.body, classOf[ResponseRawBlock]).result
         if (transactionBlock == null) {
           throw new Exception("don't have transaction block from block: " + blockNumber)
@@ -114,8 +118,7 @@ object TransactionBlocks extends TaskRun {
         scala.util.Random.nextInt(listRpc.length)
       }
       try {
-        val response = Http(rpc).header("Content-Type", "application/json")
-          .postData(s"""{"method":"getblockcount","params":[],"id":"curltest","jsonrpc":"1.0"}""").asString
+        val response = rpcCall(rpc, s"""{"method":"getblockcount","params":[],"id":"curltest","jsonrpc":"1.0"}""")
         latestBlock = gson.fromJson(response.body, classOf[ResponseRawNumber]).result
         success = true
       } catch {
