@@ -11,6 +11,378 @@
         "adapter_type": "snowflake"
     },
     "nodes": {
+        "model.chainslake.ethereum_decoded.aave_evt_liquidationcall": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_evt_liquidationcall",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_evt_liquidationcall",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_evt_liquidationcall"
+            ],
+            "alias": "aave_evt_liquidationcall",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_evt_liquidationcall LIMIT 100;",
+                "abi/aave.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"collateralAsset\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"debtAsset\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"debtToCover\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"liquidatedCollateralAmount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"liquidator\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"bool\",\n        \"name\": \"receiveAToken\",\n        \"type\": \"bool\"\n      }\n    ],\n    \"name\": \"LiquidationCall\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_evt_withdraw": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_evt_withdraw",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_evt_withdraw",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_evt_withdraw"
+            ],
+            "alias": "aave_evt_withdraw",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_evt_withdraw LIMIT 100;",
+                "abi/aave.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"to\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      }\n    ],\n    \"name\": \"Withdraw\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_borrow": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v2_evt_borrow",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_borrow",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v2_evt_borrow"
+            ],
+            "alias": "aave_v2_evt_borrow",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v2_evt_borrow LIMIT 100;",
+                "abi/aave_v2.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"onBehalfOf\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"borrowRateMode\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"borrowRate\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"uint16\",\n        \"name\": \"referral\",\n        \"type\": \"uint16\"\n      }\n    ],\n    \"name\": \"Borrow\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_deposit": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v2_evt_deposit",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_deposit",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v2_evt_deposit"
+            ],
+            "alias": "aave_v2_evt_deposit",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v2_evt_deposit LIMIT 100;",
+                "abi/aave_v2.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"onBehalfOf\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"uint16\",\n        \"name\": \"referral\",\n        \"type\": \"uint16\"\n      }\n    ],\n    \"name\": \"Deposit\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_flashloan": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v2_evt_flashloan",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_flashloan",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v2_evt_flashloan"
+            ],
+            "alias": "aave_v2_evt_flashloan",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v2_evt_flashloan LIMIT 100;",
+                "abi/aave_v2.json": "{\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"target\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"initiator\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"asset\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"premium\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint16\",\n        \"name\": \"referralCode\",\n        \"type\": \"uint16\"\n      }\n    ],\n    \"name\": \"FlashLoan\",\n    \"type\": \"event\"\n  }"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_repay": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v2_evt_repay",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_repay",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v2_evt_repay"
+            ],
+            "alias": "aave_v2_evt_repay",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v2_evt_repay LIMIT 100;",
+                "abi/aave_v2.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"repayer\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      }\n    ],\n    \"name\": \"Repay\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_borrow": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v3_evt_borrow",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_borrow",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v3_evt_borrow"
+            ],
+            "alias": "aave_v3_evt_borrow",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v3_evt_borrow LIMIT 100;",
+                "abi/aave_v3.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"onBehalfOf\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"enum DataTypes.InterestRateMode\",\n        \"name\": \"interestRateMode\",\n        \"type\": \"uint8\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"borrowRate\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"uint16\",\n        \"name\": \"referralCode\",\n        \"type\": \"uint16\"\n      }\n    ],\n    \"name\": \"Borrow\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_flashloan": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v3_evt_flashloan",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_flashloan",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v3_evt_flashloan"
+            ],
+            "alias": "aave_v3_evt_flashloan",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v3_evt_flashloan LIMIT 100;",
+                "abi/aave_v3.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"target\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"initiator\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"asset\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"enum DataTypes.InterestRateMode\",\n        \"name\": \"interestRateMode\",\n        \"type\": \"uint8\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"premium\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"uint16\",\n        \"name\": \"referralCode\",\n        \"type\": \"uint16\"\n      }\n    ],\n    \"name\": \"FlashLoan\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_repay": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v3_evt_repay",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_repay",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v3_evt_repay"
+            ],
+            "alias": "aave_v3_evt_repay",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v3_evt_repay LIMIT 100;",
+                "abi/aave_v3.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"repayer\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"bool\",\n        \"name\": \"useATokens\",\n        \"type\": \"bool\"\n      }\n    ],\n    \"name\": \"Repay\",\n    \"type\": \"event\"\n  },\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_supply": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.aave_v3_evt_supply",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_supply",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "aave_v3_evt_supply"
+            ],
+            "alias": "aave_v3_evt_supply",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.aave_v3_evt_supply LIMIT 100;",
+                "abi/aave_v3.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"reserve\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"user\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"onBehalfOf\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"uint256\",\n        \"name\": \"amount\",\n        \"type\": \"uint256\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"uint16\",\n        \"name\": \"referralCode\",\n        \"type\": \"uint16\"\n      }\n    ],\n    \"name\": \"Supply\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.blur_evt_ordersmatched": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.blur_evt_ordersmatched",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.blur_evt_ordersmatched",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "blur_evt_ordersmatched"
+            ],
+            "alias": "blur_evt_ordersmatched",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.blur_evt_ordersmatched LIMIT 100;",
+                "abi/blur.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"maker\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"taker\",\n        \"type\": \"address\"\n      },\n      {\n        \"components\": [\n          {\n            \"internalType\": \"address\",\n            \"name\": \"trader\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"enum Side\",\n            \"name\": \"side\",\n            \"type\": \"uint8\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"matchingPolicy\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"collection\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"tokenId\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"amount\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"paymentToken\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"price\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"listingTime\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"expirationTime\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"components\": [\n              {\n                \"internalType\": \"uint16\",\n                \"name\": \"rate\",\n                \"type\": \"uint16\"\n              },\n              {\n                \"internalType\": \"address payable\",\n                \"name\": \"recipient\",\n                \"type\": \"address\"\n              }\n            ],\n            \"internalType\": \"struct Fee[]\",\n            \"name\": \"fees\",\n            \"type\": \"tuple[]\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"salt\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"bytes\",\n            \"name\": \"extraParams\",\n            \"type\": \"bytes\"\n          }\n        ],\n        \"indexed\": false,\n        \"internalType\": \"struct Order\",\n        \"name\": \"sell\",\n        \"type\": \"tuple\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"bytes32\",\n        \"name\": \"sellHash\",\n        \"type\": \"bytes32\"\n      },\n      {\n        \"components\": [\n          {\n            \"internalType\": \"address\",\n            \"name\": \"trader\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"enum Side\",\n            \"name\": \"side\",\n            \"type\": \"uint8\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"matchingPolicy\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"collection\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"tokenId\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"amount\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"paymentToken\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"price\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"listingTime\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"expirationTime\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"components\": [\n              {\n                \"internalType\": \"uint16\",\n                \"name\": \"rate\",\n                \"type\": \"uint16\"\n              },\n              {\n                \"internalType\": \"address payable\",\n                \"name\": \"recipient\",\n                \"type\": \"address\"\n              }\n            ],\n            \"internalType\": \"struct Fee[]\",\n            \"name\": \"fees\",\n            \"type\": \"tuple[]\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"salt\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"bytes\",\n            \"name\": \"extraParams\",\n            \"type\": \"bytes\"\n          }\n        ],\n        \"indexed\": false,\n        \"internalType\": \"struct Order\",\n        \"name\": \"buy\",\n        \"type\": \"tuple\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"bytes32\",\n        \"name\": \"buyHash\",\n        \"type\": \"bytes32\"\n      }\n    ],\n    \"name\": \"OrdersMatched\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
+        "model.chainslake.ethereum_decoded.seaport_evt_orderfulfilled": {
+            "database": "chainslake",
+            "schema": "ethereum_decoded",
+            "name": "ethereum_decoded.seaport_evt_orderfulfilled",
+            "resource_type": "model",
+            "path": "",
+            "original_file_path": "",
+            "unique_id": "model.chainslake.ethereum_decoded.seaport_evt_orderfulfilled",
+            "fqn": [
+                "chainslake",
+                "ethereum_decoded",
+                "seaport_evt_orderfulfilled"
+            ],
+            "alias": "seaport_evt_orderfulfilled",
+            "config": {
+                "enabled": true
+            },
+            "tags": [],
+            "description": "",
+            "depends_on": {
+                "macros": [],
+                "nodes": [
+                    "model.chainslake.ethereum.logs"
+                ]
+            },
+            "code": {
+                "Example": "SELECT * FROM ethereum_decoded.seaport_evt_orderfulfilled LIMIT 100;",
+                "abi/seaport.json": "[\n  {\n    \"anonymous\": false,\n    \"inputs\": [\n      {\n        \"indexed\": false,\n        \"internalType\": \"bytes32\",\n        \"name\": \"orderHash\",\n        \"type\": \"bytes32\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"offerer\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": true,\n        \"internalType\": \"address\",\n        \"name\": \"zone\",\n        \"type\": \"address\"\n      },\n      {\n        \"indexed\": false,\n        \"internalType\": \"address\",\n        \"name\": \"recipient\",\n        \"type\": \"address\"\n      },\n      {\n        \"components\": [\n          {\n            \"internalType\": \"enum ItemType\",\n            \"name\": \"itemType\",\n            \"type\": \"uint8\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"token\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"identifier\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"amount\",\n            \"type\": \"uint256\"\n          }\n        ],\n        \"indexed\": false,\n        \"internalType\": \"struct SpentItem[]\",\n        \"name\": \"offer\",\n        \"type\": \"tuple[]\"\n      },\n      {\n        \"components\": [\n          {\n            \"internalType\": \"enum ItemType\",\n            \"name\": \"itemType\",\n            \"type\": \"uint8\"\n          },\n          {\n            \"internalType\": \"address\",\n            \"name\": \"token\",\n            \"type\": \"address\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"identifier\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"uint256\",\n            \"name\": \"amount\",\n            \"type\": \"uint256\"\n          },\n          {\n            \"internalType\": \"address payable\",\n            \"name\": \"recipient\",\n            \"type\": \"address\"\n          }\n        ],\n        \"indexed\": false,\n        \"internalType\": \"struct ReceivedItem[]\",\n        \"name\": \"consideration\",\n        \"type\": \"tuple[]\"\n      }\n    ],\n    \"name\": \"OrderFulfilled\",\n    \"type\": \"event\"\n  }\n]"
+            },
+            "package_name": "cex"
+        },
         "model.chainslake.cex_binance.exchange_info": {
             "database": "chainslake",
             "schema": "cex_binance",
@@ -1821,7 +2193,7 @@
             "path": "overview.md",
             "original_file_path": "models/overview.md",
             "unique_id": "doc.chainslake.__overview__",
-            "block_contents": "Welcome to Chainslake, a community driven by the passion to explore the beauty of data."
+            "block_contents": "# Chainslake\n\n## Introduction\n\nThis is Chainslake's data catalog document, it will help you look up information, descriptions of data tables, transformation relationships between tables, how they are created (with source code).\n\n## Naming convention\n\nTables are named meaningfully and organized in folders (schema). \n\n```\nTable name = [schema_name].[table_name]\n```\n\nEach schema contains tables that share the same business or the same creation method, typically:\n\n```\nSchema name = [chainname]_[business_name]\n```\n\nExample: \n- *bitcoin_origin*, *ethereum_origin*, *sui_origin*, *solana_origin*: Contains the original data tables, fetched directly from the RPC node\n- *bitcoin*, *ethereum*, *sui*, *solana*: Contains data tables extracted from original data, usually transactions, blocks...\n- *ethereum_decoded*: The schema contains tables decoded from ethereum's logs or traces tables using the ABI. The tables in this schema have the following naming convention:\n\n```\n[protocolname]_evt_[eventname]: For event tables decoded from the logs table\n[protocolname]_call_[functionname]: For call tables decoded from the traces table\n```\n"
         }
     },
     "exposures": {},

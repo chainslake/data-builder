@@ -248,30 +248,55 @@ with DAG(
 
     ethereum_decoded_erc20 = BashOperator(
         task_id="ethereum_decoded.erc20",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh erc20"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh erc20 forward"
     )
 
     ethereum_decoded_erc721 = BashOperator(
         task_id="ethereum_decoded.erc721",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh erc721"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh erc721 forward"
     )
 
     ethereum_decoded_erc1155 = BashOperator(
         task_id="ethereum_decoded.erc1155",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh erc1155"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh erc1155 forward"
     )
 
     ethereum_decoded_uniswap_v2 = BashOperator(
         task_id="ethereum_decoded.uniswap_v2",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh uniswap_v2"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh uniswap_v2 forward"
     )
 
     ethereum_decoded_uniswap_v3 = BashOperator(
         task_id="ethereum_decoded.uniswap_v3",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh uniswap_v3"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh uniswap_v3 forward"
     )
 
-    ethereum_logs >> [ethereum_decoded_erc20, ethereum_decoded_erc721, ethereum_decoded_erc1155, ethereum_decoded_uniswap_v2, ethereum_decoded_uniswap_v3]
+    ethereum_decoded_seaport = BashOperator(
+        task_id="ethereum_decoded.seaport",
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh seaport backward"
+    )
+
+    ethereum_decoded_blur = BashOperator(
+        task_id="ethereum_decoded.blur",
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh blur backward"
+    )
+
+    ethereum_decoded_aave = BashOperator(
+        task_id="ethereum_decoded.aave",
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave backward"
+    )
+
+    ethereum_decoded_aave_v2 = BashOperator(
+        task_id="ethereum_decoded.aave_v2",
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave_v2 backward"
+    )
+
+    ethereum_decoded_aave_v3 = BashOperator(
+        task_id="ethereum_decoded.aave_v3",
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave_v3 backward"
+    )
+
+    ethereum_logs >> [ethereum_decoded_erc20, ethereum_decoded_erc721, ethereum_decoded_erc1155, ethereum_decoded_uniswap_v2, ethereum_decoded_uniswap_v3, ethereum_decoded_seaport, ethereum_decoded_blur, ethereum_decoded_aave, ethereum_decoded_aave_v2, ethereum_decoded_aave_v3]
 
     ################################################### CONTRACT INFO ##########################################
 

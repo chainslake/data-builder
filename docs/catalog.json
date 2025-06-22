@@ -7,6 +7,1245 @@
         "env": {}
     },
     "nodes": {
+        "model.chainslake.ethereum_decoded.aave_evt_liquidationcall": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_evt_liquidationcall",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-31"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22599062"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-31 00:14:47+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:44:55.950000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xf9df907d82eb2a535c635fa143becbf47dfc44afe8788002efa3d239f80e41ad"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "19"
+                },
+                "collateralasset": {
+                    "index": 8,
+                    "name": "collateralasset",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x514910771af9ca656af840dff83e8264ecf986ca"
+                },
+                "debtasset": {
+                    "index": 9,
+                    "name": "debtasset",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                },
+                "user": {
+                    "index": 10,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x6b850c0164a6f09b8ba292e41c587811fc31a4b6"
+                },
+                "debttocover": {
+                    "index": 11,
+                    "name": "debttocover",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "27151309488"
+                },
+                "liquidatedcollateralamount": {
+                    "index": 12,
+                    "name": "liquidatedcollateralamount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "2096699025069403550560"
+                },
+                "liquidator": {
+                    "index": 13,
+                    "name": "liquidator",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x8ce45e650ab17b6ca0dd6071f7c2b5c69b5b42b2"
+                },
+                "receiveatoken": {
+                    "index": 14,
+                    "name": "receiveatoken",
+                    "type": "boolean",
+                    "description": "",
+                    "example": "False"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_evt_liquidationcall"
+        },
+        "model.chainslake.ethereum_decoded.aave_evt_withdraw": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_evt_withdraw",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-31"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22598990"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-31 00:00:23+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:14:49.630000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xc50a00c9e0478f17e931980c6e60d6561510bb0594e994d5d96b811b76d06291"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "206"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7bc3485026ac48b6cf9baf0a377477fff5703af8"
+                },
+                "to": {
+                    "index": 10,
+                    "name": "to",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xba1333333333a1ba1108e8412f11850a5c319ba9"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "34986310305"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_evt_withdraw"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_borrow": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v2_evt_borrow",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-29"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22591425"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-29 22:37:59+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:45:32.512000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xd55b0b380a84b365bba7a9eed4dd6156eb0ccb1a"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x9c52bec1fec4106555329aaad0ef522d2522762cb7fbc42608b2036aa68b8608"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "173"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x4fd52f2ac49c7a0317aaa63bbedbf136f6b0cd0c"
+                },
+                "onbehalfof": {
+                    "index": 10,
+                    "name": "onbehalfof",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x4fd52f2ac49c7a0317aaa63bbedbf136f6b0cd0c"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "178000000"
+                },
+                "borrowratemode": {
+                    "index": 12,
+                    "name": "borrowratemode",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "2"
+                },
+                "borrowrate": {
+                    "index": 13,
+                    "name": "borrowrate",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "3987652893342061322123191"
+                },
+                "referral": {
+                    "index": 14,
+                    "name": "referral",
+                    "type": "decimal(4,0)",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_borrow"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_deposit": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v2_evt_deposit",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-30"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22595929"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-30 13:44:59+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:45:28.223000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x1f285a7243f672ce2f308597799237f448e4e6e1c105276a500811dfd103ecda"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "341"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x3611b82c7b13e72b26eb0e9be0613bee7a45ac7c"
+                },
+                "onbehalfof": {
+                    "index": 10,
+                    "name": "onbehalfof",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x3611b82c7b13e72b26eb0e9be0613bee7a45ac7c"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "950187127"
+                },
+                "referral": {
+                    "index": 12,
+                    "name": "referral",
+                    "type": "decimal(4,0)",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_deposit"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_flashloan": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v2_evt_flashloan",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-30"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22592333"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-30 01:39:59+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:45:36.752000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7080bd9686d5964c30f35e283b8662b09a4a3f7e1e0188ad1f9b6b8b32d568e7"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "395"
+                },
+                "target": {
+                    "index": 8,
+                    "name": "target",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x135896de8421be2ec868e0b811006171d9df802a"
+                },
+                "initiator": {
+                    "index": 9,
+                    "name": "initiator",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xb9af6e5dbc239516e086f50cdf6006ad6b15ce3b"
+                },
+                "asset": {
+                    "index": 10,
+                    "name": "asset",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "52000000000"
+                },
+                "premium": {
+                    "index": 12,
+                    "name": "premium",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "46800000"
+                },
+                "referralcode": {
+                    "index": 13,
+                    "name": "referralcode",
+                    "type": "decimal(4,0)",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_flashloan"
+        },
+        "model.chainslake.ethereum_decoded.aave_v2_evt_repay": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v2_evt_repay",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-30"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22594994"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-30 10:36:23+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:45:35.093000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x572c4e84a6ccdc0fcfea88782cedaec5cb823ff53efa121673daa290197c46e6"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "15"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7c07f7abe10ce8e33dc6c5ad68fe033085256a84"
+                },
+                "repayer": {
+                    "index": 10,
+                    "name": "repayer",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x7c07f7abe10ce8e33dc6c5ad68fe033085256a84"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "11310520213665299719"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v2_evt_repay"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_borrow": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v3_evt_borrow",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-29"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22584962"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-29 00:54:11+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:46:17.210000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xb54a0dc4f4d032b95a67c1ee5aac760cda27c3161c4ae64efabb454894a08168"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "787"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xd7852e139a7097e119623de0751ae53a61efb442"
+                },
+                "onbehalfof": {
+                    "index": 10,
+                    "name": "onbehalfof",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xba7b70605e3354e86f85c529cf8fa39f12b8570a"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "260"
+                },
+                "interestratemode": {
+                    "index": 12,
+                    "name": "interestratemode",
+                    "type": "decimal(2,0)",
+                    "description": "",
+                    "example": "2.0"
+                },
+                "borrowrate": {
+                    "index": 13,
+                    "name": "borrowrate",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "50582371735638983165281323"
+                },
+                "referralcode": {
+                    "index": 14,
+                    "name": "referralcode",
+                    "type": "decimal(4,0)",
+                    "description": "",
+                    "example": "5936.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_borrow"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_flashloan": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v3_evt_flashloan",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-28"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22583230"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-28 19:05:35+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:46:13.190000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x3575c618ff33583f4d4d15d12471af66e774494aa2ddff73fc91bcb2f55a2a28"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "223"
+                },
+                "target": {
+                    "index": 8,
+                    "name": "target",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xab515542d621574f9b5212d50593cd0c07e641bd"
+                },
+                "initiator": {
+                    "index": 9,
+                    "name": "initiator",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xab515542d621574f9b5212d50593cd0c07e641bd"
+                },
+                "asset": {
+                    "index": 10,
+                    "name": "asset",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "25586605823"
+                },
+                "interestratemode": {
+                    "index": 12,
+                    "name": "interestratemode",
+                    "type": "decimal(2,0)",
+                    "description": "",
+                    "example": "0.0"
+                },
+                "premium": {
+                    "index": 13,
+                    "name": "premium",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0"
+                },
+                "referralcode": {
+                    "index": 14,
+                    "name": "referralcode",
+                    "type": "decimal(4,0)",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_flashloan"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_repay": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v3_evt_repay",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-28"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22583178"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-28 18:55:11+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:46:19.768000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xd3af7809a25af915b3f4af978048b4948272b71e1335760ec68e73e57dfb784f"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "160"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xdac17f958d2ee523a2206206994597c13d831ec7"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x890e59af019f60be5f1d30dfdb349e0e932d4ba3"
+                },
+                "repayer": {
+                    "index": 10,
+                    "name": "repayer",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x890e59af019f60be5f1d30dfdb349e0e932d4ba3"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "32586297792"
+                },
+                "useatokens": {
+                    "index": 12,
+                    "name": "useatokens",
+                    "type": "boolean",
+                    "description": "",
+                    "example": "True"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_repay"
+        },
+        "model.chainslake.ethereum_decoded.aave_v3_evt_supply": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "aave_v3_evt_supply",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-28"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22583184"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-28 18:56:23+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 15:46:08.558000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xf0affc8191d2c1a09315bd9b7c81f29768981ec1e6e5cf25c6a6ec6a1c578540"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "313"
+                },
+                "reserve": {
+                    "index": 8,
+                    "name": "reserve",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599"
+                },
+                "user": {
+                    "index": 9,
+                    "name": "user",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x93502a08a2d439d1f1f439ba8c457f1dc4108426"
+                },
+                "onbehalfof": {
+                    "index": 10,
+                    "name": "onbehalfof",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x93502a08a2d439d1f1f439ba8c457f1dc4108426"
+                },
+                "amount": {
+                    "index": 11,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "4642506"
+                },
+                "referralcode": {
+                    "index": 12,
+                    "name": "referralcode",
+                    "type": "decimal(4,0)",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.aave_v3_evt_supply"
+        },
+        "model.chainslake.ethereum_decoded.blur_evt_ordersmatched": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "blur_evt_ordersmatched",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-04-20"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22312451"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-04-20 19:58:47+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 11:30:34.338000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x000000000000ad05ccc4f10045630fb830b95127"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x06ede264010e0141deb991fe1541d8f850f582bde4ace9cd04916d8628683e7b"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "353"
+                },
+                "maker": {
+                    "index": 8,
+                    "name": "maker",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x0000db5c8b030ae20308ac975898e09741e70000"
+                },
+                "taker": {
+                    "index": 9,
+                    "name": "taker",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xe8d4bc653eda2b4f18ace3ae114405c88706c4f7"
+                },
+                "sell": {
+                    "index": 10,
+                    "name": "sell",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "{\"side\":1,\"amount\":1,\"fees\":[],\"salt\":431637898537843511659432586729828921864,\"tokenId\":0,\"listingTi"
+                },
+                "sellhash": {
+                    "index": 11,
+                    "name": "sellhash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xee4efa52f9cd1a83c6c54cc14cb6a5705ffc5dc6d4b9bc45e6f4c5fb4a5d662c"
+                },
+                "buy": {
+                    "index": 12,
+                    "name": "buy",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "{\"side\":0,\"amount\":1,\"fees\":[],\"salt\":261797875355364796650507420766989479808,\"tokenId\":0,\"listingTi"
+                },
+                "buyhash": {
+                    "index": 13,
+                    "name": "buyhash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xf627a2aae6b66ea1f6dcf1fe0f9731086cabc0f796908feb24fa9b8ad6f5ab91"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.blur_evt_ordersmatched"
+        },
+        "model.chainslake.ethereum_decoded.seaport_evt_orderfulfilled": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_decoded",
+                "name": "seaport_evt_orderfulfilled",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-30"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22597859"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-30 20:13:11+00:00"
+                },
+                "updated_time": {
+                    "index": 4,
+                    "name": "updated_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-06-22 11:02:56.428000+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x0000000000000068f116a894984e2db1123eb395"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xa94de44b15ce11fcabc8cfc0234bbae0f8d8d33d1282a2579cafde68a829e20f"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "79"
+                },
+                "orderhash": {
+                    "index": 8,
+                    "name": "orderhash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xb03512a97bba15add613c350aec2a5b87e1388a02487c16c57d741b3bc4f4489"
+                },
+                "offerer": {
+                    "index": 9,
+                    "name": "offerer",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x10fda98ac51c012a5ce0e4a055c193d0cd8b90db"
+                },
+                "zone": {
+                    "index": 10,
+                    "name": "zone",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x000056f7000000ece9003ca63978907a00ffd100"
+                },
+                "recipient": {
+                    "index": 11,
+                    "name": "recipient",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xf20ad890715775ea37e986984185901a01d7e5d3"
+                },
+                "offer": {
+                    "index": 12,
+                    "name": "offer",
+                    "type": "array(varchar)",
+                    "description": "",
+                    "example": "['{\"identifier\":6443,\"itemType\":2,\"amount\":1,\"token\":\"0xf51b08c5e9a62b6670b1b819da31c1b6cd959e2b\"}']"
+                },
+                "consideration": {
+                    "index": 13,
+                    "name": "consideration",
+                    "type": "array(varchar)",
+                    "description": "",
+                    "example": "['{\"identifier\":0,\"itemType\":0,\"amount\":17293500000000000,\"recipient\":\"0x10fda98ac51c012a5ce0e4a055c"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_decoded.seaport_evt_orderfulfilled"
+        },
         "model.chainslake.cex_binance.exchange_info": {
             "metadata": {
                 "type": "TABLE",
