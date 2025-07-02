@@ -17,7 +17,7 @@ with DAG(
         "retries": 2
     },
     description="Chainslake pipeline",
-    start_date=datetime(2025, 5, 22, 0),
+    start_date=datetime(2025, 6, 30, 0),
     # schedule="@continuous",
     schedule="5 0 * * *",
     # schedule="@once",
@@ -107,7 +107,8 @@ with DAG(
 
     bitcoin_origin_transaction_blocks = BashOperator(
         task_id="bitcoin_origin.transaction_blocks",
-        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
+        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh ",
+        priority_weight=3
     )
 
     bitcoin_extract_blocks = BashOperator(
@@ -174,12 +175,14 @@ with DAG(
         else
             echo "Skip run"
         fi
-        """
+        """,
+        priority_weight=2
     )
 
     binance_cex_trade_minute = BashOperator(
         task_id="cex_binance.trade_minute",
-        bash_command=f"cd {RUN_DIR} && ./binance/trade_minute.sh "
+        bash_command=f"cd {RUN_DIR} && ./binance/trade_minute.sh ",
+        priority_weight=2
     )
 
     # binance_cex_trade_minute_agg_volume = BashOperator(
@@ -207,17 +210,20 @@ with DAG(
 
     ethereum_origin_transaction_blocks = BashOperator(
         task_id="ethereum_origin.transaction_blocks",
-        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh "
+        bash_command=f"cd {RUN_DIR} && ./origin/transaction_blocks.sh ",
+        priority_weight=2
     )
 
     ethereum_origin_blocks_receipt = BashOperator(
         task_id="ethereum_origin.blocks_receipt",
-        bash_command=f"cd {RUN_DIR} && ./origin/blocks_receipt.sh "
+        bash_command=f"cd {RUN_DIR} && ./origin/blocks_receipt.sh ",
+        priority_weight=2
     )
 
     ethereum_origin_traces = BashOperator(
         task_id="ethereum_origin.traces",
-        bash_command=f"cd {RUN_DIR} && ./origin/traces.sh "
+        bash_command=f"cd {RUN_DIR} && ./origin/traces.sh ",
+        priority_weight=2
     )
 
     ethereum_origin_transaction_blocks >> [ethereum_origin_blocks_receipt, ethereum_origin_traces]
@@ -273,30 +279,25 @@ with DAG(
 
     ethereum_decoded_seaport = BashOperator(
         task_id="ethereum_decoded.seaport",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh seaport backward"
-    )
-
-    ethereum_decoded_blur = BashOperator(
-        task_id="ethereum_decoded.blur",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh blur backward"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh seaport forward"
     )
 
     ethereum_decoded_aave = BashOperator(
         task_id="ethereum_decoded.aave",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave backward"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave forward"
     )
 
     ethereum_decoded_aave_v2 = BashOperator(
         task_id="ethereum_decoded.aave_v2",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave_v2 backward"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave_v2 forward"
     )
 
     ethereum_decoded_aave_v3 = BashOperator(
         task_id="ethereum_decoded.aave_v3",
-        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave_v3 backward"
+        bash_command=f"cd {RUN_DIR} && ./extract/decoded.sh aave_v3 forward"
     )
 
-    ethereum_logs >> [ethereum_decoded_erc20, ethereum_decoded_erc721, ethereum_decoded_erc1155, ethereum_decoded_uniswap_v2, ethereum_decoded_uniswap_v3, ethereum_decoded_seaport, ethereum_decoded_blur, ethereum_decoded_aave, ethereum_decoded_aave_v2, ethereum_decoded_aave_v3]
+    ethereum_logs >> [ethereum_decoded_erc20, ethereum_decoded_erc721, ethereum_decoded_erc1155, ethereum_decoded_uniswap_v2, ethereum_decoded_uniswap_v3, ethereum_decoded_seaport, ethereum_decoded_aave, ethereum_decoded_aave_v2, ethereum_decoded_aave_v3]
 
     ################################################### CONTRACT INFO ##########################################
 
@@ -375,7 +376,7 @@ with DAG(
         task_id="ethereum_balances.nft_latest_day",
         bash_command=f"""
         current_hour=$(date +"%H")
-        if [ "$current_hour"  -eq 7 ] || [ "{RUN_MODE}" == "daily" ]; then
+        if [ "$current_hour"  -eq 7 ] || [ "{RUN_MODE}" == "dailyy" ]; then
             cd {RUN_DIR} && ./balances/nft_latest_day.sh 
         else
             echo "Skip run"
@@ -464,5 +465,45 @@ with DAG(
 
     [ethereum_dex_swap_v2_trades, ethereum_dex_swap_v3_trades, ethereum_prices_weth_usd_minute] >> ethereum_dex_token_trades
 
+    ethereum_nft_seaport_trades = BashOperator(
+        task_id="ethereum_nft.seaport_trades",
+        bash_command=f"cd {RUN_DIR} && ./nft/seaport_trades.sh "
+    )
+
+    [ethereum_decoded_seaport, binance_cex_trade_minute, ethereum_contract_erc20_tokens, ethereum_contract_erc721_tokens, ethereum_contract_erc1155_tokens] >> ethereum_nft_seaport_trades
+
+    ethereum_nft_trade_day = BashOperator(
+        task_id="ethereum_nft.trade_day",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ] || [ "{RUN_MODE}" == "daily" ]; then
+            cd {RUN_DIR} && ./nft/trade_day.sh 
+        else
+            echo "Skip run"
+        fi
+        """
+    )
+
+    ethereum_nft_seaport_trades >> ethereum_nft_trade_day
 
 
+    ethereum_defi_aave_minute = BashOperator(
+        task_id="ethereum_defi.aave_minute",
+        bash_command=f"cd {RUN_DIR} && ./defi/aave_minute.sh "
+    )
+
+    [ethereum_decoded_aave, ethereum_decoded_aave_v2, ethereum_decoded_aave_v3, ethereum_contract_erc20_tokens, ethereum_prices_erc20_usd_minute] >> ethereum_defi_aave_minute
+
+    ethereum_defi_aave_day = BashOperator(
+        task_id="ethereum_defi.aave_day",
+        bash_command=f"""
+        current_hour=$(date +"%H")
+        if [ "$current_hour"  -eq 1 ] || [ "{RUN_MODE}" == "daily" ]; then
+            cd {RUN_DIR} && ./defi/aave_day.sh
+        else
+            echo "Skip run"
+        fi
+        """
+    )
+
+    ethereum_defi_aave_minute >> ethereum_defi_aave_day

@@ -7,7 +7,9 @@ import java.io.{FileInputStream, StringReader}
 import java.util.Properties
 import ajr.scemplate._
 import chainslake.job.TaskRun
+import chainslake.libs.Utils
 import org.apache.spark.storage.StorageLevel
+import org.apache.spark.sql.functions.udf
 
 object Transformer extends TaskRun {
   override def run(spark: SparkSession, properties: Properties): Unit = {
@@ -121,7 +123,13 @@ object Transformer extends TaskRun {
     val useVersion = properties.getProperty("use_version").toBoolean
     val currentVersion = properties.getProperty("current_version").toInt
     val nextVersion = properties.getProperty("next_version").toInt
-
+    val rpcList = properties.getProperty("rpc_list")
+    if (rpcList != null) {
+      val evmGetNFTInfo = udf((contractAddress: String, tokenId: String) => {
+        Utils.evmGetNFTInfo(rpcList, contractAddress, tokenId)
+      })
+      spark.udf.register("evmGetNFTInfo", evmGetNFTInfo)
+    }
     val sqlTemplate = new Template(sqlTemplateString)
     var context = Context()
     properties.stringPropertyNames().forEach(key => {

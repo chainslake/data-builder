@@ -7,6 +7,440 @@
         "env": {}
     },
     "nodes": {
+        "model.chainslake.ethereum_defi.aave_day": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_defi",
+                "name": "aave_day",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-06-30"
+                },
+                "symbol": {
+                    "index": 2,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "sDAI"
+                },
+                "token_address": {
+                    "index": 3,
+                    "name": "token_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x83f20f44975d03b1b09e64809b757c47f942beea"
+                },
+                "deposit": {
+                    "index": 4,
+                    "name": "deposit",
+                    "type": "double",
+                    "description": "",
+                    "example": "None"
+                },
+                "withdraw": {
+                    "index": 5,
+                    "name": "withdraw",
+                    "type": "double",
+                    "description": "",
+                    "example": "0.0"
+                },
+                "borrow": {
+                    "index": 6,
+                    "name": "borrow",
+                    "type": "double",
+                    "description": "",
+                    "example": "None"
+                },
+                "repay": {
+                    "index": 7,
+                    "name": "repay",
+                    "type": "double",
+                    "description": "",
+                    "example": "None"
+                },
+                "liquidation": {
+                    "index": 8,
+                    "name": "liquidation",
+                    "type": "double",
+                    "description": "",
+                    "example": "None"
+                },
+                "flashloan": {
+                    "index": 9,
+                    "name": "flashloan",
+                    "type": "double",
+                    "description": "",
+                    "example": "None"
+                },
+                "apr": {
+                    "index": 10,
+                    "name": "apr",
+                    "type": "double",
+                    "description": "",
+                    "example": "None"
+                },
+                "total_volume": {
+                    "index": 11,
+                    "name": "total_volume",
+                    "type": "double",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_defi.aave_day"
+        },
+        "model.chainslake.ethereum_defi.aave_minute": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_defi",
+                "name": "aave_minute",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-29"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22586319"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-29 05:27:35+00:00"
+                },
+                "block_minute": {
+                    "index": 4,
+                    "name": "block_minute",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-29 05:27:00+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xb3bab5dad0143a9c73fc4492a25155f341ba8250f02d002008987554290b383e"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "435"
+                },
+                "event_type": {
+                    "index": 8,
+                    "name": "event_type",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "deposit"
+                },
+                "symbol": {
+                    "index": 9,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "USDS"
+                },
+                "token_address": {
+                    "index": 10,
+                    "name": "token_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0xdc035d45d973e3ec169d2276ddab16f1e407384f"
+                },
+                "wallet_address": {
+                    "index": 11,
+                    "name": "wallet_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x832c30802054f60f0cedb5be1f9a0e3da2a0cab4"
+                },
+                "apr": {
+                    "index": 12,
+                    "name": "apr",
+                    "type": "double",
+                    "description": "",
+                    "example": "0.0"
+                },
+                "amount": {
+                    "index": 13,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "80505.37127581422"
+                },
+                "price": {
+                    "index": 14,
+                    "name": "price",
+                    "type": "double",
+                    "description": "",
+                    "example": "0.0"
+                },
+                "value": {
+                    "index": 15,
+                    "name": "value",
+                    "type": "double",
+                    "description": "",
+                    "example": "0.0"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_defi.aave_minute"
+        },
+         "model.chainslake.ethereum_nft.seaport_trades": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_nft",
+                "name": "seaport_trades",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-05-31"
+                },
+                "block_number": {
+                    "index": 2,
+                    "name": "block_number",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "22599110"
+                },
+                "block_time": {
+                    "index": 3,
+                    "name": "block_time",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-31 00:24:23+00:00"
+                },
+                "block_minute": {
+                    "index": 4,
+                    "name": "block_minute",
+                    "type": "timestamp(3) with time zone",
+                    "description": "",
+                    "example": "2025-05-31 00:24:00+00:00"
+                },
+                "contract_address": {
+                    "index": 5,
+                    "name": "contract_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x0000000000000068f116a894984e2db1123eb395"
+                },
+                "tx_hash": {
+                    "index": 6,
+                    "name": "tx_hash",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x27a8871c49bde7e35daa7e2509bb26737eb00651b0ca1e9f7c43ee6f13130127"
+                },
+                "evt_index": {
+                    "index": 7,
+                    "name": "evt_index",
+                    "type": "integer",
+                    "description": "",
+                    "example": "250"
+                },
+                "order_type": {
+                    "index": 8,
+                    "name": "order_type",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "consideration"
+                },
+                "type_token": {
+                    "index": 9,
+                    "name": "type_token",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "Native"
+                },
+                "token_address": {
+                    "index": 10,
+                    "name": "token_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x0000000000000000000000000000000000000000"
+                },
+                "token_id": {
+                    "index": 11,
+                    "name": "token_id",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0"
+                },
+                "amount": {
+                    "index": 12,
+                    "name": "amount",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0.0148743"
+                },
+                "price": {
+                    "index": 13,
+                    "name": "price",
+                    "type": "double",
+                    "description": "",
+                    "example": "2521.99"
+                },
+                "name": {
+                    "index": 14,
+                    "name": "name",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "Ethereum"
+                },
+                "symbol": {
+                    "index": 15,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "ETH"
+                },
+                "decimals": {
+                    "index": 16,
+                    "name": "decimals",
+                    "type": "integer",
+                    "description": "",
+                    "example": "18"
+                },
+                "value": {
+                    "index": 17,
+                    "name": "value",
+                    "type": "double",
+                    "description": "",
+                    "example": "37.512835857"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_nft.seaport_trades"
+        },
+        "model.chainslake.ethereum_nft.trade_day": {
+            "metadata": {
+                "type": "TABLE",
+                "schema": "ethereum_nft",
+                "name": "trade_day",
+                "database": "chainslake",
+                "comment": null,
+                "owner": "Chainslake"
+            },
+            "columns": {
+                "block_date": {
+                    "index": 1,
+                    "name": "block_date",
+                    "type": "date",
+                    "description": "",
+                    "example": "2025-06-21"
+                },
+                "type_token": {
+                    "index": 2,
+                    "name": "type_token",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "ERC721"
+                },
+                "token_address": {
+                    "index": 3,
+                    "name": "token_address",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "0x80a4b80c653112b789517eb28ac111519b608b19"
+                },
+                "name": {
+                    "index": 4,
+                    "name": "name",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "Crypto Cannabis Club"
+                },
+                "symbol": {
+                    "index": 5,
+                    "name": "symbol",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "CCC"
+                },
+                "volume": {
+                    "index": 6,
+                    "name": "volume",
+                    "type": "double",
+                    "description": "",
+                    "example": "69.25244333"
+                },
+                "number_tx": {
+                    "index": 7,
+                    "name": "number_tx",
+                    "type": "bigint",
+                    "description": "",
+                    "example": "3"
+                },
+                "lowest_price": {
+                    "index": 8,
+                    "name": "lowest_price",
+                    "type": "double",
+                    "description": "",
+                    "example": "22.234419"
+                },
+                "lowest_price_token": {
+                    "index": 9,
+                    "name": "lowest_price_token",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "4091"
+                },
+                "highest_price": {
+                    "index": 10,
+                    "name": "highest_price",
+                    "type": "double",
+                    "description": "",
+                    "example": "24.7812543"
+                },
+                "highest_price_token": {
+                    "index": 11,
+                    "name": "highest_price_token",
+                    "type": "varchar",
+                    "description": "",
+                    "example": "9828"
+                }
+            },
+            "stats": {},
+            "unique_id": "model.chainslake.ethereum_nft.trade_day"
+        },
         "model.chainslake.ethereum_decoded.aave_evt_liquidationcall": {
             "metadata": {
                 "type": "TABLE",
@@ -1155,21 +1589,21 @@
                     "index": 1,
                     "name": "block_date",
                     "type": "date",
-                    "description": "",
+                    "description": "Date of event log",
                     "example": "2025-05-30"
                 },
                 "block_number": {
                     "index": 2,
                     "name": "block_number",
                     "type": "bigint",
-                    "description": "",
+                    "description": "Block number of event log",
                     "example": "22597859"
                 },
                 "block_time": {
                     "index": 3,
                     "name": "block_time",
                     "type": "timestamp(3) with time zone",
-                    "description": "",
+                    "description": "Time of event log",
                     "example": "2025-05-30 20:13:11+00:00"
                 },
                 "updated_time": {
@@ -1183,63 +1617,63 @@
                     "index": 5,
                     "name": "contract_address",
                     "type": "varchar",
-                    "description": "",
+                    "description": "Address of contract emitted the event log",
                     "example": "0x0000000000000068f116a894984e2db1123eb395"
                 },
                 "tx_hash": {
                     "index": 6,
                     "name": "tx_hash",
                     "type": "varchar",
-                    "description": "",
+                    "description": "Hash of transaction when the event log is emitted",
                     "example": "0xa94de44b15ce11fcabc8cfc0234bbae0f8d8d33d1282a2579cafde68a829e20f"
                 },
                 "evt_index": {
                     "index": 7,
                     "name": "evt_index",
                     "type": "integer",
-                    "description": "",
+                    "description": "The order of event on block",
                     "example": "79"
                 },
                 "orderhash": {
                     "index": 8,
                     "name": "orderhash",
                     "type": "varchar",
-                    "description": "",
+                    "description": "The hash of the fulfilled order.",
                     "example": "0xb03512a97bba15add613c350aec2a5b87e1388a02487c16c57d741b3bc4f4489"
                 },
                 "offerer": {
                     "index": 9,
                     "name": "offerer",
                     "type": "varchar",
-                    "description": "",
+                    "description": "The offerer of the fulfilled order.",
                     "example": "0x10fda98ac51c012a5ce0e4a055c193d0cd8b90db"
                 },
                 "zone": {
                     "index": 10,
                     "name": "zone",
                     "type": "varchar",
-                    "description": "",
+                    "description": "The zone of the fulfilled order.",
                     "example": "0x000056f7000000ece9003ca63978907a00ffd100"
                 },
                 "recipient": {
                     "index": 11,
                     "name": "recipient",
                     "type": "varchar",
-                    "description": "",
+                    "description": "The recipient of each spent item on the fulfilled order, or the null address if there is no specific fulfiller (i.e. the order is part of a group of orders). Defaults to the caller unless explicitly specified otherwise by the fulfiller.",
                     "example": "0xf20ad890715775ea37e986984185901a01d7e5d3"
                 },
                 "offer": {
                     "index": 12,
                     "name": "offer",
                     "type": "array(varchar)",
-                    "description": "",
+                    "description": "The offer items spent as part of the order.",
                     "example": "['{\"identifier\":6443,\"itemType\":2,\"amount\":1,\"token\":\"0xf51b08c5e9a62b6670b1b819da31c1b6cd959e2b\"}']"
                 },
                 "consideration": {
                     "index": 13,
                     "name": "consideration",
                     "type": "array(varchar)",
-                    "description": "",
+                    "description": "The consideration items received as part of the order along with the recipients of each item.",
                     "example": "['{\"identifier\":0,\"itemType\":0,\"amount\":17293500000000000,\"recipient\":\"0x10fda98ac51c012a5ce0e4a055c"
                 }
             },
